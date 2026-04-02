@@ -77,6 +77,9 @@
                     <span class="font-bold text-xl tracking-tight text-slate-900">Eco<span class="text-primary">Monitor</span></span>
                 </div>
                 <div class="flex items-center gap-4">
+                    <button onclick="openGuideModal()" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Guide
+                    </button>
                     <button onclick="loadDataFromGoogleSheets()" id="btn-sync" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
                         <i class="fa-solid fa-sync mr-1" id="icon-sync"></i> <span id="text-sync">Sinkronisasi Data</span>
                     </button>
@@ -221,6 +224,45 @@
 
     </main>
 
+    <!-- Modal Peta Sebaran (GeoJSON) -->
+    <div id="geojson-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeGeoJsonModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-3xl overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800" id="geojson-modal-title">Peta Sebaran Area</h3>
+                <button onclick="closeGeoJsonModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-0">
+                <div id="mini-map" class="w-full h-[400px] bg-slate-100 relative z-10"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Guide -->
+    <div id="guide-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeGuideModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-lg overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-primary mr-2"></i>Panduan Penggunaan</h3>
+                <button onclick="closeGuideModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 text-slate-600 text-sm leading-relaxed flex-grow">
+                <p class="mb-3">Selamat datang di Dashboard Area Konservasi.</p>
+                <p class="mb-3">Dashboard ini menampilkan data laporan lapangan dan ide inovasi yang terhubung langsung dengan Google Sheets secara *real-time*.</p>
+                <ul class="list-disc pl-5 space-y-2 mb-3">
+                    <li>Gunakan tab <b>Laporan Lapangan</b> untuk melihat sebaran aktivitas pelestarian.</li>
+                    <li>Klik pin pada peta untuk melihat detail kegiatan. Jika terdapat ikon Area, Anda dapat mengklik tombol <b>Lihat Peta Sebaran</b> di dalam popup untuk memunculkan gambar poligon area yang bersangkutan.</li>
+                    <li>Gunakan tab <b>Ide Tim</b> untuk melihat inovasi dari peserta.</li>
+                </ul>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="window.location.href='info.html'" class="bg-primary hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                    Buka info.html <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Data & Logika JavaScript -->
     <script>
         // --- 1. SETTING LINK GOOGLE SHEETS CSV ---
@@ -231,63 +273,64 @@
         let dataHackathon = [];
         let map;
         let markers = []; 
-        let activeGeoJsonLayer = null; // Menyimpan layer GeoJSON (poligon) yang sedang aktif
+        let miniMap = null;
+        let miniGeoJsonLayer = null;
 
         // --- 2. LOAD DATA DARI GOOGLE SHEETS ---
         async function loadDataFromGoogleSheets() {
             setLoadingState(true);
 
-            try {
-                // Fetch Data Laporan Lapangan
-                const resReport = await fetch(urlReportCsv);
-                const csvReportText = await resReport.text();
-                
-                Papa.parse(csvReportText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        dataReport = results.data.map(row => ({
-                            tipe: row['tipe'] || 'Tanpa Kategori',
-                            nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
-                            organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
-                            lat: parseFloat(row['lat']) || 0,
-                            long: parseFloat(row['long']) || 0,
-                            geojson: row['geojson'] || '',
-                            sampahKg: parseFloat(row['sampah kg']) || 0,
-                            bibit: parseInt(row['bibit']) || 0,
-                            jenis: row['jenis'] || '',
-                            catatan: row['catatan'] || ''
-                        })).filter(item => item.lat !== 0 && item.long !== 0); 
-                    }
-                });
-
-                // Fetch Data Ide Hackathon
-                if(urlHackathonCsv !== "") {
-                    const resHack = await fetch(urlHackathonCsv);
-                    const csvHackText = await resHack.text();
-                    Papa.parse(csvHackText, {
+            // Gunakan fitur bawaan PapaParse untuk mendownload agar lebih ramah CORS (file://)
+            const fetchCSV = (url) => {
+                return new Promise((resolve, reject) => {
+                    Papa.parse(url, {
+                        download: true,
                         header: true,
                         skipEmptyLines: true,
                         complete: function(results) {
-                            dataHackathon = results.data.map(row => ({
-                                solusi: row['solusi utama'] || row['solusi'] || '',
-                                masalah: row['mengatasi masalah'] || row['masalah'] || '',
-                                signifikan: row['mengapa signifikan'] || row['signifikan'] || ''
-                            })).filter(item => item.solusi !== '');
+                            resolve(results.data);
+                        },
+                        error: function(error) {
+                            reject(error);
                         }
                     });
+                });
+            };
+
+            try {
+                // Fetch Data Laporan Lapangan menggunakan PapaParse secara langsung
+                const reportResults = await fetchCSV(urlReportCsv);
+                dataReport = reportResults.map(row => ({
+                    tipe: row['tipe'] || 'Tanpa Kategori',
+                    nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
+                    organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
+                    lat: parseFloat(row['lat']) || 0,
+                    long: parseFloat(row['long']) || 0,
+                    geojson: row['geojson'] || '',
+                    sampahKg: parseFloat(row['sampah kg']) || 0,
+                    bibit: parseInt(row['bibit']) || 0,
+                    jenis: row['jenis'] || '',
+                    catatan: row['catatan'] || ''
+                })).filter(item => item.lat !== 0 && item.long !== 0); 
+
+                // Fetch Data Ide Hackathon
+                if(urlHackathonCsv !== "") {
+                    const hackResults = await fetchCSV(urlHackathonCsv);
+                    dataHackathon = hackResults.map(row => ({
+                        solusi: row['solusi utama'] || row['solusi'] || '',
+                        masalah: row['mengatasi masalah'] || row['masalah'] || '',
+                        signifikan: row['mengapa signifikan'] || row['signifikan'] || ''
+                    })).filter(item => item.solusi !== '');
                 }
 
                 // Render setelah selesai
-                setTimeout(() => {
-                    renderDashboard();
-                    updateMapMarkers();
-                    setLoadingState(false);
-                }, 500);
+                renderDashboard();
+                updateMapMarkers();
+                setLoadingState(false);
 
             } catch (error) {
                 console.error("Gagal mengambil data:", error);
-                document.getElementById('status-text').innerText = "Gagal memuat data";
+                document.getElementById('status-text').innerText = "Gagal memuat data (Cek koneksi/CORS)";
                 document.getElementById('status-dot').className = "h-2 w-2 rounded-full bg-red-500 mr-2";
                 setLoadingState(false, true);
             }
@@ -299,14 +342,6 @@
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
-
-            // Menghapus GeoJSON poligon saat popup ditutup
-            map.on('popupclose', function() {
-                if (activeGeoJsonLayer) {
-                    map.removeLayer(activeGeoJsonLayer);
-                    activeGeoJsonLayer = null;
-                }
-            });
         }
 
         function updateMapMarkers() {
@@ -314,15 +349,12 @@
             
             markers.forEach(m => map.removeLayer(m));
             markers = [];
-            if (activeGeoJsonLayer) map.removeLayer(activeGeoJsonLayer);
-            activeGeoJsonLayer = null;
 
-            dataReport.forEach(item => {
+            dataReport.forEach((item, index) => {
                 let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
                 let isPenanaman = item.tipe.toLowerCase().includes('penanaman');
                 
                 let iconColor = isPembersihan ? 'red' : isPenanaman ? 'green' : 'blue';
-                let hexColor = isPembersihan ? '#ef4444' : isPenanaman ? '#10b981' : '#3b82f6';
                 
                 const customIcon = L.divIcon({
                     className: "custom-pin",
@@ -332,7 +364,7 @@
                 });
 
                 // Konten Popup
-                let popupContent = `<div class="font-sans min-w-[150px]">`;
+                let popupContent = `<div class="font-sans min-w-[160px]">`;
                 popupContent += `<b class="text-[14px] text-slate-800">${item.tipe}</b><br>`;
                 if (item.nama !== '-' || item.organisasi !== '-') {
                     popupContent += `<span class="text-xs text-slate-500 block mb-2"><i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})</span>`;
@@ -341,53 +373,13 @@
                 if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ Sampah: <b>${item.sampahKg} kg</b></div>`;
                 if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 Bibit: <b>${item.bibit} (${item.jenis})</b></div>`;
                 
+                // Tambahkan tombol untuk memunculkan modal peta sebaran GeoJSON jika ada data
                 if(item.geojson && item.geojson.trim() !== "") {
-                    popupContent += `<div class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded inline-block border border-blue-100"><i class="fa-solid fa-draw-polygon mr-1"></i> Area Tersedia</div>`;
+                    popupContent += `<button onclick="openGeoJsonModal(${index})" class="mt-3 w-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium py-1.5 px-2 rounded border border-blue-200 transition-colors cursor-pointer text-center block"><i class="fa-solid fa-map-location-dot mr-1"></i> Lihat Peta Sebaran</button>`;
                 }
                 popupContent += `</div>`;
                 
                 let marker = L.marker([item.lat, item.long], {icon: customIcon}).addTo(map).bindPopup(popupContent);
-                 
-                // Event Listener ketika PIN di klik (Render GeoJSON)
-                marker.on('click', function() {
-                    if (activeGeoJsonLayer) {
-                        map.removeLayer(activeGeoJsonLayer);
-                        activeGeoJsonLayer = null;
-                    }
-
-                    if (item.geojson && item.geojson.trim() !== "") {
-                        try {
-                            let coords = JSON.parse(item.geojson);
-                            // Cek jika kedalaman array menunjukkan Polyline atau Polygon
-                            let geomType = "Polygon";
-                            if (coords.length > 0 && typeof coords[0][0] === 'number') {
-                                geomType = "LineString";
-                            }
-
-                            let geoFeature = {
-                                "type": "Feature",
-                                "geometry": {
-                                    "type": geomType,
-                                    "coordinates": coords
-                                }
-                            };
-                            
-                            activeGeoJsonLayer = L.geoJSON(geoFeature, {
-                                style: {
-                                    color: hexColor,
-                                    weight: 3,
-                                    opacity: 0.8,
-                                    fillColor: hexColor,
-                                    fillOpacity: 0.3
-                                }
-                            }).addTo(map);
-
-                        } catch(e) {
-                            console.error("Gagal membaca koordinat GeoJSON:", e);
-                        }
-                    }
-                });
-
                 markers.push(marker);
             });
 
@@ -548,6 +540,81 @@
                 statusText.innerText = `Terakhir update: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
                 statusDot.className = "h-2 w-2 rounded-full bg-success mr-2";
             }
+        }
+
+        // --- 5. FUNGSI MODAL PETA GEOJSON & GUIDE ---
+        function openGuideModal() {
+            document.getElementById('guide-modal').classList.remove('hidden');
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
+
+        function openGeoJsonModal(index) {
+            const item = dataReport[index];
+            if (!item || !item.geojson) return;
+
+            // Buka Modal
+            document.getElementById('geojson-modal').classList.remove('hidden');
+            document.getElementById('geojson-modal-title').innerText = `Area Sebaran: ${item.tipe}`;
+
+            // Inisialisasi mini map jika belum ada
+            if (!miniMap) {
+                miniMap = L.map('mini-map').setView([item.lat, item.long], 15);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(miniMap);
+            }
+
+            // Timeout diperlukan agar Leaflet dapat menyesuaikan ukuran peta di dalam container popup yang baru tampil
+            setTimeout(() => {
+                miniMap.invalidateSize();
+
+                if (miniGeoJsonLayer) {
+                    miniMap.removeLayer(miniGeoJsonLayer);
+                }
+
+                try {
+                    let coords = JSON.parse(item.geojson);
+                    let geomType = "Polygon";
+                    if (coords.length > 0 && typeof coords[0][0] === 'number') {
+                        geomType = "LineString";
+                    }
+
+                    let geoFeature = {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": geomType,
+                            "coordinates": coords
+                        }
+                    };
+                    
+                    let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
+                    let isPenanaman = item.tipe.toLowerCase().includes('penanaman');
+                    let hexColor = isPembersihan ? '#ef4444' : isPenanaman ? '#10b981' : '#3b82f6';
+
+                    miniGeoJsonLayer = L.geoJSON(geoFeature, {
+                        style: {
+                            color: hexColor,
+                            weight: 3,
+                            opacity: 0.8,
+                            fillColor: hexColor,
+                            fillOpacity: 0.3
+                        }
+                    }).addTo(miniMap);
+
+                    // Arahkan kamera mini map fokus ke area poligon saja
+                    miniMap.fitBounds(miniGeoJsonLayer.getBounds(), { padding: [20, 20], maxZoom: 17 });
+
+                } catch (e) {
+                    console.error("Gagal membaca koordinat GeoJSON:", e);
+                }
+            }, 150);
+        }
+
+        function closeGeoJsonModal() {
+            document.getElementById('geojson-modal').classList.add('hidden');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
