@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Mangrove & Hackathon</title>
+    
+    <!-- Tailwind CSS untuk Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS & JS untuk Peta -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- PapaParse untuk membaca file CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb', // Blue-600
+                        secondary: '#0ea5e9', // Sky-500
+                        success: '#10b981', // Emerald-500
+                        background: '#f8fafc', // Slate-50
+                        surface: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .tab-active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+        }
+        .tab-inactive {
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-inactive:hover { color: #334155; }
+        #map { z-index: 10; }
+        .cut-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased font-sans">
+
+    <!-- Navigasi -->
+    <nav class="glass-header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <i class="fa-solid fa-leaf text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Eco<span class="text-primary">Monitor</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="loadDataFromGoogleSheets()" id="btn-sync" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa-solid fa-sync mr-1" id="icon-sync"></i> <span id="text-sync">Sinkronisasi Data</span>
+                    </button>
+                    <div class="h-8 w-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center">
+                        <i class="fa-regular fa-user text-slate-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header & Tab -->
+        <div class="mb-8 border-b border-slate-200">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Dashboard Area Konservasi</h1>
+                    <p class="text-sm text-slate-500 mt-1">Hutan Mangrove Graha Indah, Balikpapan</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 text-sm font-medium text-slate-600 flex items-center">
+                    <span id="status-dot" class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>
+                    <span id="status-text">Menunggu data...</span>
+                </div>
+            </div>
+
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button onclick="switchTab('report')" id="tab-report" class="tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
+                    <i class="fa-solid fa-clipboard-list mr-2"></i>Laporan Lapangan
+                </button>
+                <button onclick="switchTab('hackathon')" id="tab-hackathon" class="tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
+                    <i class="fa-solid fa-lightbulb mr-2"></i>Ide Tim (Hackathon)
+                </button>
+            </nav>
+        </div>
+
+        <!-- ================= TAB: REPORT ================= -->
+        <div id="view-report" class="space-y-6 block">
+            
+            <!-- Kartu KPI -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Sampah Terkumpul</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-sampah">0 <span class="text-base font-medium text-slate-500">kg</span></h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-red-500">
+                            <i class="fa-solid fa-trash-can text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Bibit Ditanam</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-bibit">0 <span class="text-base font-medium text-slate-500">pohon</span></h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                            <i class="fa-solid fa-seedling text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Jumlah Aktivitas</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-aktivitas">0</h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                            <i class="fa-solid fa-person-digging text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peta & Aktivitas -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Peta -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden flex flex-col">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-800">Peta Sebaran Aktivitas</h3>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Live</span>
+                    </div>
+                    <div id="map" class="w-full h-96 bg-slate-100 relative"></div>
+                </div>
+
+                <!-- Feed Aktivitas -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                        <h3 class="font-semibold text-slate-800">Aktivitas Terkini</h3>
+                    </div>
+                    <div class="p-6 overflow-y-auto max-h-96" id="activity-feed">
+                        <!-- Disisipkan via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data Penuh -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mt-6">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="font-semibold text-slate-800">Detail Laporan Lapangan</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Pelapor / Tim</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Jenis & Lokasi</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Hasil</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200" id="table-body">
+                            <!-- Disisipkan via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB: HACKATHON ================= -->
+        <div id="view-hackathon" class="space-y-6 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Ide & Inovasi Tim</h2>
+                    <p class="text-sm text-slate-500">Kumpulan solusi dari peserta Hackathon.</p>
+                </div>
+                <button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-plus mr-2"></i>Ajukan Ide
+                </button>
+            </div>
+
+            <!-- Grid Ide -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6" id="hackathon-grid">
+                <!-- Disisipkan via JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Data & Logika JavaScript -->
+    <script>
+        // --- 1. SETTING LINK GOOGLE SHEETS CSV ---
+        const urlReportCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?output=csv";
+        const urlHackathonCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?gid=1516464451&single=true&output=csv";
+
+        let dataReport = [];
+        let dataHackathon = [];
+        let map;
+        let markers = []; 
+        let activeGeoJsonLayer = null; // Menyimpan layer GeoJSON (poligon) yang sedang aktif
+
+        // --- 2. LOAD DATA DARI GOOGLE SHEETS ---
+        async function loadDataFromGoogleSheets() {
+            setLoadingState(true);
+
+            try {
+                // Fetch Data Laporan Lapangan
+                const resReport = await fetch(urlReportCsv);
+                const csvReportText = await resReport.text();
+                
+                Papa.parse(csvReportText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        dataReport = results.data.map(row => ({
+                            tipe: row['tipe'] || 'Tanpa Kategori',
+                            nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
+                            organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
+                            lat: parseFloat(row['lat']) || 0,
+                            long: parseFloat(row['long']) || 0,
+                            geojson: row['geojson'] || '',
+                            sampahKg: parseFloat(row['sampah kg']) || 0,
+                            bibit: parseInt(row['bibit']) || 0,
+                            jenis: row['jenis'] || '',
+                            catatan: row['catatan'] || ''
+                        })).filter(item => item.lat !== 0 && item.long !== 0); 
+                    }
+                });
+
+                // Fetch Data Ide Hackathon
+                if(urlHackathonCsv !== "") {
+                    const resHack = await fetch(urlHackathonCsv);
+                    const csvHackText = await resHack.text();
+                    Papa.parse(csvHackText, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            dataHackathon = results.data.map(row => ({
+                                solusi: row['solusi utama'] || row['solusi'] || '',
+                                masalah: row['mengatasi masalah'] || row['masalah'] || '',
+                                signifikan: row['mengapa signifikan'] || row['signifikan'] || ''
+                            })).filter(item => item.solusi !== '');
+                        }
+                    });
+                }
+
+                // Render setelah selesai
+                setTimeout(() => {
+                    renderDashboard();
+                    updateMapMarkers();
+                    setLoadingState(false);
+                }, 500);
+
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+                document.getElementById('status-text').innerText = "Gagal memuat data";
+                document.getElementById('status-dot').className = "h-2 w-2 rounded-full bg-red-500 mr-2";
+                setLoadingState(false, true);
+            }
+        }
+
+        // --- 3. MAP LOGIC ---
+        function initMap() {
+            map = L.map('map').setView([-1.2175, 116.8375], 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Menghapus GeoJSON poligon saat popup ditutup
+            map.on('popupclose', function() {
+                if (activeGeoJsonLayer) {
+                    map.removeLayer(activeGeoJsonLayer);
+                    activeGeoJsonLayer = null;
+                }
+            });
+        }
+
+        function updateMapMarkers() {
+            if (!map) return;
+            
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+            if (activeGeoJsonLayer) map.removeLayer(activeGeoJsonLayer);
+            activeGeoJsonLayer = null;
+
+            dataReport.forEach(item => {
+                let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
+                let isPenanaman = item.tipe.toLowerCase().includes('penanaman');
+                
+                let iconColor = isPembersihan ? 'red' : isPenanaman ? 'green' : 'blue';
+                let hexColor = isPembersihan ? '#ef4444' : isPenanaman ? '#10b981' : '#3b82f6';
+                
+                const customIcon = L.divIcon({
+                    className: "custom-pin",
+                    iconAnchor: [0, 24],
+                    popupAnchor: [0, -36],
+                    html: `<span style="background-color: ${iconColor}; width: 1.5rem; height: 1.5rem; display: block; left: -0.75rem; top: -0.75rem; position: relative; border-radius: 3rem 3rem 0; transform: rotate(45deg); border: 2px solid #FFFFFF; box-shadow: 0 4px 6px rgba(0,0,0,0.3)"></span>`
+                });
+
+                // Konten Popup
+                let popupContent = `<div class="font-sans min-w-[150px]">`;
+                popupContent += `<b class="text-[14px] text-slate-800">${item.tipe}</b><br>`;
+                if (item.nama !== '-' || item.organisasi !== '-') {
+                    popupContent += `<span class="text-xs text-slate-500 block mb-2"><i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})</span>`;
+                }
+                
+                if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ Sampah: <b>${item.sampahKg} kg</b></div>`;
+                if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 Bibit: <b>${item.bibit} (${item.jenis})</b></div>`;
+                
+                if(item.geojson && item.geojson.trim() !== "") {
+                    popupContent += `<div class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded inline-block border border-blue-100"><i class="fa-solid fa-draw-polygon mr-1"></i> Area Tersedia</div>`;
+                }
+                popupContent += `</div>`;
+                
+                let marker = L.marker([item.lat, item.long], {icon: customIcon}).addTo(map).bindPopup(popupContent);
+                 
+                // Event Listener ketika PIN di klik (Render GeoJSON)
+                marker.on('click', function() {
+                    if (activeGeoJsonLayer) {
+                        map.removeLayer(activeGeoJsonLayer);
+                        activeGeoJsonLayer = null;
+                    }
+
+                    if (item.geojson && item.geojson.trim() !== "") {
+                        try {
+                            let coords = JSON.parse(item.geojson);
+                            // Cek jika kedalaman array menunjukkan Polyline atau Polygon
+                            let geomType = "Polygon";
+                            if (coords.length > 0 && typeof coords[0][0] === 'number') {
+                                geomType = "LineString";
+                            }
+
+                            let geoFeature = {
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": geomType,
+                                    "coordinates": coords
+                                }
+                            };
+                            
+                            activeGeoJsonLayer = L.geoJSON(geoFeature, {
+                                style: {
+                                    color: hexColor,
+                                    weight: 3,
+                                    opacity: 0.8,
+                                    fillColor: hexColor,
+                                    fillOpacity: 0.3
+                                }
+                            }).addTo(map);
+
+                        } catch(e) {
+                            console.error("Gagal membaca koordinat GeoJSON:", e);
+                        }
+                    }
+                });
+
+                markers.push(marker);
+            });
+
+            if (markers.length > 0) {
+                var group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        // --- 4. RENDER UI ---
+        function renderDashboard() {
+            let totalSampah = 0;
+            let totalBibit = 0;
+            
+            const tableBody = document.getElementById('table-body');
+            const activityFeed = document.getElementById('activity-feed');
+            
+            tableBody.innerHTML = '';
+            activityFeed.innerHTML = '';
+
+            dataReport.forEach((item, index) => {
+                totalSampah += item.sampahKg;
+                totalBibit += item.bibit;
+
+                let iconClass = 'fa-clipboard';
+                let iconBg = 'bg-slate-100 text-slate-500';
+                if(item.tipe.toLowerCase().includes('pembersihan')) { iconClass = 'fa-trash-can'; iconBg = 'bg-red-100 text-red-500'; }
+                if(item.tipe.toLowerCase().includes('penanaman')) { iconClass = 'fa-seedling'; iconBg = 'bg-emerald-100 text-emerald-500'; }
+                if(item.tipe.toLowerCase().includes('observasi')) { iconClass = 'fa-binoculars'; iconBg = 'bg-blue-100 text-blue-500'; }
+
+                // -- Render Activity Feed --
+                activityFeed.innerHTML += `
+                    <div class="flex gap-4 mb-6 last:mb-0 relative">
+                        ${index !== dataReport.length - 1 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100 z-0"></div>' : ''}
+                        <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 ${iconBg}">
+                            <i class="fa-solid ${iconClass}"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-800">${item.tipe}</h4>
+                            <p class="text-xs text-slate-500 mb-1">
+                                <i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})
+                            </p>
+                            <p class="text-sm text-slate-600 cut-text">${item.catatan}</p>
+                        </div>
+                    </div>
+                `;
+
+                // -- Render Tabel Data --
+                let resultText = '-';
+                if(item.sampahKg > 0) resultText = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">${item.sampahKg} kg Sampah</span>`;
+                if(item.bibit > 0) resultText = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs font-medium">${item.bibit} Bibit ${item.jenis}</span>`;
+
+                let geojsonBadge = item.geojson ? `<span class="mt-1 inline-block bg-blue-50 text-blue-500 text-[10px] px-1.5 py-0.5 rounded border border-blue-100"><i class="fa-solid fa-map"></i> Area Map</span>` : '';
+
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-slate-900">${item.nama}</div>
+                            <div class="text-xs text-slate-500">${item.organisasi}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full ${iconBg} flex items-center justify-center mr-3">
+                                    <i class="fa-solid ${iconClass} text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-slate-900">${item.tipe}</span><br>
+                                    <span class="text-xs text-slate-500">${item.lat}, ${item.long}</span><br>
+                                    ${geojsonBadge}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${resultText}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">
+                            <p class="truncate w-48 lg:w-64" title="${item.catatan}">${item.catatan}</p>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base font-medium text-slate-500">kg</span>`;
+            document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base font-medium text-slate-500">pohon</span>`;
+            document.getElementById('kpi-aktivitas').innerText = dataReport.length;
+
+            // -- Render Ide Hackathon --
+            const hackGrid = document.getElementById('hackathon-grid');
+            hackGrid.innerHTML = ''; 
+            dataHackathon.forEach((idea, idx) => {
+                hackGrid.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 flex justify-between items-center">
+                            <h3 class="font-bold text-white"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide Tim #${idx + 1}</h3>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">Proposal</span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col gap-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Solusi Utama</h4>
+                                <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100">${idea.solusi}</p>
+                            </div>
+                            <div class="grid grid-cols-1 gap-4 mt-auto">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Masalah Diatasi</h4>
+                                    <p class="text-sm text-slate-600">${idea.masalah}</p>
+                                </div>
+                                <div class="border-t border-slate-100 pt-4">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-chart-line text-emerald-500 mr-1"></i> Signifikansi</h4>
+                                    <p class="text-sm text-slate-600">${idea.signifikan}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-end gap-2">
+                            <button class="text-sm text-slate-500 hover:text-slate-800 font-medium px-3 py-1 rounded transition-colors"><i class="fa-regular fa-comment mr-1"></i> Diskusi</button>
+                            <button class="bg-primary text-white text-sm font-medium px-4 py-1.5 rounded shadow-sm hover:bg-blue-700 transition-colors">Dukung Ide</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Fungsi Ganti Tab
+        function switchTab(tabId) {
+            document.getElementById('tab-report').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            document.getElementById('tab-hackathon').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            
+            document.getElementById('view-report').classList.add('hidden');
+            document.getElementById('view-hackathon').classList.add('hidden');
+
+            document.getElementById('tab-' + tabId).className = 'tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            if(tabId === 'report' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 100);
+            }
+        }
+
+        // Fungsi Loading UI
+        function setLoadingState(isLoading, isError = false) {
+            const icon = document.getElementById('icon-sync');
+            const text = document.getElementById('text-sync');
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+
+            if (isLoading) {
+                icon.classList.add('fa-spin');
+                text.innerText = 'Menyinkronkan...';
+                statusText.innerText = 'Mengambil data terbaru...';
+                statusDot.className = "h-2 w-2 rounded-full bg-yellow-400 mr-2 animate-pulse";
+            } else if (isError) {
+                icon.classList.remove('fa-spin');
+                text.innerText = 'Gagal Sinkronisasi';
+            } else {
+                icon.classList.remove('fa-spin');
+                text.innerText = 'Sinkronisasi Data';
+                
+                const now = new Date();
+                statusText.innerText = `Terakhir update: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                statusDot.className = "h-2 w-2 rounded-full bg-success mr-2";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            loadDataFromGoogleSheets();
+        });
+
+    </script>
+</body>
+</html>
