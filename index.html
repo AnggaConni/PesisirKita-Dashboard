@@ -355,6 +355,8 @@
                 if(urlHackathonCsv !== "") {
                     const hackResults = await fetchCSV(urlHackathonCsv);
                     dataHackathon = hackResults.map(row => ({
+                        nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
+                        organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
                         solusi: row['solusi utama'] || row['solusi'] || '',
                         masalah: row['mengatasi masalah'] || row['masalah'] || '',
                         signifikan: row['mengapa signifikan'] || row['signifikan'] || ''
@@ -483,6 +485,15 @@
                             <span class="bg-white/20 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">Proposal</span>
                         </div>
                         <div class="p-6 flex-grow flex flex-col gap-4">
+                            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0 border border-slate-200">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">${idea.nama}</p>
+                                    <p class="text-xs text-slate-500">${idea.organisasi}</p>
+                                </div>
+                            </div>
                             <div>
                                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Solusi Utama</h4>
                                 <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100">${idea.solusi}</p>
