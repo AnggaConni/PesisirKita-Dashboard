@@ -172,8 +172,9 @@
 
                 <!-- Feed Aktivitas -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                         <h3 class="font-semibold text-slate-800">Aktivitas Terkini</h3>
+                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-1 rounded-md">Maks 30</span>
                     </div>
                     <div class="p-6 overflow-y-auto max-h-96" id="activity-feed">
                         <!-- Disisipkan via JS -->
@@ -181,12 +182,30 @@
                 </div>
             </div>
 
-            <!-- Tabel Data Penuh -->
+            <!-- Tabel Data Penuh dengan Filter & Pagination -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mt-6">
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                <!-- Tabel Header Controls -->
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 class="font-semibold text-slate-800">Detail Laporan Lapangan</h3>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="flex items-center gap-2">
+                            <label for="filter-tipe" class="text-slate-500"><i class="fa-solid fa-filter"></i></label>
+                            <select id="filter-tipe" onchange="applyTableFilter()" class="border border-slate-300 rounded-md px-3 py-1.5 text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                                <option value="All">Semua Jenis</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 border-l border-slate-300 pl-3">
+                            <label for="rows-per-page" class="text-slate-500 text-xs hidden sm:block">Tampilkan</label>
+                            <select id="rows-per-page" onchange="changeRowsPerPage()" class="border border-slate-300 rounded-md px-3 py-1.5 text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                                <option value="20">20 Baris</option>
+                                <option value="50">50 Baris</option>
+                                <option value="10000">Semua</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
+
+                <div class="overflow-x-auto min-h-[300px]">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
@@ -200,6 +219,21 @@
                             <!-- Disisipkan via JS -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Tabel Footer Pagination -->
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="text-sm text-slate-500" id="table-info">
+                        Menampilkan 0 hingga 0 dari 0 data
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-prev" onclick="prevTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                            <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+                        </button>
+                        <button id="btn-next" onclick="nextTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                            Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -252,6 +286,7 @@
                 <ul class="list-disc pl-5 space-y-2 mb-3">
                     <li>Gunakan tab <b>Laporan Lapangan</b> untuk melihat sebaran aktivitas pelestarian.</li>
                     <li>Klik pin pada peta untuk melihat detail kegiatan. Jika terdapat ikon Area, Anda dapat mengklik tombol <b>Lihat Peta Sebaran</b> di dalam popup untuk memunculkan gambar poligon area yang bersangkutan.</li>
+                    <li>Gunakan filter dan navigasi halaman di atas dan bawah tabel untuk mempermudah pencarian detail data.</li>
                     <li>Gunakan tab <b>Ide Tim</b> untuk melihat inovasi dari peserta.</li>
                 </ul>
             </div>
@@ -276,11 +311,16 @@
         let miniMap = null;
         let miniGeoJsonLayer = null;
 
+        // Variables untuk Pagination & Filter
+        let currentTablePage = 1;
+        let tableRowsPerPage = 20;
+        let currentTableFilter = 'All';
+        let filteredTableData = [];
+
         // --- 2. LOAD DATA DARI GOOGLE SHEETS ---
         async function loadDataFromGoogleSheets() {
             setLoadingState(true);
 
-            // Gunakan fitur bawaan PapaParse untuk mendownload agar lebih ramah CORS (file://)
             const fetchCSV = (url) => {
                 return new Promise((resolve, reject) => {
                     Papa.parse(url, {
@@ -298,7 +338,6 @@
             };
 
             try {
-                // Fetch Data Laporan Lapangan menggunakan PapaParse secara langsung
                 const reportResults = await fetchCSV(urlReportCsv);
                 dataReport = reportResults.map(row => ({
                     tipe: row['tipe'] || 'Tanpa Kategori',
@@ -313,7 +352,6 @@
                     catatan: row['catatan'] || ''
                 })).filter(item => item.lat !== 0 && item.long !== 0); 
 
-                // Fetch Data Ide Hackathon
                 if(urlHackathonCsv !== "") {
                     const hackResults = await fetchCSV(urlHackathonCsv);
                     dataHackathon = hackResults.map(row => ({
@@ -323,7 +361,7 @@
                     })).filter(item => item.solusi !== '');
                 }
 
-                // Render setelah selesai
+                populateFilterOptions();
                 renderDashboard();
                 updateMapMarkers();
                 setLoadingState(false);
@@ -363,7 +401,6 @@
                     html: `<span style="background-color: ${iconColor}; width: 1.5rem; height: 1.5rem; display: block; left: -0.75rem; top: -0.75rem; position: relative; border-radius: 3rem 3rem 0; transform: rotate(45deg); border: 2px solid #FFFFFF; box-shadow: 0 4px 6px rgba(0,0,0,0.3)"></span>`
                 });
 
-                // Konten Popup
                 let popupContent = `<div class="font-sans min-w-[160px]">`;
                 popupContent += `<b class="text-[14px] text-slate-800">${item.tipe}</b><br>`;
                 if (item.nama !== '-' || item.organisasi !== '-') {
@@ -373,7 +410,6 @@
                 if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ Sampah: <b>${item.sampahKg} kg</b></div>`;
                 if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 Bibit: <b>${item.bibit} (${item.jenis})</b></div>`;
                 
-                // Tambahkan tombol untuk memunculkan modal peta sebaran GeoJSON jika ada data
                 if(item.geojson && item.geojson.trim() !== "") {
                     popupContent += `<button onclick="openGeoJsonModal(${index})" class="mt-3 w-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium py-1.5 px-2 rounded border border-blue-200 transition-colors cursor-pointer text-center block"><i class="fa-solid fa-map-location-dot mr-1"></i> Lihat Peta Sebaran</button>`;
                 }
@@ -394,26 +430,31 @@
             let totalSampah = 0;
             let totalBibit = 0;
             
-            const tableBody = document.getElementById('table-body');
             const activityFeed = document.getElementById('activity-feed');
-            
-            tableBody.innerHTML = '';
             activityFeed.innerHTML = '';
 
-            dataReport.forEach((item, index) => {
+            // Hitung total KPI dari SELURUH data
+            dataReport.forEach((item) => {
                 totalSampah += item.sampahKg;
                 totalBibit += item.bibit;
+            });
 
+            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base font-medium text-slate-500">kg</span>`;
+            document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base font-medium text-slate-500">pohon</span>`;
+            document.getElementById('kpi-aktivitas').innerText = dataReport.length;
+
+            // -- Render Activity Feed (Maksimal 30 Item) --
+            const feedData = dataReport.slice(0, 30);
+            feedData.forEach((item, index) => {
                 let iconClass = 'fa-clipboard';
                 let iconBg = 'bg-slate-100 text-slate-500';
                 if(item.tipe.toLowerCase().includes('pembersihan')) { iconClass = 'fa-trash-can'; iconBg = 'bg-red-100 text-red-500'; }
                 if(item.tipe.toLowerCase().includes('penanaman')) { iconClass = 'fa-seedling'; iconBg = 'bg-emerald-100 text-emerald-500'; }
                 if(item.tipe.toLowerCase().includes('observasi')) { iconClass = 'fa-binoculars'; iconBg = 'bg-blue-100 text-blue-500'; }
 
-                // -- Render Activity Feed --
                 activityFeed.innerHTML += `
                     <div class="flex gap-4 mb-6 last:mb-0 relative">
-                        ${index !== dataReport.length - 1 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100 z-0"></div>' : ''}
+                        ${index !== feedData.length - 1 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100 z-0"></div>' : ''}
                         <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 ${iconBg}">
                             <i class="fa-solid ${iconClass}"></i>
                         </div>
@@ -426,45 +467,10 @@
                         </div>
                     </div>
                 `;
-
-                // -- Render Tabel Data --
-                let resultText = '-';
-                if(item.sampahKg > 0) resultText = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">${item.sampahKg} kg Sampah</span>`;
-                if(item.bibit > 0) resultText = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs font-medium">${item.bibit} Bibit ${item.jenis}</span>`;
-
-                let geojsonBadge = item.geojson ? `<span class="mt-1 inline-block bg-blue-50 text-blue-500 text-[10px] px-1.5 py-0.5 rounded border border-blue-100"><i class="fa-solid fa-map"></i> Area Map</span>` : '';
-
-                tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-slate-900">${item.nama}</div>
-                            <div class="text-xs text-slate-500">${item.organisasi}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="h-8 w-8 rounded-full ${iconBg} flex items-center justify-center mr-3">
-                                    <i class="fa-solid ${iconClass} text-xs"></i>
-                                </div>
-                                <div>
-                                    <span class="text-sm font-medium text-slate-900">${item.tipe}</span><br>
-                                    <span class="text-xs text-slate-500">${item.lat}, ${item.long}</span><br>
-                                    ${geojsonBadge}
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            ${resultText}
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">
-                            <p class="truncate w-48 lg:w-64" title="${item.catatan}">${item.catatan}</p>
-                        </td>
-                    </tr>
-                `;
             });
 
-            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base font-medium text-slate-500">kg</span>`;
-            document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base font-medium text-slate-500">pohon</span>`;
-            document.getElementById('kpi-aktivitas').innerText = dataReport.length;
+            // Render Laporan Lapangan Table
+            renderTableData();
 
             // -- Render Ide Hackathon --
             const hackGrid = document.getElementById('hackathon-grid');
@@ -501,7 +507,125 @@
             });
         }
 
-        // Fungsi Ganti Tab
+        // --- 5. LOGIKA FILTER & PAGINATION TABEL ---
+        function populateFilterOptions() {
+            const filterSelect = document.getElementById('filter-tipe');
+            // Dapatkan jenis-jenis unik dari data
+            const uniqueTypes = [...new Set(dataReport.map(item => item.tipe))];
+            
+            let optionsHtml = '<option value="All">Semua Jenis</option>';
+            uniqueTypes.forEach(type => {
+                optionsHtml += `<option value="${type}">${type}</option>`;
+            });
+            filterSelect.innerHTML = optionsHtml;
+        }
+
+        function applyTableFilter() {
+            currentTableFilter = document.getElementById('filter-tipe').value;
+            currentTablePage = 1; // Kembali ke halaman 1 setiap ganti filter
+            renderTableData();
+        }
+
+        function changeRowsPerPage() {
+            tableRowsPerPage = parseInt(document.getElementById('rows-per-page').value);
+            currentTablePage = 1; // Kembali ke halaman 1
+            renderTableData();
+        }
+
+        function prevTablePage() {
+            if (currentTablePage > 1) {
+                currentTablePage--;
+                renderTableData();
+            }
+        }
+
+        function nextTablePage() {
+            const totalPages = Math.ceil(filteredTableData.length / tableRowsPerPage);
+            if (currentTablePage < totalPages) {
+                currentTablePage++;
+                renderTableData();
+            }
+        }
+
+        function renderTableData() {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+
+            // Terapkan Filter
+            if (currentTableFilter === 'All') {
+                filteredTableData = dataReport;
+            } else {
+                filteredTableData = dataReport.filter(item => item.tipe === currentTableFilter);
+            }
+
+            const totalItems = filteredTableData.length;
+            const totalPages = Math.ceil(totalItems / tableRowsPerPage);
+            
+            // Hitung Index untuk Slice data per halaman
+            const startIndex = (currentTablePage - 1) * tableRowsPerPage;
+            const endIndex = Math.min(startIndex + tableRowsPerPage, totalItems);
+            
+            // Potong data sesuai halaman dan baris per halaman
+            const dataToRender = filteredTableData.slice(startIndex, endIndex);
+
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500">Tidak ada data untuk ditampilkan.</td></tr>`;
+            }
+
+            dataToRender.forEach(item => {
+                let iconClass = 'fa-clipboard';
+                let iconBg = 'bg-slate-100 text-slate-500';
+                if(item.tipe.toLowerCase().includes('pembersihan')) { iconClass = 'fa-trash-can'; iconBg = 'bg-red-100 text-red-500'; }
+                if(item.tipe.toLowerCase().includes('penanaman')) { iconClass = 'fa-seedling'; iconBg = 'bg-emerald-100 text-emerald-500'; }
+                if(item.tipe.toLowerCase().includes('observasi')) { iconClass = 'fa-binoculars'; iconBg = 'bg-blue-100 text-blue-500'; }
+
+                let resultText = '-';
+                if(item.sampahKg > 0) resultText = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">${item.sampahKg} kg Sampah</span>`;
+                if(item.bibit > 0) resultText = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs font-medium">${item.bibit} Bibit ${item.jenis}</span>`;
+
+                let geojsonBadge = item.geojson ? `<span class="mt-1 inline-block bg-blue-50 text-blue-500 text-[10px] px-1.5 py-0.5 rounded border border-blue-100"><i class="fa-solid fa-map"></i> Area Map</span>` : '';
+
+                // Cari index asli data item ini untuk passing ke modal peta geojson
+                const originalIndex = dataReport.indexOf(item);
+
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-slate-900">${item.nama}</div>
+                            <div class="text-xs text-slate-500">${item.organisasi}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full ${iconBg} flex items-center justify-center mr-3">
+                                    <i class="fa-solid ${iconClass} text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-slate-900">${item.tipe}</span><br>
+                                    <span class="text-xs text-slate-500">${item.lat}, ${item.long}</span><br>
+                                    ${item.geojson ? `<button onclick="openGeoJsonModal(${originalIndex})" class="mt-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-medium px-1.5 py-0.5 rounded border border-blue-100 transition-colors"><i class="fa-solid fa-map-location-dot"></i> Lihat Area</button>` : ''}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${resultText}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">
+                            <p class="truncate w-48 lg:w-64" title="${item.catatan}">${item.catatan}</p>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Update status text Pagination
+            const infoText = totalItems === 0 ? 0 : startIndex + 1;
+            document.getElementById('table-info').innerText = `Menampilkan ${infoText} hingga ${endIndex} dari ${totalItems} data`;
+            
+            // Atur disabled state untuk tombol Prev/Next
+            document.getElementById('btn-prev').disabled = currentTablePage === 1;
+            document.getElementById('btn-next').disabled = currentTablePage === totalPages || totalPages === 0;
+        }
+
+        // --- 6. FUNGSI UI & MODAL LAINNYA ---
         function switchTab(tabId) {
             document.getElementById('tab-report').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
             document.getElementById('tab-hackathon').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
@@ -517,7 +641,6 @@
             }
         }
 
-        // Fungsi Loading UI
         function setLoadingState(isLoading, isError = false) {
             const icon = document.getElementById('icon-sync');
             const text = document.getElementById('text-sync');
@@ -542,7 +665,6 @@
             }
         }
 
-        // --- 5. FUNGSI MODAL PETA GEOJSON & GUIDE ---
         function openGuideModal() {
             document.getElementById('guide-modal').classList.remove('hidden');
         }
@@ -555,11 +677,9 @@
             const item = dataReport[index];
             if (!item || !item.geojson) return;
 
-            // Buka Modal
             document.getElementById('geojson-modal').classList.remove('hidden');
             document.getElementById('geojson-modal-title').innerText = `Area Sebaran: ${item.tipe}`;
 
-            // Inisialisasi mini map jika belum ada
             if (!miniMap) {
                 miniMap = L.map('mini-map').setView([item.lat, item.long], 15);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -567,7 +687,6 @@
                 }).addTo(miniMap);
             }
 
-            // Timeout diperlukan agar Leaflet dapat menyesuaikan ukuran peta di dalam container popup yang baru tampil
             setTimeout(() => {
                 miniMap.invalidateSize();
 
@@ -604,7 +723,6 @@
                         }
                     }).addTo(miniMap);
 
-                    // Arahkan kamera mini map fokus ke area poligon saja
                     miniMap.fitBounds(miniGeoJsonLayer.getBounds(), { padding: [20, 20], maxZoom: 17 });
 
                 } catch (e) {
