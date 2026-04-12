@@ -25,28 +25,93 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { primary: '#2563eb', secondary: '#0ea5e9', success: '#10b981', background: '#f8fafc', surface: '#ffffff' }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb', // Blue-600
+                        secondary: '#0ea5e9', // Sky-500
+                        success: '#10b981', // Emerald-500
+                        background: '#f8fafc', // Slate-50
+                        surface: '#ffffff',
+                    }
                 }
             }
         }
     </script>
     <style>
         body { background-color: #f8fafc; }
-        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .tab-active { color: #2563eb; border-bottom: 2px solid #2563eb; }
-        .tab-inactive { color: #64748b; border-bottom: 2px solid transparent; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .tab-active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+        }
+        .tab-inactive {
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+        }
         .tab-inactive:hover { color: #334155; }
         #map { z-index: 10; }
-        .cut-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .cut-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-        /* CSS KHUSUS EASTER EGG GAME */
-        #easter-egg-container { background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; touch-action: none; }
-        .game-ui-overlay { position: absolute; top: 20px; left: 20px; pointer-events: none; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); z-index: 10; }
-        .game-message-box { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); padding: 15px 25px; border-radius: 12px; border: 2px solid #3b82f6; color: #fbbf24; font-weight: bold; max-width: 80%; text-align: center; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 10; }
-        .show-msg { opacity: 1; }
-        .score-popup { position: absolute; color: #4ade80; font-weight: bold; font-size: 24px; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 15; }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
+        /* --- CSS KHUSUS EASTER EGG GAME --- */
+        #easter-egg-container {
+            background-color: #0f172a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none;
+        }
+        .game-ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .game-message-box {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 2px solid #3b82f6;
+            color: #fbbf24;
+            font-weight: bold;
+            max-width: 80%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .show-msg {
+            opacity: 1;
+        }
+        .score-popup {
+            position: absolute;
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 15;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased font-sans flex flex-col min-h-screen">
@@ -56,13 +121,21 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="bg-primary text-white p-2 rounded-lg"><i class="fa-solid fa-leaf text-xl"></i></div>
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <i class="fa-solid fa-leaf text-xl"></i>
+                    </div>
                     <span class="font-bold text-xl tracking-tight text-slate-900">Eco<span class="text-primary">Monitor</span></span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button onclick="openGuideModal()" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"><i class="fa-solid fa-circle-info mr-1"></i> Guide</button>
-                    <button onclick="loadDataFromGoogleSheets()" id="btn-sync" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"><i class="fa-solid fa-sync mr-1" id="icon-sync"></i> <span id="text-sync">Sinkronisasi Data</span></button>
-                    <div class="h-8 w-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center"><i class="fa-regular fa-user text-slate-500"></i></div>
+                    <button onclick="openGuideModal()" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Guide
+                    </button>
+                    <button onclick="loadDataFromGoogleSheets()" id="btn-sync" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa-solid fa-sync mr-1" id="icon-sync"></i> <span id="text-sync">Sinkronisasi Data</span>
+                    </button>
+                    <div class="h-8 w-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center">
+                        <i class="fa-regular fa-user text-slate-500"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,6 +144,7 @@
     <!-- Konten Utama -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
         
+        <!-- Header & Tab -->
         <div class="mb-8 border-b border-slate-200">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                 <div>
@@ -84,30 +158,79 @@
             </div>
 
             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <button onclick="switchTab('report')" id="tab-report" class="tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200"><i class="fa-solid fa-clipboard-list mr-2"></i>Laporan Lapangan</button>
-                <button onclick="switchTab('hackathon')" id="tab-hackathon" class="tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200"><i class="fa-solid fa-lightbulb mr-2"></i>Ide Tim (Hackathon)</button>
+                <button onclick="switchTab('report')" id="tab-report" class="tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
+                    <i class="fa-solid fa-clipboard-list mr-2"></i>Laporan Lapangan
+                </button>
+                <button onclick="switchTab('hackathon')" id="tab-hackathon" class="tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
+                    <i class="fa-solid fa-lightbulb mr-2"></i>Ide Tim (Hackathon)
+                </button>
             </nav>
         </div>
 
         <!-- ================= TAB: REPORT ================= -->
         <div id="view-report" class="space-y-6 block">
+            
+            <!-- Kartu KPI -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100"><div class="flex items-center justify-between"><div><p class="text-sm font-medium text-slate-500 mb-1">Total Sampah Terkumpul</p><h3 class="text-3xl font-bold text-slate-800" id="kpi-sampah">0 <span class="text-base font-medium text-slate-500">kg</span></h3></div><div class="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-trash-can text-xl"></i></div></div></div>
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100"><div class="flex items-center justify-between"><div><p class="text-sm font-medium text-slate-500 mb-1">Total Bibit Ditanam</p><h3 class="text-3xl font-bold text-slate-800" id="kpi-bibit">0 <span class="text-base font-medium text-slate-500">pohon</span></h3></div><div class="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500"><i class="fa-solid fa-seedling text-xl"></i></div></div></div>
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100"><div class="flex items-center justify-between"><div><p class="text-sm font-medium text-slate-500 mb-1">Jumlah Aktivitas</p><h3 class="text-3xl font-bold text-slate-800" id="kpi-aktivitas">0</h3></div><div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-500"><i class="fa-solid fa-person-digging text-xl"></i></div></div></div>
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Sampah Terkumpul</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-sampah">0 <span class="text-base font-medium text-slate-500">kg</span></h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-red-500">
+                            <i class="fa-solid fa-trash-can text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Bibit Ditanam</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-bibit">0 <span class="text-base font-medium text-slate-500">pohon</span></h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                            <i class="fa-solid fa-seedling text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Jumlah Aktivitas</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-aktivitas">0</h3>
+                        </div>
+                        <div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                            <i class="fa-solid fa-person-digging text-xl"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- Peta & Aktivitas -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Peta -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden flex flex-col">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center"><h3 class="font-semibold text-slate-800">Peta Sebaran Aktivitas</h3><span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Live</span></div>
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-800">Peta Sebaran Aktivitas</h3>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Live</span>
+                    </div>
                     <div id="map" class="w-full h-96 bg-slate-100 relative"></div>
                 </div>
+
+                <!-- Feed Aktivitas -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center"><h3 class="font-semibold text-slate-800">Aktivitas Terkini</h3><span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-1 rounded-md">Maks 30</span></div>
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-800">Aktivitas Terkini</h3>
+                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-1 rounded-md">Maks 30</span>
+                    </div>
                     <div class="p-6 overflow-y-auto max-h-96" id="activity-feed"></div>
                 </div>
             </div>
 
+            <!-- Tabel Data -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mt-6">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 class="font-semibold text-slate-800">Detail Laporan Lapangan</h3>
@@ -128,6 +251,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="overflow-x-auto min-h-[300px]">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
@@ -141,11 +265,16 @@
                         <tbody class="bg-white divide-y divide-slate-200" id="table-body"></tbody>
                     </table>
                 </div>
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-between items-center gap-4">
+
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div class="text-sm text-slate-500" id="table-info">Menampilkan 0 hingga 0 dari 0 data</div>
                     <div class="flex gap-2">
-                        <button id="btn-prev" onclick="prevTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
-                        <button id="btn-next" onclick="nextTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                        <button id="btn-prev" onclick="prevTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                            <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+                        </button>
+                        <button id="btn-next" onclick="nextTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                            Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -154,34 +283,50 @@
         <!-- ================= TAB: HACKATHON ================= -->
         <div id="view-hackathon" class="space-y-6 hidden">
             <div class="flex justify-between items-center mb-6">
-                <div><h2 class="text-xl font-bold text-slate-800">Ide & Inovasi Tim</h2><p class="text-sm text-slate-500">Kumpulan solusi peserta.</p></div>
-                <button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"><i class="fa-solid fa-plus mr-2"></i>Ajukan Ide</button>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Ide & Inovasi Tim</h2>
+                    <p class="text-sm text-slate-500">Kumpulan solusi dari peserta Hackathon.</p>
+                </div>
+                <button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-plus mr-2"></i>Ajukan Ide
+                </button>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6" id="hackathon-grid"></div>
         </div>
+
     </main>
 
     <!-- Footer dengan Easter Egg Trigger -->
     <footer class="mt-auto py-6 border-t border-slate-200 bg-slate-50 text-center">
-        <p class="text-sm text-slate-500 font-medium">EcoMonitor &copy; 2026 - Dashboard Konservasi. <span onclick="openEasterEgg()" class="cursor-pointer hover:text-blue-500 transition-colors ml-1 text-lg" title="Mancing?">🐟</span></p>
+        <p class="text-sm text-slate-500 font-medium">
+            EcoMonitor &copy; 2026 - Dashboard Area Konservasi Mangrove. 
+            <span onclick="openEasterEgg()" class="cursor-pointer hover:text-blue-500 transition-colors ml-1 text-lg" title="Ada apa dengan ikan ini?">🐟</span>
+        </p>
     </footer>
 
     <!-- ================== MODAL EASTER EGG (GAME) ================== -->
     <div id="easter-egg-container" class="fixed inset-0 z-[200] hidden overflow-hidden">
+        <!-- Tombol Keluar -->
         <button onclick="closeEasterEgg()" class="absolute top-6 right-6 z-[210] bg-white/10 hover:bg-red-500 text-white border border-white/30 px-4 py-2 rounded-lg font-bold backdrop-blur-md transition-all flex items-center gap-2 shadow-lg">
             <i class="fa-solid fa-xmark"></i> Keluar Game
         </button>
+
+        <!-- UI Game -->
         <div class="game-ui-overlay">
             <h1 class="text-2xl font-bold text-blue-400">Pancingan Karma v1.1</h1>
-            <p class="text-sm opacity-80">Klik/Tap pada air untuk menjatuhkan kail.</p>
+            <p class="text-sm opacity-80">Klik/Tap pada area air untuk menjatuhkan kail.</p>
             <div class="mt-4 space-y-1 bg-black/40 p-3 rounded-lg backdrop-blur-sm border border-white/10">
                 <div class="text-yellow-400 text-xl font-bold">SKOR: <span id="game-total-score">0</span></div>
-                <div class="text-green-400 font-medium">Ikan Terselamat: <span id="game-fish-count">0</span></div>
-                <div class="text-red-400 font-medium">Sampah: <span id="game-trash-count">0</span></div>
+                <div class="text-green-400 font-medium">Ikan Terselamatkan: <span id="game-fish-count">0</span></div>
+                <div class="text-red-400 font-medium">"Warisan" Manusia: <span id="game-trash-count">0</span></div>
                 <div class="text-gray-400 text-xs mt-2 italic">Status: <span id="game-ego-level" class="text-white font-bold">Mulai Sadar</span></div>
             </div>
         </div>
+
         <div id="game-message-box" class="game-message-box"></div>
+
+        <!-- Canvas -->
         <canvas id="gameCanvas" class="block w-full h-full"></canvas>
     </div>
 
@@ -205,160 +350,404 @@
             </div>
             <!-- KONTEN MAP -->
             <div class="p-0">
-                <div id="mini-map" class="w-full h-[400px] bg-slate-800 relative z-10"></div> <!-- Background gelap saat loading satelit -->
+                <div id="mini-map" class="w-full h-[400px] bg-slate-800 relative z-10"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Guide -->
+    <!-- ================== MODAL GUIDE (DIPERBAIKI) ================== -->
     <div id="guide-modal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeGuideModal()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-lg overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"><h3 class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-primary mr-2"></i>Panduan</h3><button onclick="closeGuideModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button></div>
-            <div class="p-6 text-slate-600 text-sm">Dashboard ini menampilkan data laporan lapangan dan ide inovasi. Klik pin pada peta untuk melihat detail. Jika ada ikon Area, Anda dapat klik untuk melihat bentuk Area Sebaran di citra Satelit dan mengunduhnya ke GIS (ESRI/QGIS).</div>
+            
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-primary mr-2"></i>Panduan Penggunaan</h3>
+                <button onclick="closeGuideModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="p-6 text-slate-600 text-sm leading-relaxed flex-grow">
+                <p class="mb-3">Selamat datang di Dashboard Area Konservasi.</p>
+                <p class="mb-3">Dashboard ini menampilkan data laporan lapangan dan ide inovasi yang terhubung langsung dengan Google Sheets secara *real-time*.</p>
+                <ul class="list-disc pl-5 space-y-2 mb-3">
+                    <li>Gunakan tab <b>Laporan Lapangan</b> untuk melihat sebaran aktivitas pelestarian.</li>
+                    <li>Klik pin pada peta untuk melihat detail kegiatan. Jika terdapat ikon Area, Anda dapat mengklik tombol <b>Lihat Peta Sebaran</b> di dalam popup.</li>
+                    <li>Peta sebaran akan memunculkan gambar satelit dan poligon yang bisa didownload dalam format <b>GeoJSON</b> untuk QGIS/ESRI.</li>
+                </ul>
+            </div>
+            
+            <!-- INI BAGIAN FOOTER MENU MENUJU INFO.HTML YANG DIKEMBALIKAN -->
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="window.location.href='info.html'" class="bg-primary hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center">
+                    Buka info.html <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
         </div>
     </div>
 
-    <!-- Data & Logika JavaScript -->
+    <!-- ========================================================================= -->
+    <!-- SCRIPT UTAMA: LOAD DATA, MAP DASHBOARD, TABEL, FILTER                     -->
+    <!-- ========================================================================= -->
     <script>
         const urlReportCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?gid=0&single=true&output=csv";
         const urlHackathonCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?gid=1516464451&single=true&output=csv";
 
-        let dataReport = [], dataHackathon = [];
-        let map, markers = []; 
-        let miniMap = null, miniGeoJsonLayer = null;
-        let currentTablePage = 1, tableRowsPerPage = 20, currentTableFilter = 'All', filteredTableData = [];
+        let dataReport = [];
+        let dataHackathon = [];
+        let map;
+        let markers = []; 
+        let miniMap = null;
+        let miniGeoJsonLayer = null;
+
+        let currentTablePage = 1;
+        let tableRowsPerPage = 20;
+        let currentTableFilter = 'All';
+        let filteredTableData = [];
 
         async function loadDataFromGoogleSheets() {
             setLoadingState(true);
-            const fetchCSV = (url) => new Promise((resolve, reject) => Papa.parse(url, { download: true, header: true, skipEmptyLines: true, complete: res => resolve(res.data), error: err => reject(err) }));
+
+            const fetchCSV = (url) => {
+                return new Promise((resolve, reject) => {
+                    Papa.parse(url, {
+                        download: true,
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) { resolve(results.data); },
+                        error: function(error) { reject(error); }
+                    });
+                });
+            };
 
             try {
                 const reportResults = await fetchCSV(urlReportCsv);
                 dataReport = reportResults.map(row => ({
-                    tipe: row['tipe'] || 'Tanpa Kategori', nama: row['nama'] || '-', organisasi: row['organisasi'] || '-',
-                    lat: parseFloat(row['lat']) || 0, long: parseFloat(row['long']) || 0, geojson: row['geojson'] || '',
-                    sampahKg: parseFloat(row['sampah kg']) || 0, bibit: parseInt(row['bibit']) || 0, jenis: row['jenis'] || '',
+                    tipe: row['tipe'] || 'Tanpa Kategori',
+                    nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
+                    organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
+                    lat: parseFloat(row['lat']) || 0,
+                    long: parseFloat(row['long']) || 0,
+                    geojson: row['geojson'] || '',
+                    sampahKg: parseFloat(row['sampah kg']) || 0,
+                    bibit: parseInt(row['bibit']) || 0,
+                    jenis: row['jenis'] || '',
                     catatan: escapeHTML(row['catatan'] || '')
                 })).filter(item => item.lat !== 0 && item.long !== 0); 
 
-                if(urlHackathonCsv) {
+                if(urlHackathonCsv !== "") {
                     const hackResults = await fetchCSV(urlHackathonCsv);
                     dataHackathon = hackResults.map(row => ({
-                        nama: row['nama'] || '-', organisasi: row['organisasi'] || '-',
-                        solusi: escapeHTML(row['solusi utama'] || row['solusi'] || '')
+                        nama: row['nama'] || '-',
+                        organisasi: row['organisasi'] || '-',
+                        solusi: escapeHTML(row['solusi utama'] || row['solusi'] || ''),
+                        masalah: escapeHTML(row['mengatasi masalah'] || row['masalah'] || ''),
+                        signifikan: escapeHTML(row['mengapa signifikan'] || row['signifikan'] || '')
                     })).filter(item => item.solusi !== '');
                 }
 
-                populateFilterOptions(); renderDashboard(); updateMapMarkers(); setLoadingState(false);
-            } catch (error) { document.getElementById('status-text').innerText = "Gagal memuat data"; document.getElementById('status-dot').className = "h-2 w-2 rounded-full bg-red-500 mr-2"; setLoadingState(false, true); }
+                populateFilterOptions();
+                renderDashboard();
+                updateMapMarkers();
+                setLoadingState(false);
+
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+                document.getElementById('status-text').innerText = "Gagal memuat data (Cek koneksi/CORS)";
+                document.getElementById('status-dot').className = "h-2 w-2 rounded-full bg-red-500 mr-2";
+                setLoadingState(false, true);
+            }
         }
 
-        function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
 
-        // Peta Utama (Dashboard Map) - CartoDB Biasa
         function initMap() {
             map = L.map('map').setView([-1.2175, 116.8375], 15);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
         }
 
         function updateMapMarkers() {
-            if (!map) return; markers.forEach(m => map.removeLayer(m)); markers = [];
-            dataReport.forEach((item, index) => {
-                let iconColor = item.tipe.toLowerCase().includes('pembersihan') ? 'red' : item.tipe.toLowerCase().includes('penanaman') ? 'green' : 'blue';
-                const customIcon = L.divIcon({ className: "custom-pin", iconAnchor: [0, 24], popupAnchor: [0, -36], html: `<span style="background-color: ${iconColor}; width: 1.5rem; height: 1.5rem; display: block; left: -0.75rem; top: -0.75rem; position: relative; border-radius: 3rem 3rem 0; transform: rotate(45deg); border: 2px solid #FFFFFF; box-shadow: 0 4px 6px rgba(0,0,0,0.3)"></span>` });
+            if (!map) return;
+            
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
 
-                let popupContent = `<div class="font-sans min-w-[160px]"><b class="text-[14px] text-slate-800">${item.tipe}</b><br><span class="text-xs text-slate-500 mb-2 block"><i class="fa-regular fa-user mr-1"></i> ${item.nama}</span>`;
-                if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ ${item.sampahKg} kg Sampah</div>`;
-                if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 ${item.bibit} Bibit</div>`;
-                // Tombol Lihat Area Sebaran memicu Modal Peta Satelit
-                if(item.geojson && item.geojson.trim() !== "") popupContent += `<button onclick="openGeoJsonModal(${index})" class="mt-3 w-full bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 text-xs font-medium py-1.5 px-2 rounded border border-blue-200 transition-colors block"><i class="fa-solid fa-satellite mr-1"></i> Lihat Peta Sebaran</button>`;
+            dataReport.forEach((item, index) => {
+                let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
+                let isPenanaman = item.tipe.toLowerCase().includes('penanaman');
+                let iconColor = isPembersihan ? 'red' : isPenanaman ? 'green' : 'blue';
                 
-                let marker = L.marker([item.lat, item.long], {icon: customIcon}).addTo(map).bindPopup(popupContent + `</div>`);
+                const customIcon = L.divIcon({
+                    className: "custom-pin",
+                    iconAnchor: [0, 24],
+                    popupAnchor: [0, -36],
+                    html: `<span style="background-color: ${iconColor}; width: 1.5rem; height: 1.5rem; display: block; left: -0.75rem; top: -0.75rem; position: relative; border-radius: 3rem 3rem 0; transform: rotate(45deg); border: 2px solid #FFFFFF; box-shadow: 0 4px 6px rgba(0,0,0,0.3)"></span>`
+                });
+
+                let popupContent = `<div class="font-sans min-w-[160px]">`;
+                popupContent += `<b class="text-[14px] text-slate-800">${item.tipe}</b><br>`;
+                
+                if (item.nama !== '-' || item.organisasi !== '-') {
+                    popupContent += `<span class="text-xs text-slate-500 block mb-2"><i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})</span>`;
+                }
+                
+                if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ Sampah: <b>${item.sampahKg} kg</b></div>`;
+                if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 Bibit: <b>${item.bibit} (${item.jenis})</b></div>`;
+                
+                if(item.geojson && item.geojson.trim() !== "") {
+                    popupContent += `<button onclick="openGeoJsonModal(${index})" class="mt-3 w-full bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 text-xs font-medium py-1.5 px-2 rounded border border-blue-200 transition-colors cursor-pointer text-center block"><i class="fa-solid fa-satellite mr-1"></i> Lihat Peta Sebaran</button>`;
+                }
+                popupContent += `</div>`;
+                
+                let marker = L.marker([item.lat, item.long], {icon: customIcon}).addTo(map).bindPopup(popupContent);
                 markers.push(marker);
             });
-            if (markers.length > 0) map.fitBounds(new L.featureGroup(markers).getBounds().pad(0.1));
+
+            if (markers.length > 0) {
+                var group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
         }
 
         function renderDashboard() {
-            let totalSampah = 0, totalBibit = 0; dataReport.forEach(item => { totalSampah += item.sampahKg; totalBibit += item.bibit; });
-            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base text-slate-500">kg</span>`; document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base text-slate-500">pohon</span>`; document.getElementById('kpi-aktivitas').innerText = dataReport.length;
-            const activityFeed = document.getElementById('activity-feed'); activityFeed.innerHTML = '';
-            dataReport.slice(0, 30).forEach((item, index) => {
-                let iconClass = 'fa-clipboard', iconBg = 'bg-slate-100 text-slate-500';
+            let totalSampah = 0;
+            let totalBibit = 0;
+            
+            const activityFeed = document.getElementById('activity-feed');
+            activityFeed.innerHTML = '';
+
+            dataReport.forEach((item) => {
+                totalSampah += item.sampahKg;
+                totalBibit += item.bibit;
+            });
+
+            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base font-medium text-slate-500">kg</span>`;
+            document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base font-medium text-slate-500">pohon</span>`;
+            document.getElementById('kpi-aktivitas').innerText = dataReport.length;
+
+            const feedData = dataReport.slice(0, 30);
+            feedData.forEach((item, index) => {
+                let iconClass = 'fa-clipboard';
+                let iconBg = 'bg-slate-100 text-slate-500';
                 if(item.tipe.toLowerCase().includes('pembersihan')) { iconClass = 'fa-trash-can'; iconBg = 'bg-red-100 text-red-500'; }
                 if(item.tipe.toLowerCase().includes('penanaman')) { iconClass = 'fa-seedling'; iconBg = 'bg-emerald-100 text-emerald-500'; }
-                activityFeed.innerHTML += `<div class="flex gap-4 mb-6 relative">${index !== 29 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100"></div>' : ''}<div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 ${iconBg}"><i class="fa-solid ${iconClass}"></i></div><div><h4 class="text-sm font-semibold text-slate-800">${item.tipe}</h4><p class="text-xs text-slate-500 mb-1">${item.nama}</p><p class="text-sm text-slate-600 cut-text">${item.catatan}</p></div></div>`;
+
+                activityFeed.innerHTML += `
+                    <div class="flex gap-4 mb-6 last:mb-0 relative">
+                        ${index !== feedData.length - 1 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100 z-0"></div>' : ''}
+                        <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 ${iconBg}">
+                            <i class="fa-solid ${iconClass}"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-800">${item.tipe}</h4>
+                            <p class="text-xs text-slate-500 mb-1">
+                                <i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})
+                            </p>
+                            <p class="text-sm text-slate-600 cut-text">${item.catatan}</p>
+                        </div>
+                    </div>
+                `;
             });
+
             renderTableData();
-            const hackGrid = document.getElementById('hackathon-grid'); hackGrid.innerHTML = ''; 
-            dataHackathon.forEach((idea, idx) => { hackGrid.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col"><div class="bg-slate-800 px-6 py-4"><h3 class="font-bold text-white"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide #${idx + 1}</h3></div><div class="p-6 flex-grow"><p class="text-sm font-semibold">${idea.nama}</p><p class="text-sm mt-3 bg-blue-50 p-3 rounded">${idea.solusi}</p></div></div>`; });
+
+            const hackGrid = document.getElementById('hackathon-grid');
+            hackGrid.innerHTML = ''; 
+            dataHackathon.forEach((idea, idx) => {
+                hackGrid.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 flex justify-between items-center">
+                            <h3 class="font-bold text-white"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide Tim #${idx + 1}</h3>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col gap-4">
+                            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">${idea.nama}</p>
+                                    <p class="text-xs text-slate-500">${idea.organisasi}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Solusi Utama</h4>
+                                <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100">${idea.solusi}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        function populateFilterOptions() { document.getElementById('filter-tipe').innerHTML = '<option value="All">Semua Jenis</option>' + [...new Set(dataReport.map(i => i.tipe))].map(t => `<option value="${t}">${t}</option>`).join(''); }
-        function applyTableFilter() { currentTableFilter = document.getElementById('filter-tipe').value; currentTablePage = 1; renderTableData(); }
-        function changeRowsPerPage() { tableRowsPerPage = parseInt(document.getElementById('rows-per-page').value); currentTablePage = 1; renderTableData(); }
-        function prevTablePage() { if (currentTablePage > 1) { currentTablePage--; renderTableData(); } }
-        function nextTablePage() { if (currentTablePage < Math.ceil(filteredTableData.length / tableRowsPerPage)) { currentTablePage++; renderTableData(); } }
+        function populateFilterOptions() {
+            const filterSelect = document.getElementById('filter-tipe');
+            const uniqueTypes = [...new Set(dataReport.map(item => item.tipe))];
+            
+            let optionsHtml = '<option value="All">Semua Jenis</option>';
+            uniqueTypes.forEach(type => {
+                optionsHtml += `<option value="${type}">${type}</option>`;
+            });
+            filterSelect.innerHTML = optionsHtml;
+        }
+
+        function applyTableFilter() {
+            currentTableFilter = document.getElementById('filter-tipe').value;
+            currentTablePage = 1;
+            renderTableData();
+        }
+
+        function changeRowsPerPage() {
+            tableRowsPerPage = parseInt(document.getElementById('rows-per-page').value);
+            currentTablePage = 1;
+            renderTableData();
+        }
+
+        function prevTablePage() {
+            if (currentTablePage > 1) {
+                currentTablePage--;
+                renderTableData();
+            }
+        }
+
+        function nextTablePage() {
+            const totalPages = Math.ceil(filteredTableData.length / tableRowsPerPage);
+            if (currentTablePage < totalPages) {
+                currentTablePage++;
+                renderTableData();
+            }
+        }
 
         function renderTableData() {
-            filteredTableData = currentTableFilter === 'All' ? dataReport : dataReport.filter(i => i.tipe === currentTableFilter);
-            const totalItems = filteredTableData.length; const startIndex = (currentTablePage - 1) * tableRowsPerPage; const endIndex = Math.min(startIndex + tableRowsPerPage, totalItems);
-            const tableBody = document.getElementById('table-body'); tableBody.innerHTML = '';
-            if (filteredTableData.slice(startIndex, endIndex).length === 0) tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-sm">Tidak ada data.</td></tr>`;
-            
-            filteredTableData.slice(startIndex, endIndex).forEach((item, originalIdxInFiltered) => {
-                let originalIdx = dataReport.indexOf(item); // Perlu index asli untuk modal
-                let res = '-'; if(item.sampahKg > 0) res = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs">${item.sampahKg} kg</span>`; if(item.bibit > 0) res = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs">${item.bibit} Pohon</span>`;
-                let areaBtn = item.geojson ? `<button onclick="openGeoJsonModal(${originalIdx})" class="mt-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded border border-slate-200"><i class="fa-solid fa-map"></i> Area</button>` : '';
-                tableBody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100"><td class="px-6 py-4"><div class="text-sm font-medium">${item.nama}</div></td><td class="px-6 py-4"><span class="text-sm">${item.tipe}</span><br>${areaBtn}</td><td class="px-6 py-4">${res}</td><td class="px-6 py-4 text-sm text-slate-500"><p class="truncate w-48">${item.catatan}</p></td></tr>`;
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+
+            if (currentTableFilter === 'All') {
+                filteredTableData = dataReport;
+            } else {
+                filteredTableData = dataReport.filter(item => item.tipe === currentTableFilter);
+            }
+
+            const totalItems = filteredTableData.length;
+            const totalPages = Math.ceil(totalItems / tableRowsPerPage);
+            const startIndex = (currentTablePage - 1) * tableRowsPerPage;
+            const endIndex = Math.min(startIndex + tableRowsPerPage, totalItems);
+            const dataToRender = filteredTableData.slice(startIndex, endIndex);
+
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500">Tidak ada data untuk ditampilkan.</td></tr>`;
+            }
+
+            dataToRender.forEach(item => {
+                let resultText = '-';
+                if(item.sampahKg > 0) resultText = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">${item.sampahKg} kg Sampah</span>`;
+                if(item.bibit > 0) resultText = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs font-medium">${item.bibit} Bibit</span>`;
+
+                const originalIndex = dataReport.indexOf(item);
+                let geojsonBadge = item.geojson ? `<button onclick="openGeoJsonModal(${originalIndex})" class="mt-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-medium px-1.5 py-0.5 rounded border border-blue-100 transition-colors"><i class="fa-solid fa-satellite"></i> Lihat Area</button>` : '';
+
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-slate-900">${item.nama}</div>
+                            <div class="text-xs text-slate-500">${item.organisasi}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-medium text-slate-900">${item.tipe}</span><br>
+                            <span class="text-xs text-slate-500">${item.lat}, ${item.long}</span><br>
+                            ${geojsonBadge}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${resultText}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">
+                            <p class="truncate w-48 lg:w-64" title="${item.catatan}">${item.catatan}</p>
+                        </td>
+                    </tr>
+                `;
             });
-            document.getElementById('table-info').innerText = `Menampilkan ${totalItems === 0 ? 0 : startIndex + 1} - ${endIndex} dari ${totalItems}`;
-            document.getElementById('btn-prev').disabled = currentTablePage === 1; document.getElementById('btn-next').disabled = currentTablePage === Math.ceil(totalItems / tableRowsPerPage) || totalItems === 0;
+
+            const infoText = totalItems === 0 ? 0 : startIndex + 1;
+            document.getElementById('table-info').innerText = `Menampilkan ${infoText} hingga ${endIndex} dari ${totalItems} data`;
+            document.getElementById('btn-prev').disabled = currentTablePage === 1;
+            document.getElementById('btn-next').disabled = currentTablePage === totalPages || totalPages === 0;
         }
 
         function switchTab(tabId) {
-            ['report', 'hackathon'].forEach(id => { document.getElementById('tab-' + id).className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm'; document.getElementById('view-' + id).classList.add('hidden'); });
-            document.getElementById('tab-' + tabId).className = 'tab-active whitespace-nowrap py-4 px-1 font-medium text-sm'; document.getElementById('view-' + tabId).classList.remove('hidden');
-            if(tabId === 'report' && map) setTimeout(() => { map.invalidateSize(); }, 100);
+            document.getElementById('tab-report').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            document.getElementById('tab-hackathon').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            
+            document.getElementById('view-report').classList.add('hidden');
+            document.getElementById('view-hackathon').classList.add('hidden');
+
+            document.getElementById('tab-' + tabId).className = 'tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            if(tabId === 'report' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 100);
+            }
         }
 
-        function setLoadingState(isLoading, isError = false) { document.getElementById('text-sync').innerText = isLoading ? 'Menyinkronkan...' : 'Sinkronisasi Data'; document.getElementById('status-text').innerText = isLoading ? 'Loading...' : `Update: ${new Date().toLocaleTimeString()}`; }
+        function setLoadingState(isLoading, isError = false) {
+            const icon = document.getElementById('icon-sync');
+            const text = document.getElementById('text-sync');
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+
+            if (isLoading) {
+                icon.classList.add('fa-spin');
+                text.innerText = 'Menyinkronkan...';
+                statusText.innerText = 'Mengambil data terbaru...';
+                statusDot.className = "h-2 w-2 rounded-full bg-yellow-400 mr-2 animate-pulse";
+            } else if (isError) {
+                icon.classList.remove('fa-spin');
+                text.innerText = 'Gagal Sinkronisasi';
+            } else {
+                icon.classList.remove('fa-spin');
+                text.innerText = 'Sinkronisasi Data';
+                
+                const now = new Date();
+                statusText.innerText = `Terakhir update: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                statusDot.className = "h-2 w-2 rounded-full bg-success mr-2";
+            }
+        }
+
         function openGuideModal() { document.getElementById('guide-modal').classList.remove('hidden'); }
         function closeGuideModal() { document.getElementById('guide-modal').classList.add('hidden'); }
 
-        // =======================================================
-        // LOGIKA PERBAIKAN: MODAL GEOJSON & SATELLIT & EXPORT
-        // =======================================================
-        let activeGeoJsonItem = null; // Menyimpan data area yang sedang aktif di modal
+        // =========================================================================
+        // SCRIPT MAP MODAL: SATELLITE & GEOJSON EXPORT LOGIC
+        // =========================================================================
+        let activeGeoJsonItem = null;
 
         function openGeoJsonModal(index) {
             const item = dataReport[index];
             if (!item || !item.geojson) return;
             
-            activeGeoJsonItem = item; // Simpan untuk fungsi export
+            activeGeoJsonItem = item;
             
             document.getElementById('geojson-modal').classList.remove('hidden');
             document.getElementById('geojson-modal-title').innerText = `Area: ${item.tipe}`;
 
-            // 1. Inisialisasi Peta Modal dengan Tile ESRI SATELLITE
+            // Inisialisasi Peta Esri World Imagery (Satelit)
             if (!miniMap) {
                 miniMap = L.map('mini-map').setView([item.lat, item.long], 16);
-                
-                // Menggunakan Esri World Imagery (Resolusi Satelit sangat tinggi dan gratis untuk penggunaan umum)
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
                 }).addTo(miniMap);
             }
 
-            // Atur fungsi tombol Export
             document.getElementById('btn-export-geojson').onclick = function() {
                 exportToGeoJSON(activeGeoJsonItem);
             };
 
-            // 2. Timeout untuk Mengakali Bug Leaflet di dalam elemen tersembunyi
+            // Timeout untuk mengatasi Bug render Leaflet di element display:none
             setTimeout(() => {
-                miniMap.invalidateSize(); // Wajib dipanggil setelah modal terbuka 100%
+                miniMap.invalidateSize();
 
                 if (miniGeoJsonLayer) {
                     miniMap.removeLayer(miniGeoJsonLayer);
@@ -367,12 +756,10 @@
                 try {
                     let coords = JSON.parse(item.geojson);
                     let geomType = "Polygon";
-                    // Pengecekan otomatis apakah itu Garis (LineString) atau Area (Polygon)
                     if (coords.length > 0 && typeof coords[0][0] === 'number') {
                         geomType = "LineString";
                     }
 
-                    // Pembuatan Format GeoJSON Murni
                     let geoFeature = {
                         "type": "Feature",
                         "properties": {
@@ -386,39 +773,37 @@
                     };
                     
                     let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
-                    let hexColor = isPembersihan ? '#ef4444' : '#10b981'; // Merah untuk sampah, Hijau untuk tanam
+                    let hexColor = isPembersihan ? '#ef4444' : '#10b981';
 
-                    // Gambar di atas peta Satelit
                     miniGeoJsonLayer = L.geoJSON(geoFeature, {
                         style: {
                             color: hexColor,
                             weight: 3,
                             opacity: 1,
                             fillColor: hexColor,
-                            fillOpacity: 0.5 // Transparansi 50% agar satelit di bawahnya tetap terlihat
+                            fillOpacity: 0.5
                         }
                     }).addTo(miniMap);
 
-                    // Posisikan kamera agar area pas di tengah layer
                     miniMap.fitBounds(miniGeoJsonLayer.getBounds(), { padding: [30, 30], maxZoom: 18 });
 
                 } catch (e) {
                     console.error("Gagal membaca koordinat GeoJSON:", e);
-                    alert("Format kordinat area pada Google Sheet tidak valid (Harus JSON Array).");
+                    alert("Format kordinat area tidak valid.");
                 }
-            }, 250); // Memberikan jeda 250ms agar animasi modal CSS Tailwind selesai
+            }, 250);
         }
 
-        function closeGeoJsonModal() { document.getElementById('geojson-modal').classList.add('hidden'); }
+        function closeGeoJsonModal() {
+            document.getElementById('geojson-modal').classList.add('hidden');
+        }
 
-        // Fungsi Baru: Download ke file .geojson (Cocok untuk ESRI/QGIS)
         function exportToGeoJSON(item) {
             try {
                 let coords = JSON.parse(item.geojson);
                 let geomType = "Polygon";
                 if (coords.length > 0 && typeof coords[0][0] === 'number') { geomType = "LineString"; }
 
-                // Membuat format FeatureCollection standar GIS Internasional
                 let geoJsonData = {
                     "type": "FeatureCollection",
                     "name": "Export_EcoMonitor",
@@ -444,21 +829,18 @@
                     ]
                 };
 
-                // Proses merubah data JSON menjadi File Blob dan mengunduhnya
                 const dataStr = JSON.stringify(geoJsonData, null, 2);
                 const blob = new Blob([dataStr], { type: "application/geo+json" });
                 const url = URL.createObjectURL(blob);
                 
                 const a = document.createElement('a');
                 a.href = url;
-                // Membuat nama file yang aman dari spasi/karakter aneh
                 let safeName = item.tipe.replace(/[^a-zA-Z0-9]/g, '_');
                 a.download = `Area_${safeName}_${item.nama.substring(0,5)}.geojson`;
                 
                 document.body.appendChild(a);
                 a.click();
                 
-                // Cleanup memori
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
 
@@ -468,50 +850,285 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => { initMap(); loadDataFromGoogleSheets(); });
+        // Jalankan Inisiasi Awal
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            loadDataFromGoogleSheets();
+        });
 
 
-        // ==========================================
-        // EASTER EGG GAME LOGIC (Tetap dipertahankan)
-        // ==========================================
-        let isGameActive = false; let animationFrameId;
-        const gameCanvas = document.getElementById('gameCanvas'); const gameCtx = gameCanvas.getContext('2d');
-        let gWidth, gHeight; let gameFishCount = 0, gameTrashCount = 0, gameTotalScore = 0;
-        const hook = { x: 0, y: 100, targetY: 100, status: 'idle', speed: 8, attached: null };
+        // =========================================================================
+        // SCRIPT EASTER EGG: PANCINGAN KARMA (FULL VERSION 100%)
+        // =========================================================================
+        let isGameActive = false;
+        let animationFrameId;
+
+        const gameCanvas = document.getElementById('gameCanvas');
+        const gameCtx = gameCanvas.getContext('2d');
+        const gameMsgBox = document.getElementById('game-message-box');
+        
+        let gWidth, gHeight;
+        let gameFishCount = 0;
+        let gameTrashCount = 0;
+        let gameTotalScore = 0;
+
+        const gameInsults = [
+            "Selamat! Kamu menyelamatkan botol plastik ini dari kepunahan.",
+            "Wah, sepatu bot! Tinggal pancing sebelahnya, terus buka toko loak deh.",
+            "Kantong kresek! Dikira penyu doyan makan ginian? (SPOILER: Enggak!)",
+            "Ban mobil?! Kapan-kapan sekalian buang truknya aja ke laut.",
+            "Kaleng kosong, sekosong pikiran orang yang membuangnya sembarangan.",
+            "Sedotan plastik! Senjata rahasia manusia untuk menyiksa kura-kura laut.",
+            "Wow! Laut kita pelan-pelan resmi berubah jadi Tempat Pembuangan Akhir (TPA).",
+            "Satu lagi sampah! Bumi pasti menangis terharu melihat 'kebaikanmu'.",
+            "Luar biasa! Jejak sampah ini akan bertahan sampai kamu punya cicit."
+        ];
+
+        const gamePraises = [
+            "Lho?! MASIH ADA IKAN?! Kirain udah punah semua gara-gara sampah.",
+            "Wah, ikan langka! Beruntung banget dia belum keselek tutup botol.",
+            "Tolong cepat evakuasi ikan ini sebelum dia belajar makan plastik kresek."
+        ];
+
+        const gameEgoTitles = [
+            "Mulai Sadar", 
+            "Agak Bebal", 
+            "Rajin Nyampah", 
+            "Musuh Alam", 
+            "Pewaris Bencana", 
+            "Raja TPA (Tempat Pembuangan Akhir)"
+        ];
+
+        const hook = {
+            x: 0,
+            y: 100,
+            targetY: 100,
+            status: 'idle', // idle, dropping, pulling
+            speed: 8,
+            attached: null
+        };
+
         const entities = [];
-        const gameTypes = [{ char: '🐟', type: 'fish', points: 100 }, { char: '🐠', type: 'fish', points: 150 }, { char: '🍾', type: 'trash', points: 0 }, { char: '🛍️', type: 'trash', points: 0 }];
+        const gameTypes = [
+            { char: '🐟', type: 'fish', points: 100 },
+            { char: '🐠', type: 'fish', points: 150 },
+            { char: '🐡', type: 'fish', points: 200 },
+            { char: '🍾', type: 'trash', points: 0 },
+            { char: '🥫', type: 'trash', points: 0 },
+            { char: '🛍️', type: 'trash', points: 0 },
+            { char: '👞', type: 'trash', points: 0 },
+            { char: '🥤', type: 'trash', points: 0 }
+        ];
 
-        function resizeGame() { if (!isGameActive) return; gWidth = window.innerWidth; gHeight = window.innerHeight; gameCanvas.width = gWidth; gameCanvas.height = gHeight; if(hook.x === 0) hook.x = gWidth / 2; }
-        function spawnEntity() {
-            const isTrash = Math.random() > 0.3; const availableTypes = gameTypes.filter(t => isTrash ? t.type === 'trash' : t.type === 'fish');
-            entities.push({ x: Math.random() < 0.5 ? -50 : gWidth + 50, y: 250 + Math.random() * (gHeight - 350), speed: (1 + Math.random() * 2) * (Math.random() < 0.5 ? 1 : -1), config: availableTypes[Math.floor(Math.random() * availableTypes.length)], size: 40 });
+        function resizeGame() {
+            if (!isGameActive) return;
+            gWidth = window.innerWidth;
+            gHeight = window.innerHeight;
+            gameCanvas.width = gWidth;
+            gameCanvas.height = gHeight;
+            if(hook.x === 0) hook.x = gWidth / 2;
         }
 
-        gameCanvas.addEventListener('mousedown', (e) => { if (isGameActive && hook.status === 'idle') { hook.x = e.clientX; hook.status = 'dropping'; hook.targetY = gHeight - 50; } });
+        function spawnEntity() {
+            const isTrash = Math.random() > 0.3; // 70% peluang sampah
+            const availableTypes = gameTypes.filter(t => isTrash ? t.type === 'trash' : t.type === 'fish');
+            const config = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+            
+            entities.push({
+                x: Math.random() < 0.5 ? -50 : gWidth + 50,
+                y: 250 + Math.random() * (gHeight - 350),
+                speed: (1 + Math.random() * 2) * (Math.random() < 0.5 ? 1 : -1),
+                config: config,
+                size: 40
+            });
+        }
+
+        function createScorePopup(x, y, text, color = '#4ade80') {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+            popup.style.color = color;
+            popup.innerText = text;
+            document.getElementById('easter-egg-container').appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        function showGameMessage(text) {
+            gameMsgBox.innerText = text;
+            gameMsgBox.classList.add('show-msg');
+            setTimeout(() => gameMsgBox.classList.remove('show-msg'), 4000);
+        }
+
+        gameCanvas.addEventListener('mousedown', (e) => {
+            if (isGameActive && hook.status === 'idle') {
+                hook.x = e.clientX;
+                hook.status = 'dropping';
+                hook.targetY = gHeight - 50;
+            }
+        });
+
+        gameCanvas.addEventListener('touchstart', (e) => {
+            if (isGameActive && hook.status === 'idle') {
+                hook.x = e.touches[0].clientX;
+                hook.status = 'dropping';
+                hook.targetY = gHeight - 50;
+            }
+        });
+
         window.addEventListener('resize', resizeGame);
 
         function updateGame() {
-            if (hook.status === 'dropping') { hook.y += hook.speed; if (hook.y >= hook.targetY) hook.status = 'pulling'; } 
-            else if (hook.status === 'pulling') { hook.y -= hook.speed; if (hook.y <= 120) { if (hook.attached) { hook.attached = null; } hook.status = 'idle'; hook.y = 100; } }
+            // Hook logic
+            if (hook.status === 'dropping') {
+                hook.y += hook.speed;
+                if (hook.y >= hook.targetY) hook.status = 'pulling';
+            } else if (hook.status === 'pulling') {
+                hook.y -= hook.speed;
+                if (hook.y <= 120) {
+                    if (hook.attached) {
+                        const entity = hook.attached;
+                        if (entity.config.type === 'trash') {
+                            gameTrashCount++;
+                            document.getElementById('game-trash-count').innerText = gameTrashCount;
+                            
+                            // Update Ego Level
+                            let egoIdx = Math.min(Math.floor(gameTrashCount / 3), gameEgoTitles.length - 1);
+                            document.getElementById('game-ego-level').innerText = gameEgoTitles[egoIdx];
+                            
+                            // Penalty Score
+                            gameTotalScore = Math.max(0, gameTotalScore - 50);
+                            
+                            createScorePopup(hook.x, 150, '-50 Moral', '#ef4444');
+                            showGameMessage(gameInsults[Math.floor(Math.random() * gameInsults.length)]);
+                        } else {
+                            const points = entity.config.points;
+                            gameTotalScore += points;
+                            gameFishCount++;
+                            
+                            document.getElementById('game-fish-count').innerText = gameFishCount;
+                            createScorePopup(hook.x, 150, '+' + points, '#4ade80');
+                            showGameMessage(gamePraises[Math.floor(Math.random() * gamePraises.length)]);
+                        }
+                        document.getElementById('game-total-score').innerText = gameTotalScore;
+                        hook.attached = null;
+                    }
+                    hook.status = 'idle';
+                    hook.y = 100;
+                }
+            }
+
+            // Entities logic
             entities.forEach((ent, index) => {
-                if (hook.attached === ent) { ent.x = hook.x; ent.y = hook.y + 20; } 
-                else { ent.x += ent.speed; if ((hook.status === 'dropping' || hook.status === 'pulling') && !hook.attached && Math.hypot(hook.x - ent.x, (hook.y + 20) - ent.y) < 30) { hook.attached = ent; hook.status = 'pulling'; }
-                if (ent.x > gWidth + 100 || ent.x < -100) { entities.splice(index, 1); spawnEntity(); } }
+                if (hook.attached === ent) {
+                    ent.x = hook.x;
+                    ent.y = hook.y + 20;
+                } else {
+                    ent.x += ent.speed;
+                    
+                    // Collision with hook
+                    if ((hook.status === 'dropping' || hook.status === 'pulling') && !hook.attached) {
+                        const dist = Math.hypot(hook.x - ent.x, (hook.y + 20) - ent.y);
+                        if (dist < 30) {
+                            hook.attached = ent;
+                            hook.status = 'pulling';
+                        }
+                    }
+
+                    // Remove out of bounds
+                    if (ent.x > gWidth + 100 || ent.x < -100) {
+                        entities.splice(index, 1);
+                        spawnEntity();
+                    }
+                }
             });
-            if (entities.length < 10) spawnEntity();
+
+            if (entities.length < 15) spawnEntity();
         }
 
         function drawGame() {
-            gameCtx.fillStyle = '#0ea5e9'; gameCtx.fillRect(0, 0, gWidth, gHeight);
-            gameCtx.fillStyle = '#ffffff'; gameCtx.font = '60px Arial'; gameCtx.fillText('🚣', hook.x - 45, 110);
-            gameCtx.beginPath(); gameCtx.moveTo(hook.x, 100); gameCtx.lineTo(hook.x, hook.y); gameCtx.strokeStyle = '#cbd5e1'; gameCtx.lineWidth = 2; gameCtx.stroke(); 
-            gameCtx.font = '30px Arial'; gameCtx.fillText('🪝', hook.x - 15, hook.y + 20);
-            entities.forEach(ent => { gameCtx.save(); gameCtx.font = ent.size + 'px Arial'; if (ent.speed < 0) { gameCtx.translate(ent.x, ent.y); gameCtx.scale(-1, 1); gameCtx.fillText(ent.config.char, -ent.size/2, ent.size/2); } else { gameCtx.fillText(ent.config.char, ent.x - ent.size/2, ent.y + ent.size/2); } gameCtx.restore(); });
+            // Sky & Water Gradient
+            const grad = gameCtx.createLinearGradient(0, 0, 0, gHeight);
+            grad.addColorStop(0, '#38bdf8'); // Sky
+            grad.addColorStop(0.15, '#0ea5e9'); // Surface
+            grad.addColorStop(0.2, '#1d4ed8'); // Shallow
+            grad.addColorStop(1, '#1e3a8a'); // Deep
+            gameCtx.fillStyle = grad;
+            gameCtx.fillRect(0, 0, gWidth, gHeight);
+
+            // Murky Water Effect (Polusi bertambah seiring sampah yang ditangkap)
+            const pollutionLevel = Math.min(gameTrashCount * 0.05, 0.85); // Maksimal 85% keruh
+            gameCtx.fillStyle = `rgba(75, 83, 32, ${pollutionLevel})`; // Warna hijau kotor/limbah
+            gameCtx.fillRect(0, gHeight * 0.15, gWidth, gHeight * 0.85);
+
+            gameCtx.fillStyle = '#ffffff';
+
+            // Boat
+            gameCtx.font = '60px Arial';
+            gameCtx.fillText('🚣', hook.x - 45, 110);
+
+            // Hook Line
+            gameCtx.beginPath();
+            gameCtx.moveTo(hook.x, 100);
+            gameCtx.lineTo(hook.x, hook.y);
+            gameCtx.strokeStyle = '#cbd5e1';
+            gameCtx.lineWidth = 2;
+            gameCtx.setLineDash([5, 3]);
+            gameCtx.stroke();
+            gameCtx.setLineDash([]);
+
+            // Hook
+            gameCtx.font = '30px Arial';
+            gameCtx.fillText('🪝', hook.x - 15, hook.y + 20);
+
+            // Entities
+            entities.forEach(ent => {
+                gameCtx.save();
+                gameCtx.font = ent.size + 'px Arial';
+                // Flip if moving left
+                if (ent.speed < 0) {
+                    gameCtx.translate(ent.x, ent.y);
+                    gameCtx.scale(-1, 1);
+                    gameCtx.fillText(ent.config.char, -ent.size/2, ent.size/2);
+                } else {
+                    gameCtx.fillText(ent.config.char, ent.x - ent.size/2, ent.y + ent.size/2);
+                }
+                gameCtx.restore();
+            });
+
+            // Water surface ripples
+            gameCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            for(let i=0; i<5; i++) {
+                gameCtx.fillRect(0, 0.15 * gHeight + (i*5), gWidth, 1);
+            }
         }
 
-        function gameLoop() { if(!isGameActive) return; updateGame(); drawGame(); animationFrameId = requestAnimationFrame(gameLoop); }
-        function openEasterEgg() { document.getElementById('easter-egg-container').classList.remove('hidden'); document.body.style.overflow = 'hidden'; isGameActive = true; resizeGame(); if(entities.length === 0) { for (let i = 0; i < 10; i++) spawnEntity(); } gameLoop(); }
-        function closeEasterEgg() { document.getElementById('easter-egg-container').classList.add('hidden'); document.body.style.overflow = 'auto'; isGameActive = false; cancelAnimationFrame(animationFrameId); }
+        function gameLoop() {
+            if(!isGameActive) return;
+            updateGame();
+            drawGame();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function openEasterEgg() {
+            document.getElementById('easter-egg-container').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
+            isGameActive = true;
+            resizeGame();
+            
+            if(entities.length === 0) {
+                for (let i = 0; i < 12; i++) spawnEntity();
+            }
+            
+            gameLoop();
+        }
+
+        function closeEasterEgg() {
+            document.getElementById('easter-egg-container').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Buka kunci scroll
+            isGameActive = false;
+            cancelAnimationFrame(animationFrameId); // Hentikan memori canvas
+        }
 
     </script>
 </body>
