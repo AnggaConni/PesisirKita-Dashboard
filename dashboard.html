@@ -287,9 +287,11 @@
                     <h2 class="text-xl font-bold text-slate-800">Ide & Inovasi Tim</h2>
                     <p class="text-sm text-slate-500">Kumpulan solusi dari peserta Hackathon.</p>
                 </div>
-                <button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    <i class="fa-solid fa-plus mr-2"></i>Ajukan Ide
+
+                <button onclick="openVoteModal()" class="bg-success hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-md flex items-center">
+                    <i class="fa-solid fa-check-double mr-2"></i>Kirim Penilaian
                 </button>
+
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6" id="hackathon-grid"></div>
@@ -384,6 +386,60 @@
             
         </div>
     </div>
+
+
+    <!-- ================== MODAL DETAIL IDE HACKATHON ================== -->
+    <div id="ide-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeIdeDetail()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-800 text-white">
+                <h3 class="font-bold flex items-center gap-2" id="detail-title"><i class="fa-solid fa-lightbulb text-yellow-400"></i> Detail Ide</h3>
+                <button onclick="closeIdeDetail()" class="text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-5 text-slate-700 text-sm">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pengusul</span>
+                    <p id="detail-author" class="font-bold text-lg text-slate-900"></p>
+                </div>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Solusi Utama</span>
+                    <p id="detail-solusi" class="bg-blue-50 p-4 rounded-lg border border-blue-100 mt-1"></p>
+                </div>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Masalah yang Diatasi</span>
+                    <p id="detail-masalah" class="bg-red-50 p-4 rounded-lg border border-red-100 mt-1"></p>
+                </div>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mengapa Ini Signifikan?</span>
+                    <p id="detail-signifikan" class="bg-emerald-50 p-4 rounded-lg border border-emerald-100 mt-1"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== MODAL VOTING & PASSWORD ================== -->
+    <div id="vote-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeVoteModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-sm overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-500 text-white">
+                <h3 class="font-bold"><i class="fa-solid fa-lock mr-2"></i> Konfirmasi Penilaian</h3>
+                <button onclick="closeVoteModal()" class="text-emerald-100 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-slate-600 mb-4">Anda memilih <span id="vote-count" class="font-bold text-emerald-600 text-lg">0</span> ide. Masukkan nama Anda dan password sistem untuk mengirim data ke server.</p>
+                
+                <input type="text" id="vote-name" placeholder="Nama Penilai (Misal: Pak Budi)" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm mb-3 focus:outline-none focus:border-emerald-500">
+                <input type="password" id="vote-password" placeholder="Masukkan Password" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 mb-4">
+                
+                <p id="vote-error" class="text-red-500 text-xs hidden mb-3 font-medium"></p>
+
+                <button id="btn-submit-vote" onclick="submitVote()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg transition shadow-sm">
+                    Kirim ke Server
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- ========================================================================= -->
     <!-- SCRIPT UTAMA: LOAD DATA, MAP DASHBOARD, TABEL, FILTER                     -->
@@ -556,28 +612,37 @@
 
             renderTableData();
 
-            const hackGrid = document.getElementById('hackathon-grid');
+
+const hackGrid = document.getElementById('hackathon-grid');
             hackGrid.innerHTML = ''; 
             dataHackathon.forEach((idea, idx) => {
                 hackGrid.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 flex justify-between items-center">
-                            <h3 class="font-bold text-white"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide Tim #${idx + 1}</h3>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all flex flex-col">
+                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-4 py-3 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <!-- Checkbox untuk Vote -->
+                                <input type="checkbox" id="vote-${idx}" value="${idx}" class="vote-checkbox w-5 h-5 text-emerald-500 rounded border-gray-300 focus:ring-emerald-500 cursor-pointer">
+                                <label for="vote-${idx}" class="font-bold text-white cursor-pointer"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide Tim #${idx + 1}</label>
+                            </div>
                         </div>
-                        <div class="p-6 flex-grow flex flex-col gap-4">
+                        <div class="p-5 flex-grow flex flex-col gap-4">
                             <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
                                 <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
                                     <i class="fa-regular fa-user"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-800">${idea.nama}</p>
+                                    <p class="text-sm font-bold text-slate-800">${idea.nama}</p>
                                     <p class="text-xs text-slate-500">${idea.organisasi}</p>
                                 </div>
                             </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Solusi Utama</h4>
-                                <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100">${idea.solusi}</p>
+                            <div class="flex-grow">
+                                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Solusi Utama</h4>
+                                <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100 line-clamp-3">${idea.solusi}</p>
                             </div>
+                            <!-- Tombol Lihat Detail Full -->
+                            <button onclick="openIdeDetail(${idx})" class="w-full text-center text-sm font-medium text-primary hover:text-blue-800 hover:bg-blue-50 py-2 rounded-lg transition border border-transparent hover:border-blue-100">
+                                Baca Detail Lengkap <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1128,6 +1193,112 @@
             document.body.style.overflow = 'auto'; // Buka kunci scroll
             isGameActive = false;
             cancelAnimationFrame(animationFrameId); // Hentikan memori canvas
+        }
+
+        // =========================================================================
+        // SCRIPT HACKATHON: BACA FULL IDE & SISTEM VOTING
+        // =========================================================================
+        
+        // --- 1. Fungsi Buka Modal Detail Full ---
+        function openIdeDetail(idx) {
+            const idea = dataHackathon[idx];
+            document.getElementById('detail-title').innerHTML = `<i class="fa-solid fa-lightbulb text-yellow-400"></i> Ide Tim #${idx + 1}`;
+            document.getElementById('detail-author').innerText = `${idea.nama} (${idea.organisasi})`;
+            document.getElementById('detail-solusi').innerText = idea.solusi || 'Tidak ada deskripsi';
+            document.getElementById('detail-masalah').innerText = idea.masalah || 'Tidak ada deskripsi';
+            document.getElementById('detail-signifikan').innerText = idea.signifikan || 'Tidak ada deskripsi';
+            
+            document.getElementById('ide-modal').classList.remove('hidden');
+        }
+
+        function closeIdeDetail() {
+            document.getElementById('ide-modal').classList.add('hidden');
+        }
+
+        // --- 2. Fungsi Buka Modal Voting ---
+        function openVoteModal() {
+            // Cek berapa checkbox yang dicentang
+            const checkboxes = document.querySelectorAll('.vote-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("Pilih minimal 1 ide dengan mencentang kotak di pojok kiri atas Card Ide sebelum mengirim penilaian.");
+                return;
+            }
+            
+            document.getElementById('vote-count').innerText = checkboxes.length;
+            document.getElementById('vote-error').classList.add('hidden');
+            document.getElementById('vote-password').value = '';
+            document.getElementById('vote-name').value = '';
+            document.getElementById('vote-modal').classList.remove('hidden');
+        }
+
+        function closeVoteModal() {
+            document.getElementById('vote-modal').classList.add('hidden');
+        }
+
+        // --- 3. Fungsi Kirim Data Voting ke Google Apps Script ---
+        async function submitVote() {
+            const passwordInput = document.getElementById('vote-password').value;
+            const namaInput = document.getElementById('vote-name').value;
+            const errorMsg = document.getElementById('vote-error');
+            const btnSubmit = document.getElementById('btn-submit-vote');
+
+            if (!namaInput) {
+                errorMsg.innerText = "Nama penilai tidak boleh kosong.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (!passwordInput) {
+                errorMsg.innerText = "Password tidak boleh kosong.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // Kumpulkan ide yang dipilih
+            const checkboxes = document.querySelectorAll('.vote-checkbox:checked');
+            let selectedIdeasString =[];
+            checkboxes.forEach(cb => {
+                let idx = cb.value;
+                selectedIdeasString.push(`Ide #${parseInt(idx)+1} (${dataHackathon[idx].nama})`);
+            });
+
+            // Ubah tombol jadi loading
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
+            btnSubmit.disabled = true;
+
+            // Siapkan FormData
+            const formData = new FormData();
+            formData.append('action', 'vote'); // Action penting agar GAS tahu ini proses voting
+            formData.append('password', passwordInput);
+            formData.append('nama_penilai', namaInput);
+            formData.append('ide_terpilih', selectedIdeasString.join(", "));
+
+            // KITA PAKAI URL WEB APP (GAS) ANDA YANG AKTIF:
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwoyD7G1oR6YgY3yW2j7y40J5QG_l4-O4LqU5iSChJd4t-YjV65F34E8fQ9_sA3W-0HhQ/exec";
+
+            try {
+                const response = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.result === 'success') {
+                    // Sukses! Tutup modal & hilangkan centang
+                    alert("Berhasil! Penilaian Anda telah tersimpan di server.");
+                    closeVoteModal();
+                    checkboxes.forEach(cb => cb.checked = false);
+                } else {
+                    // Password salah
+                    errorMsg.innerText = result.message || "Gagal memverifikasi password.";
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorMsg.innerText = "Terjadi kesalahan sistem. Cek koneksi Anda.";
+                errorMsg.classList.remove('hidden');
+            }
+
+            // Kembalikan status tombol
+            btnSubmit.innerHTML = originalBtnText;
+            btnSubmit.disabled = false;
         }
 
     </script>
