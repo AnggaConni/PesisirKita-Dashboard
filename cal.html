@@ -3,364 +3,1527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Carbon Lab Calculator | PesisirKita</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Blue Carbon Lab | PesisirKita</title>
 
+    <!-- Google Fonts: Sora + DM Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        ocean: { 50: '#f0f9ff', 500: '#0ea5e9', 700: '#0369a1', 900: '#0c4a6e' },
-                        mangrove: { 50: '#ecfdf5', 500: '#10b981', 700: '#047857', 900: '#064e3b' }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Custom Scrollbar for aesthetic */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .tab-active { border-bottom: 3px solid #0ea5e9; color: #0ea5e9; font-weight: 600; }
-        .tab-inactive { color: #64748b; font-weight: 500; }
-        .tab-inactive:hover { color: #334155; }
-    </style>
+<style>
+:root {
+    --ocean-50:  #f0faff;
+    --ocean-100: #e0f4ff;
+    --ocean-400: #22c3f5;
+    --ocean-500: #06aed4;
+    --ocean-600: #0891b2;
+    --ocean-700: #0e7490;
+    --grove-400: #34d399;
+    --grove-500: #10b981;
+    --grove-600: #059669;
+    --grove-700: #047857;
+    --amber-400: #fbbf24;
+    --amber-500: #f59e0b;
+    --red-400:   #f87171;
+    --red-500:   #ef4444;
+    --gray-50:   #f8fafc;
+    --gray-100:  #f1f5f9;
+    --gray-200:  #e2e8f0;
+    --gray-300:  #cbd5e1;
+    --gray-500:  #64748b;
+    --gray-700:  #334155;
+    --gray-800:  #1e293b;
+    --gray-900:  #0f172a;
+    --white:     #ffffff;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.4);
+    --shadow-glow-ocean: 0 0 20px rgba(6, 174, 212, 0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Background mesh */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 40% at 10% 0%, rgba(6,174,212,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 90% 100%, rgba(16,185,129,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+main, nav { position: relative; z-index: 1; }
+
+h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; }
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ocean-500); }
+
+/* ==================== NAVBAR ==================== */
+.navbar {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--ocean-500), var(--grove-500));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+    box-shadow: 0 2px 8px rgba(6,174,212,0.35);
+}
+.nav-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; color: var(--gray-800); }
+.nav-title span { color: var(--ocean-600); }
+.nav-badge {
+    font-size: 12px; font-weight: 600;
+    background: linear-gradient(135deg, var(--ocean-50), #e0fff4);
+    color: var(--ocean-700);
+    border: 1px solid var(--ocean-400);
+    padding: 4px 12px;
+    border-radius: 100px;
+    display: flex; align-items: center; gap: 6px;
+}
+.nav-help-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--gray-500); font-size: 14px;
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all .2s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+}
+.nav-help-btn:hover { background: var(--ocean-50); color: var(--ocean-600); }
+
+/* ==================== MODAL ==================== */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity .3s;
+}
+.modal-overlay.show { opacity: 1; }
+.modal-box {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    max-width: 680px; width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+    transform: translateY(20px);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    max-height: 92vh;
+    display: flex; flex-direction: column;
+}
+.modal-overlay.show .modal-box { transform: translateY(0); }
+
+.modal-header {
+    background: linear-gradient(135deg, var(--ocean-600) 0%, var(--grove-600) 100%);
+    padding: 28px 32px 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+.modal-header::after {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+}
+.modal-header::before {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -50px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+}
+.modal-header-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+}
+.modal-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; position: relative; z-index: 1; }
+.modal-header p { font-size: 14px; opacity: 0.85; position: relative; z-index: 1; font-weight: 400; }
+
+.modal-body { padding: 28px 32px; overflow-y: auto; flex: 1; }
+
+.modal-steps { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
+.modal-step {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    transition: all .2s;
+}
+.modal-step:hover { border-color: var(--ocean-400); background: var(--ocean-50); }
+.step-num {
+    min-width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700; font-size: 15px;
+    color: white;
+    flex-shrink: 0;
+}
+.step-num.blue { background: linear-gradient(135deg, var(--ocean-500), var(--ocean-700)); }
+.step-num.green { background: linear-gradient(135deg, var(--grove-500), var(--grove-700)); }
+.step-num.amber { background: linear-gradient(135deg, var(--amber-400), var(--amber-500)); }
+.step-content h4 { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; font-family: 'Sora', sans-serif; }
+.step-content p { font-size: 13px; color: var(--gray-500); line-height: 1.55; }
+
+.modal-formula-box {
+    background: linear-gradient(135deg, #f0faff, #ecfdf5);
+    border: 1px solid var(--ocean-400);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+.modal-formula-box h4 { font-size: 13px; font-weight: 700; color: var(--ocean-700); margin-bottom: 10px; font-family: 'Sora', sans-serif; }
+.formula-line { font-family: 'Courier New', monospace; font-size: 12.5px; color: var(--gray-700); padding: 4px 0; border-bottom: 1px dashed var(--gray-200); }
+.formula-line:last-child { border-bottom: none; }
+
+.modal-footer { padding: 20px 32px; border-top: 1px solid var(--gray-100); display: flex; gap: 10px; justify-content: flex-end; }
+.btn-primary {
+    background: linear-gradient(135deg, var(--ocean-500), var(--ocean-700));
+    color: white; border: none; cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700; font-size: 14px;
+    padding: 11px 24px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(6,174,212,0.35);
+    transition: all .2s;
+    display: flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(6,174,212,0.45); }
+.btn-secondary {
+    background: var(--gray-100); color: var(--gray-600);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 14px;
+    padding: 11px 20px; border-radius: 10px; transition: all .2s;
+}
+.btn-secondary:hover { background: var(--gray-200); }
+
+/* ==================== MAIN LAYOUT ==================== */
+.main-wrap { max-width: 1280px; margin: 0 auto; padding: 32px 24px; width: 100%; flex: 1; }
+
+.page-header { margin-bottom: 32px; }
+.page-header-inner {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+}
+.page-header h1 { font-size: 28px; font-weight: 800; color: var(--gray-900); line-height: 1.2; }
+.page-header h1 span { color: var(--ocean-600); }
+.page-header p { font-size: 14.5px; color: var(--gray-500); margin-top: 6px; max-width: 540px; line-height: 1.6; }
+.header-badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.hbadge {
+    font-size: 12px; font-weight: 600; padding: 5px 12px;
+    border-radius: 100px; display: flex; align-items: center; gap: 5px;
+}
+.hbadge.blue { background: var(--ocean-50); color: var(--ocean-700); border: 1px solid #bae6fd; }
+.hbadge.green { background: #ecfdf5; color: var(--grove-700); border: 1px solid #a7f3d0; }
+.hbadge.amber { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+/* ==================== GRID ==================== */
+.grid-layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+
+/* ==================== CARD ==================== */
+.card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+.card-body { padding: 28px; }
+
+/* ==================== TABS ==================== */
+.tabs { display: flex; border-bottom: 1px solid var(--gray-200); }
+.tab-btn {
+    flex: 1; padding: 16px 12px;
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500;
+    color: var(--gray-500);
+    border-bottom: 3px solid transparent;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: all .2s;
+    margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+.tab-btn.active { color: var(--ocean-600); border-bottom-color: var(--ocean-500); font-weight: 700; }
+.tab-btn.active.green-tab { color: var(--grove-600); border-bottom-color: var(--grove-500); }
+.tab-btn.active.amber-tab { color: var(--amber-500); border-bottom-color: var(--amber-400); }
+.tab-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gray-300); flex-shrink: 0;
+}
+.tab-dot.filled-blue { background: var(--ocean-500); }
+.tab-dot.filled-green { background: var(--grove-500); }
+.tab-dot.filled-amber { background: var(--amber-500); }
+
+.tab-panel { display: none; padding: 24px 28px 28px; }
+.tab-panel.active { display: block; }
+
+/* ==================== INFO BANNER ==================== */
+.info-banner {
+    border-left: 4px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    display: flex; gap: 12px; align-items: flex-start;
+}
+.info-banner.blue { background: #eff9ff; border-color: var(--ocean-500); }
+.info-banner.green { background: #f0fdf7; border-color: var(--grove-500); }
+.info-banner.amber { background: #fffbeb; border-color: var(--amber-400); }
+.info-banner i { margin-top: 1px; flex-shrink: 0; }
+.info-banner .banner-title { font-size: 13px; font-weight: 700; font-family: 'Sora', sans-serif; margin-bottom: 3px; }
+.info-banner .banner-text { font-size: 13px; line-height: 1.5; }
+.info-banner.blue .banner-title { color: var(--ocean-700); }
+.info-banner.blue .banner-text { color: #0369a1; }
+.info-banner.blue i { color: var(--ocean-600); }
+.info-banner.green .banner-title { color: var(--grove-700); }
+.info-banner.green .banner-text { color: #065f46; }
+.info-banner.green i { color: var(--grove-600); }
+.info-banner.amber .banner-title { color: #92400e; }
+.info-banner.amber .banner-text { color: #78350f; }
+.info-banner.amber i { color: var(--amber-500); }
+
+/* ==================== FORM ELEMENTS ==================== */
+.form-grid { display: grid; gap: 18px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-label {
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-700); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'Sora', sans-serif;
+}
+.form-hint { font-size: 11.5px; color: var(--gray-500); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+
+.input-wrap { position: relative; }
+.input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 14px; }
+.form-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: all .2s;
+    outline: none;
+}
+.form-input:focus { border-color: var(--ocean-500); box-shadow: 0 0 0 3px rgba(6,174,212,0.12); }
+.form-input.green:focus { border-color: var(--grove-500); box-shadow: 0 0 0 3px rgba(16,185,129,0.12); }
+.form-input.amber:focus { border-color: var(--amber-400); box-shadow: 0 0 0 3px rgba(251,191,36,0.14); }
+select.form-input { cursor: pointer; padding-left: 12px; }
+
+.tooltip-btn {
+    background: none; border: none; cursor: help;
+    color: var(--gray-400); font-size: 13px;
+    transition: color .15s;
+}
+.tooltip-btn:hover { color: var(--ocean-500); }
+
+/* Calc button */
+.calc-btn {
+    width: 100%; border: none; cursor: pointer;
+    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14.5px;
+    padding: 13px 20px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    margin-top: 8px; transition: all .25s;
+}
+.calc-btn.blue {
+    background: linear-gradient(135deg, var(--ocean-500), var(--ocean-700));
+    color: white;
+    box-shadow: 0 4px 14px rgba(6,174,212,0.35);
+}
+.calc-btn.blue:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(6,174,212,0.45); }
+.calc-btn.green {
+    background: linear-gradient(135deg, var(--grove-400), var(--grove-700));
+    color: white;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.35);
+}
+.calc-btn.green:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,185,129,0.45); }
+.calc-btn.amber {
+    background: linear-gradient(135deg, var(--amber-400), var(--amber-500));
+    color: white;
+    box-shadow: 0 4px 14px rgba(245,158,11,0.35);
+}
+.calc-btn.amber:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,158,11,0.45); }
+
+/* Formula box */
+.formula-display {
+    background: var(--gray-50);
+    border: 1px dashed var(--gray-300);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    color: var(--gray-600);
+    line-height: 1.8;
+    text-align: center;
+}
+
+/* ==================== RIGHT COLUMN ==================== */
+/* Status Card */
+.status-card { padding: 24px; }
+.status-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.status-header h3 { font-size: 16px; font-weight: 700; color: var(--gray-800); font-family: 'Sora', sans-serif; }
+
+.metric-row { 
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+.metric-row.emission { background: #fff5f5; border: 1px solid #fee2e2; }
+.metric-row.absorption { background: #f0fdf4; border: 1px solid #d1fae5; }
+.metric-row.stock { background: #fffbeb; border: 1px solid #fde68a; }
+.metric-label { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--gray-600); }
+.metric-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.metric-value { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; line-height: 1; }
+.metric-value .unit { font-size: 11px; font-weight: 500; color: var(--gray-500); margin-left: 2px; }
+.metric-row.emission .metric-value { color: var(--red-500); }
+.metric-row.absorption .metric-value { color: var(--grove-600); }
+.metric-row.stock .metric-value { color: var(--amber-500); }
+
+/* Progress */
+.progress-section { margin: 18px 0; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--gray-500); margin-bottom: 6px; font-weight: 500; }
+.progress-track { background: var(--gray-200); border-radius: 100px; height: 10px; overflow: hidden; }
+.progress-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 1.2s cubic-bezier(.34,1.1,.64,1);
+    background: linear-gradient(90deg, var(--ocean-400), var(--grove-500));
+    width: 0%;
+}
+.status-pill {
+    text-align: center;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Sora', sans-serif;
+    margin-top: 10px;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    line-height: 1.5;
+    transition: all .4s;
+}
+.status-pill.success { background: #ecfdf5; color: var(--grove-700); border: 1px solid #a7f3d0; }
+.status-pill.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.status-pill.danger  { background: #fff5f5; color: var(--red-500); border: 1px solid #fee2e2; }
+
+/* Chart */
+.chart-card { padding: 22px; }
+.chart-card h3 { font-size: 13.5px; font-weight: 700; color: var(--gray-700); font-family: 'Sora', sans-serif; margin-bottom: 4px; }
+.chart-card p { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
+.chart-wrap { position: relative; height: 200px; }
+
+/* Insight Box */
+.insight-box {
+    padding: 22px;
+    border-top: 1px solid var(--gray-100);
+}
+.insight-box h3 { font-size: 13.5px; font-weight: 700; color: var(--gray-700); font-family: 'Sora', sans-serif; margin-bottom: 14px; }
+.insight-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background .15s;
+    margin-bottom: 4px;
+}
+.insight-item:hover { background: var(--gray-50); }
+.insight-icon { font-size: 16px; margin-top: 1px; }
+.insight-text { font-size: 12.5px; color: var(--gray-600); line-height: 1.5; }
+.insight-text strong { color: var(--gray-800); }
+
+/* Action buttons */
+.action-row { display: flex; flex-direction: column; gap: 8px; padding: 0 22px 22px; }
+.action-btn {
+    width: 100%; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13.5px;
+    padding: 12px 16px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
+}
+.action-btn.outline {
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    color: var(--gray-700);
+}
+.action-btn.outline:hover { border-color: var(--ocean-400); color: var(--ocean-600); background: var(--ocean-50); }
+.action-btn.outline-green {
+    background: var(--white); border: 1.5px solid #a7f3d0;
+    color: var(--grove-700);
+}
+.action-btn.outline-green:hover { background: #f0fdf4; }
+
+/* ==================== SUMMARY SECTION ==================== */
+.summary-section {
+    margin-top: 24px;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: none;
+}
+.summary-section.visible { display: block; }
+.summary-header {
+    background: linear-gradient(135deg, var(--ocean-600), var(--grove-600));
+    padding: 22px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.summary-header h2 { font-size: 18px; font-weight: 800; color: white; font-family: 'Sora', sans-serif; }
+.summary-header p { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 3px; }
+.summary-body { padding: 28px; }
+.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.summary-metric {
+    text-align: center; padding: 20px 14px;
+    background: var(--gray-50);
+    border-radius: 14px; border: 1px solid var(--gray-200);
+}
+.summary-metric .sm-value { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; }
+.summary-metric .sm-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; font-weight: 500; line-height: 1.4; }
+.summary-metric.red .sm-value { color: var(--red-500); }
+.summary-metric.green .sm-value { color: var(--grove-600); }
+.summary-metric.amber .sm-value { color: var(--amber-500); }
+.summary-metric.ocean .sm-value { color: var(--ocean-600); }
+.summary-verdict {
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex; gap: 16px; align-items: flex-start;
+    margin-bottom: 0;
+}
+.verdict-icon { font-size: 28px; flex-shrink: 0; }
+.verdict-title { font-size: 15px; font-weight: 700; font-family: 'Sora', sans-serif; margin-bottom: 5px; }
+.verdict-text { font-size: 13.5px; line-height: 1.6; }
+
+/* ==================== TOOLTIP POPUP ==================== */
+.tt-popup {
+    position: fixed;
+    background: var(--gray-900);
+    color: white;
+    font-size: 12.5px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    max-width: 240px;
+    line-height: 1.5;
+    z-index: 500;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    pointer-events: none;
+}
+.tt-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 50%; transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--gray-900);
+}
+
+/* ==================== COUNTER ANIMATION ==================== */
+@keyframes countUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.counting { animation: countUp .35s ease forwards; }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+    .form-grid-2 { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2,1fr); }
+    .tabs { flex-direction: column; }
+    .page-header h1 { font-size: 22px; }
+    .modal-body, .modal-footer, .modal-header { padding: 20px 20px; }
+}
+
+/* ==================== PRINT ==================== */
+@media print {
+    .navbar, .tab-btn, .calc-btn, .action-row, .modal-overlay { display: none !important; }
+    .summary-section { display: block !important; }
+    body { background: white; }
+}
+
+/* Divider */
+.divider { height: 1px; background: var(--gray-100); margin: 18px 0; }
+
+/* Fade in page */
+@keyframes fadeInUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.main-wrap { animation: fadeInUp .5s ease; }
+</style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+<body>
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3">
-                    <a href="index.html" class="text-gray-400 hover:text-ocean-500 transition">
-                        <i class="fa-solid fa-arrow-left text-lg"></i>
-                    </a>
-                    <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-flask"></i>
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <div class="nav-logo"><i class="fa-solid fa-flask"></i></div>
+        <span class="nav-title">BlueCarbon <span>Lab</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+        <button class="nav-help-btn" onclick="openModal()">
+            <i class="fa-solid fa-circle-question"></i> Panduan
+        </button>
+        <div class="nav-badge">
+            <i class="fa-solid fa-graduation-cap"></i> Mode Edukasi
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== TOOLTIP POPUP ==================== -->
+<div class="tt-popup" id="tt-popup"></div>
+
+<!-- ==================== MODAL ==================== -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleModalClick(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-header-icon"><i class="fa-solid fa-flask"></i></div>
+            <h2>Selamat Datang di Blue Carbon Lab</h2>
+            <p>Kalkulator edukasi untuk guru & komunitas pesisir — simulasikan jejak karbon lab/sekolah vs. potensi serapan ekosistem mangrove.</p>
+        </div>
+        <div class="modal-body">
+            <div class="modal-steps">
+                <div class="modal-step">
+                    <div class="step-num blue">1</div>
+                    <div class="step-content">
+                        <h4><i class="fa-solid fa-industry" style="color:#0891b2;margin-right:6px;"></i>Hitung Emisi Lab / Sekolah</h4>
+                        <p>Masukkan data konsumsi energi bulanan: listrik (kWh), kertas (rim), dan limbah padat (kg). Sistem akan menghitung total <strong>Carbon Footprint</strong> menggunakan faktor emisi yang relevan untuk Indonesia.</p>
                     </div>
-                    <span class="font-bold text-xl text-gray-800">BlueCarbon <span class="text-ocean-600">Lab</span></span>
                 </div>
-                <div class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    <i class="fa-solid fa-graduation-cap mr-1"></i> Mode Edukasi Guru
+                <div class="modal-step">
+                    <div class="step-num green">2</div>
+                    <div class="step-content">
+                        <h4><i class="fa-solid fa-tree" style="color:#059669;margin-right:6px;"></i>Estimasi Serapan Blue Carbon</h4>
+                        <p>Gunakan data lapangan dari plot pengukuran siswa: spesies mangrove dominan, rata-rata DBH (Diameter at Breast Height), dan jumlah pohon. Sistem menerapkan rumus <strong>allometrik Chave et al.</strong> untuk estimasi biomassa.</p>
+                    </div>
+                </div>
+                <div class="modal-step">
+                    <div class="step-num amber">3</div>
+                    <div class="step-content">
+                        <h4><i class="fa-solid fa-layer-group" style="color:#d97706;margin-right:6px;"></i>Hitung Stok Karbon (Carbon Stock)</h4>
+                        <p>Masukkan data karbon tanah (SOC) dan biomassa bawah permukaan. Dapatkan estimasi total <strong>Carbon Stock</strong> per hektar dari ekosistem mangrove yang diteliti — komponen kunci dalam perdagangan karbon.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+            <div class="modal-formula-box">
+                <h4><i class="fa-solid fa-square-root-variable" style="margin-right:6px;"></i> Rumus Utama yang Digunakan</h4>
+                <div class="formula-line">AGB (kg/pohon) = 0.251 × ρ × DBH<sup>2.46</sup></div>
+                <div class="formula-line">Karbon Biomassa = AGB × 0.47 (fraksi karbon IPCC)</div>
+                <div class="formula-line">Serapan CO₂e = Karbon × 3.67 (rasio massa molekul)</div>
+                <div class="formula-line">Carbon Stock = Biomassa Atas + Biomassa Bawah + SOC (t C/ha)</div>
+                <div class="formula-line">Faktor Emisi Listrik: 0.85 kg CO₂e/kWh (RUPTL PLN)</div>
+            </div>
+
+            <p style="font-size:12.5px;color:var(--gray-500);text-align:center;">
+                <i class="fa-solid fa-circle-info" style="margin-right:4px;"></i>
+                Data yang dihasilkan bersifat <strong>estimasi edukatif</strong>. Untuk keperluan resmi, konsultasikan dengan ahli ekologi hutan.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Lewati</button>
+            <button class="btn-primary" onclick="closeModal()">
+                <i class="fa-solid fa-rocket"></i> Mulai Kalkulasi
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MAIN ==================== -->
+<main class="main-wrap">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div>
+                <h1>Simulator <span>Net-Zero</span> Laboratorium</h1>
+                <p>Bandingkan jejak karbon fasilitas sekolah dengan potensi serapan & stok karbon ekosistem mangrove yang diteliti siswa.</p>
+                <div class="header-badge-group">
+                    <span class="hbadge blue"><i class="fa-solid fa-bolt"></i> Carbon Footprint</span>
+                    <span class="hbadge green"><i class="fa-solid fa-tree"></i> Blue Carbon Sequestration</span>
+                    <span class="hbadge amber"><i class="fa-solid fa-layer-group"></i> Carbon Stock</span>
+                </div>
+            </div>
+            <button onclick="openModal()" style="background:var(--ocean-50);border:1.5px solid #bae6fd;color:var(--ocean-700);border-radius:12px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;white-space:nowrap;"
+                onmouseover="this.style.background='var(--ocean-100)'"
+                onmouseout="this.style.background='var(--ocean-50)'">
+                <i class="fa-solid fa-circle-question"></i> Panduan Penggunaan
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid-layout">
         
-        <!-- Header Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Simulator Net-Zero Laboratorium</h1>
-            <p class="text-gray-600">Bandingkan jejak emisi karbon fasilitas sekolah dengan potensi serapan karbon (Blue Carbon) dari plot mangrove yang diteliti oleh siswa.</p>
-        </div>
-
-        <!-- Dashboard Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Left Column: Inputs & Tools -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                
-                <!-- Tabs -->
-                <div class="flex border-b border-gray-200">
-                    <button onclick="switchTab('emisi')" id="tab-emisi" class="flex-1 py-4 text-center tab-active transition">
-                        <i class="fa-solid fa-industry mr-2"></i> 1. Emisi Lab/Sekolah
-                    </button>
-                    <button onclick="switchTab('mangrove')" id="tab-mangrove" class="flex-1 py-4 text-center tab-inactive transition">
-                        <i class="fa-solid fa-tree mr-2"></i> 2. Data Plot Mangrove
-                    </button>
-                </div>
-
-                <!-- Tab Content: Emisi -->
-                <div id="content-emisi" class="p-6 md:p-8">
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
-                        <h4 class="font-semibold text-blue-800 text-sm"><i class="fa-solid fa-circle-info mr-1"></i> Modul Pembelajaran</h4>
-                        <p class="text-sm text-blue-700 mt-1">Masukkan data penggunaan energi di laboratorium atau sekolah dalam sebulan untuk menghitung *Carbon Footprint* (Jejak Karbon).</p>
-                    </div>
-
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Penggunaan Listrik (kWh / bulan)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fa-solid fa-bolt text-yellow-500"></i>
-                                </div>
-                                <input type="number" id="input-listrik" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 500">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~0.85 kg CO2e / kWh</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Penggunaan Kertas (Rim / bulan)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fa-solid fa-file-lines text-gray-400"></i>
-                                </div>
-                                <input type="number" id="input-kertas" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 10">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~2.5 kg CO2e / rim</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Limbah Plastik/Organik Lab (Kg / bulan)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fa-solid fa-trash-can text-red-400"></i>
-                                </div>
-                                <input type="number" id="input-sampah" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 50">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~1.2 kg CO2e / kg sampah</p>
-                        </div>
-
-                        <button onclick="hitungEmisi()" class="w-full bg-ocean-600 hover:bg-ocean-700 text-white font-bold py-3 rounded-xl transition shadow-md mt-4">
-                            Kalkulasi Emisi Karbon
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tab Content: Mangrove (Hidden by default) -->
-                <div id="content-mangrove" class="p-6 md:p-8 hidden">
-                    <div class="bg-green-50 border-l-4 border-mangrove-500 p-4 rounded mb-6 flex items-start gap-3">
-                        <i class="fa-solid fa-book-open text-mangrove-600 mt-1"></i>
-                        <div>
-                            <h4 class="font-semibold text-mangrove-800 text-sm">Praktikum Allometrik</h4>
-                            <p class="text-sm text-mangrove-700 mt-1">Gunakan rumus allometrik untuk mengestimasi Biomassa Atas Permukaan (Above Ground Biomass). Masukkan rata-rata DBH (Diameter at Breast Height) dari plot sampel siswa.</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Spesies Dominan di Plot</label>
-                            <select id="input-spesies" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500 focus:border-mangrove-500 bg-white">
-                                <option value="0.7">Rhizophora spp. (Kerapatan kayu ~0.7 g/cm³)</option>
-                                <option value="0.6">Avicennia spp. (Kerapatan kayu ~0.6 g/cm³)</option>
-                                <option value="0.5">Sonneratia spp. (Kerapatan kayu ~0.5 g/cm³)</option>
-                            </select>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Rata-rata DBH (cm)</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fa-solid fa-ruler text-gray-400"></i>
-                                    </div>
-                                    <input type="number" id="input-dbh" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500" placeholder="Contoh: 15">
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Diameter setinggi dada (1.3m)</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Pohon Ditanam/Plot</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fa-solid fa-seedling text-mangrove-500"></i>
-                                    </div>
-                                    <input type="number" id="input-jumlah" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500" placeholder="Contoh: 100">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rumus Visual -->
-                        <div class="bg-gray-100 p-4 rounded-lg text-center text-sm font-mono text-gray-600 border border-gray-200">
-                            Estimasi Biomassa (B) = 0.251 × ρ × (DBH)<sup class="text-[10px]">2.46</sup> <br>
-                            Serapan CO2 = B × 0.47 (Fraksi Karbon) × 3.67
-                        </div>
-
-                        <button onclick="hitungSerapan()" class="w-full bg-mangrove-600 hover:bg-mangrove-700 text-white font-bold py-3 rounded-xl transition shadow-md mt-4">
-                            Kalkulasi Serapan Blue Carbon
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Right Column: Results & Dashboard -->
-            <div class="lg:col-span-1 space-y-6">
-                <!-- Score Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Status Net-Zero</h3>
-                    
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="text-sm font-medium text-gray-500">Total Emisi (Bulanan)</span>
-                        <span class="text-xl font-bold text-red-500" id="res-emisi">0 <span class="text-sm font-normal">kg CO₂e</span></span>
-                    </div>
-                    
-                    <div class="flex justify-between items-end mb-4">
-                        <span class="text-sm font-medium text-gray-500">Potensi Serapan Plot</span>
-                        <span class="text-xl font-bold text-mangrove-600" id="res-serapan">0 <span class="text-sm font-normal">kg CO₂e</span></span>
-                    </div>
-
-                    <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
-                        <div id="progress-bar" class="bg-ocean-500 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                    <p id="status-text" class="text-xs text-center text-gray-500 font-medium">Silakan lakukan kalkulasi di form.</p>
-                </div>
-
-                <!-- Chart Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="text-sm font-bold text-gray-800 mb-4 text-center">Perbandingan Emisi vs Serapan</h3>
-                    <div class="relative h-48 w-full">
-                        <canvas id="carbonChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Print Button -->
-                <button onclick="window.print()" class="w-full bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 rounded-xl transition flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-print"></i> Cetak Laporan Praktikum
+        <!-- ===== LEFT: Input Calculator ===== -->
+        <div class="card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-emisi" onclick="switchTab('emisi')">
+                    <i class="fa-solid fa-industry"></i>
+                    <span id="dot-emisi" class="tab-dot"></span>
+                    <span>Emisi Lab/Sekolah</span>
+                </button>
+                <button class="tab-btn" id="tab-mangrove" onclick="switchTab('mangrove')">
+                    <i class="fa-solid fa-tree"></i>
+                    <span id="dot-mangrove" class="tab-dot"></span>
+                    <span>Plot Mangrove</span>
+                </button>
+                <button class="tab-btn" id="tab-stock" onclick="switchTab('stock')">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span id="dot-stock" class="tab-dot"></span>
+                    <span>Karbon Stok</span>
                 </button>
             </div>
 
+            <!-- ===== TAB 1: EMISI ===== -->
+            <div class="tab-panel active" id="panel-emisi">
+                <div class="info-banner blue">
+                    <i class="fa-solid fa-circle-info fa-sm"></i>
+                    <div>
+                        <div class="banner-title">Modul 1 — Jejak Karbon (Carbon Footprint)</div>
+                        <div class="banner-text">Masukkan data penggunaan sumber daya laboratorium atau sekolah dalam <strong>satu bulan</strong>. Hasil kalkulasi menunjukkan total emisi dalam satuan kg CO₂ ekuivalen.</div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <!-- Listrik -->
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-bolt" style="color:var(--amber-400)"></i>
+                            Penggunaan Listrik (kWh/bulan)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Energi listrik yang dikonsumsi dalam satu bulan. Lihat tagihan PLN atau meteran listrik. Faktor emisi 0.85 kg CO₂e/kWh mengacu RUPTL PLN 2023.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:var(--amber-400)"><i class="fa-solid fa-bolt"></i></span>
+                            <input type="number" id="in-listrik" class="form-input" placeholder="Contoh: 500" min="0">
+                        </div>
+                        <div class="form-hint"><i class="fa-solid fa-tags" style="font-size:10px;"></i> Faktor emisi: 0.85 kg CO₂e / kWh · Sumber: RUPTL PLN</div>
+                    </div>
+
+                    <!-- Kertas -->
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-file-lines" style="color:var(--gray-400)"></i>
+                            Penggunaan Kertas (Rim/bulan)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'1 rim = 500 lembar kertas A4. Produksi kertas menghasilkan emisi dari proses pulping, bleaching, dan transportasi.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:var(--gray-400)"><i class="fa-solid fa-file-lines"></i></span>
+                            <input type="number" id="in-kertas" class="form-input" placeholder="Contoh: 10" min="0">
+                        </div>
+                        <div class="form-hint"><i class="fa-solid fa-tags" style="font-size:10px;"></i> Faktor emisi: 2.5 kg CO₂e / rim · Sumber: IPCC 2006</div>
+                    </div>
+
+                    <!-- Sampah -->
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-trash-can" style="color:var(--red-400)"></i>
+                            Limbah Plastik/Organik Lab (Kg/bulan)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Limbah padat organik dan plastik dari kegiatan lab. Dekomposisi limbah menghasilkan metana (CH₄) yang dikonversi ke CO₂e.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:var(--red-400)"><i class="fa-solid fa-trash-can"></i></span>
+                            <input type="number" id="in-sampah" class="form-input" placeholder="Contoh: 50" min="0">
+                        </div>
+                        <div class="form-hint"><i class="fa-solid fa-tags" style="font-size:10px;"></i> Faktor emisi: 1.2 kg CO₂e / kg sampah · Sumber: IPCC 2006</div>
+                    </div>
+
+                    <!-- Transportasi -->
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-car" style="color:#6366f1"></i>
+                            Transportasi Guru/Staff (km/bulan)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Estimasi total jarak tempuh kendaraan bermotor guru & staf per bulan. Gunakan rerata kendaraan campuran (motor+mobil). Faktor emisi rerata ~0.11 kg CO₂e/km.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:#6366f1"><i class="fa-solid fa-car"></i></span>
+                            <input type="number" id="in-transport" class="form-input" placeholder="Contoh: 800" min="0">
+                        </div>
+                        <div class="form-hint"><i class="fa-solid fa-tags" style="font-size:10px;"></i> Faktor emisi: 0.11 kg CO₂e / km · Sumber: KLHK 2021</div>
+                    </div>
+
+                    <!-- Air -->
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-droplet" style="color:#38bdf8"></i>
+                            Konsumsi Air Bersih (m³/bulan)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Air bersih dari PAM/PDAM memerlukan energi untuk pompa dan pengolahan. Faktor emisi mencakup emisi tidak langsung dari proses treatment & distribusi.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:#38bdf8"><i class="fa-solid fa-droplet"></i></span>
+                            <input type="number" id="in-air" class="form-input" placeholder="Contoh: 30" min="0">
+                        </div>
+                        <div class="form-hint"><i class="fa-solid fa-tags" style="font-size:10px;"></i> Faktor emisi: 0.344 kg CO₂e / m³ · Sumber: Water UK 2020</div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Breakdown preview -->
+                <div id="emisi-breakdown" style="display:none;margin-bottom:16px;">
+                    <p style="font-size:12.5px;font-weight:700;color:var(--gray-700);margin-bottom:10px;font-family:'Sora',sans-serif;">Rincian Sumber Emisi:</p>
+                    <div id="emisi-bars"></div>
+                </div>
+
+                <button class="calc-btn blue" onclick="hitungEmisi()">
+                    <i class="fa-solid fa-calculator"></i> Kalkulasi Emisi Karbon
+                </button>
+            </div>
+
+            <!-- ===== TAB 2: MANGROVE ===== -->
+            <div class="tab-panel" id="panel-mangrove">
+                <div class="info-banner green">
+                    <i class="fa-solid fa-book-open fa-sm"></i>
+                    <div>
+                        <div class="banner-title">Modul 2 — Estimasi Serapan Blue Carbon</div>
+                        <div class="banner-text">Gunakan data lapangan dari plot pengukuran siswa. Rumus allometrik Chave et al. mengkonversi DBH menjadi estimasi biomassa dan serapan CO₂ per pohon.</div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-leaf" style="color:var(--grove-500)"></i>
+                            Spesies Dominan di Plot
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Kerapatan kayu (ρ/wood density) berbeda antar spesies dan memengaruhi estimasi biomassa. Pilih spesies yang paling banyak ditemukan di plot pengukuran.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <select id="in-spesies" class="form-input green" style="padding-left:12px;">
+                            <option value="0.70">Rhizophora spp. — Kerapatan kayu 0.70 g/cm³</option>
+                            <option value="0.60">Avicennia spp. — Kerapatan kayu 0.60 g/cm³</option>
+                            <option value="0.50">Sonneratia spp. — Kerapatan kayu 0.50 g/cm³</option>
+                            <option value="0.55">Bruguiera spp. — Kerapatan kayu 0.55 g/cm³</option>
+                            <option value="0.65">Ceriops spp. — Kerapatan kayu 0.65 g/cm³</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-ruler" style="color:var(--gray-400)"></i>
+                                Rata-rata DBH (cm)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Diameter at Breast Height — diameter batang diukur setinggi 1.3 m dari permukaan tanah. Gunakan rata-rata dari semua pohon yang diukur di plot.')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:var(--gray-400)"><i class="fa-solid fa-ruler"></i></span>
+                                <input type="number" id="in-dbh" class="form-input green" placeholder="Contoh: 15" min="0.1">
+                            </div>
+                            <div class="form-hint">Diukur setinggi 1.3 m dari tanah</div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-seedling" style="color:var(--grove-500)"></i>
+                                Jumlah Pohon (batang)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Total pohon yang dihitung dalam plot pengukuran. Kerapatan pohon mangrove bervariasi: 1.000–4.000 batang/ha untuk mangrove alami, 2.500–5.000 batang/ha untuk rehabilitasi.')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:var(--grove-500)"><i class="fa-solid fa-seedling"></i></span>
+                                <input type="number" id="in-jumlah" class="form-input green" placeholder="Contoh: 100" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-expand" style="color:var(--grove-500)"></i>
+                            Luas Plot Pengukuran (m²)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Luas area plot tempat pohon diukur. Standar plot mangrove umumnya 10×10 m (100 m²) atau 20×20 m (400 m²). Digunakan untuk menghitung kerapatan per hektar.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:var(--grove-500)"><i class="fa-solid fa-expand"></i></span>
+                            <input type="number" id="in-luas" class="form-input green" placeholder="Contoh: 100 (untuk plot 10×10 m)" min="1">
+                        </div>
+                        <div class="form-hint">Plot standar SNI: 10×10 m = 100 m²</div>
+                    </div>
+                </div>
+
+                <div class="formula-display" style="margin:16px 0;">
+                    AGB (kg/pohon) = 0.251 × ρ × DBH<sup>2.46</sup><br>
+                    CO₂e/pohon = AGB × 0.47 × 3.67<br>
+                    Kerapatan = (N/A) × 10.000 batang/ha
+                </div>
+
+                <button class="calc-btn green" onclick="hitungSerapan()">
+                    <i class="fa-solid fa-tree"></i> Kalkulasi Serapan Blue Carbon
+                </button>
+            </div>
+
+            <!-- ===== TAB 3: CARBON STOCK ===== -->
+            <div class="tab-panel" id="panel-stock">
+                <div class="info-banner amber">
+                    <i class="fa-solid fa-layer-group fa-sm"></i>
+                    <div>
+                        <div class="banner-title">Modul 3 — Stok Karbon Total (Carbon Stock)</div>
+                        <div class="banner-text">Carbon Stock mengukur <strong>total karbon tersimpan</strong> dalam ekosistem — meliputi biomassa atas & bawah permukaan serta karbon organik tanah (SOC). Nilai ini krusial untuk program REDD+ dan perdagangan karbon sukarela.</div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-grid-2">
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-tree" style="color:var(--grove-500)"></i>
+                                AGB hasil Modul 2 (t C/ha)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Above Ground Biomass — otomatis terisi dari hasil kalkulasi Modul 2. Jika belum menghitung, isi manual dalam satuan ton Carbon per hektar.')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:var(--grove-500)"><i class="fa-solid fa-tree"></i></span>
+                                <input type="number" id="in-agb-stock" class="form-input amber" placeholder="Dari Modul 2" min="0" step="0.01">
+                            </div>
+                            <div class="form-hint" id="agb-autofill-hint" style="color:var(--grove-600);display:none;"><i class="fa-solid fa-check-circle"></i> Otomatis dari Modul 2</div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-arrows-down-to-line" style="color:#a16207"></i>
+                                Biomassa Bawah Permukaan (t C/ha)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Below Ground Biomass (BGB) mencakup akar. Rumus IPCC: BGB = AGB × 0.26 (rasio root-to-shoot). Jika tidak tersedia, gunakan nilai default 26% dari AGB.')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:#a16207"><i class="fa-solid fa-arrows-down-to-line"></i></span>
+                                <input type="number" id="in-bgb" class="form-input amber" placeholder="≈ 26% dari AGB" min="0" step="0.01">
+                            </div>
+                            <div class="form-hint">BGB = AGB × 0.26 (IPCC, 2013)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-seedling" style="color:#a16207"></i>
+                                Serasah / Nekromasa (t C/ha)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Dead organic matter — serasah daun, ranting mati, kayu lapuk. Untuk mangrove tropis rerata berkisar 2–8 t C/ha. Dapat diukur dengan perangkap serasah.')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:#a16207"><i class="fa-solid fa-seedling"></i></span>
+                                <input type="number" id="in-serasah" class="form-input amber" placeholder="Contoh: 3" min="0" step="0.01">
+                            </div>
+                            <div class="form-hint">Rerata mangrove: 2–8 t C/ha</div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">
+                                <i class="fa-solid fa-mountain" style="color:#92400e"></i>
+                                Karbon Organik Tanah — SOC (t C/ha)
+                                <button class="tooltip-btn" onmouseenter="showTip(this,'Soil Organic Carbon (SOC) — komponen terbesar Blue Carbon. Mangrove menyimpan hingga 1.000 t C/ha di tanah anoksik. Diukur dengan analisis tanah laboratorium (metode Walkley-Black).')" onmouseleave="hideTip()">
+                                    <i class="fa-solid fa-circle-question"></i>
+                                </button>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" style="color:#92400e"><i class="fa-solid fa-mountain"></i></span>
+                                <input type="number" id="in-soc" class="form-input amber" placeholder="Contoh: 250" min="0" step="0.1">
+                            </div>
+                            <div class="form-hint">Mangrove Indonesia rerata: 200–600 t C/ha</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fa-solid fa-dollar-sign" style="color:#059669"></i>
+                            Harga Karbon Acuan (USD / ton CO₂)
+                            <button class="tooltip-btn" onmouseenter="showTip(this,'Harga karbon sukarela (Voluntary Carbon Market). Rerata global 2023: USD 5–50/tCO₂e. Indonesia via IDXCarbon: mulai USD 5–20/tCO₂e. Masukkan harga yang relevan untuk simulasi nilai ekonomi.')" onmouseleave="hideTip()">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon" style="color:#059669"><i class="fa-solid fa-dollar-sign"></i></span>
+                            <input type="number" id="in-harga" class="form-input amber" placeholder="Contoh: 20" min="0" step="0.5" value="20">
+                        </div>
+                        <div class="form-hint">IDXCarbon 2024: USD 5–20/tCO₂e · VCM Global: USD 3–50/tCO₂e</div>
+                    </div>
+                </div>
+
+                <div class="formula-display" style="margin:16px 0;">
+                    Carbon Stock Total = AGB + BGB + Serasah + SOC (t C/ha)<br>
+                    CO₂e Tersimpan = Carbon Stock × 3.67 (t CO₂e/ha)<br>
+                    Nilai Ekonomi = CO₂e × Harga Karbon (USD/ha)
+                </div>
+
+                <button class="calc-btn amber" onclick="hitungStock()">
+                    <i class="fa-solid fa-layer-group"></i> Kalkulasi Carbon Stock
+                </button>
+            </div>
         </div>
-    </main>
 
-    <script>
-        // State variables
-        let totalEmisi = 0;
-        let totalSerapan = 0;
-        let carbonChart;
+        <!-- ===== RIGHT: Results ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
 
-        // Initialize Chart
-        window.onload = function() {
-            const ctx = document.getElementById('carbonChart').getContext('2d');
-            carbonChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Emisi Lab', 'Serapan Mangrove'],
-                    datasets: [{
-                        label: 'Kilogram CO2e',
-                        data: [0, 0],
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.7)', // Red for emission
-                            'rgba(16, 185, 129, 0.7)'  // Green for absorption
-                        ],
-                        borderColor: [
-                            'rgb(239, 68, 68)',
-                            'rgb(16, 185, 129)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
+            <!-- Status Card -->
+            <div class="card">
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3>Status Net-Zero</h3>
+                        <span style="font-size:11px;color:var(--gray-400);font-weight:500;background:var(--gray-100);padding:4px 10px;border-radius:6px;">Bulanan</span>
+                    </div>
+
+                    <div class="metric-row emission">
+                        <div class="metric-label">
+                            <div class="metric-dot" style="background:var(--red-500);"></div>
+                            Total Emisi Lab
+                        </div>
+                        <div class="metric-value" id="res-emisi">0 <span class="unit">kg CO₂e</span></div>
+                    </div>
+
+                    <div class="metric-row absorption">
+                        <div class="metric-label">
+                            <div class="metric-dot" style="background:var(--grove-500);"></div>
+                            Serapan Blue Carbon
+                        </div>
+                        <div class="metric-value" id="res-serapan">0 <span class="unit">kg CO₂e</span></div>
+                    </div>
+
+                    <div class="metric-row stock">
+                        <div class="metric-label">
+                            <div class="metric-dot" style="background:var(--amber-400);"></div>
+                            Carbon Stock
+                        </div>
+                        <div class="metric-value" id="res-stock">0 <span class="unit">t C/ha</span></div>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-labels">
+                            <span>0% Net-Zero</span>
+                            <span id="pct-label">0%</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="status-pill" id="status-pill">
+                        Lakukan kalkulasi untuk melihat status Net-Zero
+                    </div>
+                </div>
+
+                <!-- Insight -->
+                <div class="divider" style="margin:0;"></div>
+                <div class="insight-box">
+                    <h3><i class="fa-solid fa-lightbulb" style="color:var(--amber-400);margin-right:6px;"></i>Interpretasi Ilmiah</h3>
+                    <div id="insight-container">
+                        <div class="insight-item">
+                            <span class="insight-icon">🌊</span>
+                            <div class="insight-text">Mangrove menyimpan karbon <strong>3–5× lebih banyak</strong> per hektar dibanding hutan tropis daratan (Howard et al., 2014).</div>
+                        </div>
+                        <div class="insight-item">
+                            <span class="insight-icon">⏱️</span>
+                            <div class="insight-text">Ekosistem mangrove yang terdegradasi membutuhkan <strong>25–50 tahun</strong> rehabilitasi untuk mencapai karbon stok awal.</div>
+                        </div>
+                        <div class="insight-item">
+                            <span class="insight-icon">🇮🇩</span>
+                            <div class="insight-text">Indonesia memiliki <strong>20–23% mangrove dunia</strong> — menjadikannya kunci dalam target NDC dan karbon biru global.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="card">
+                <div class="chart-card">
+                    <h3>Perbandingan Emisi vs Serapan</h3>
+                    <p>kg CO₂ ekuivalen per bulan</p>
+                    <div class="chart-wrap">
+                        <canvas id="carbonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card" style="overflow:visible;">
+                <div class="action-row" style="padding:18px;">
+                    <button class="action-btn outline-green" onclick="generateReport()">
+                        <i class="fa-solid fa-file-lines"></i> Buat Laporan Ringkas
+                    </button>
+                    <button class="action-btn outline" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Cetak Laporan Praktikum
+                    </button>
+                    <button class="action-btn outline" onclick="resetAll()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Semua Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SUMMARY REPORT ===== -->
+    <div class="summary-section" id="summary-section">
+        <div class="summary-header">
+            <div>
+                <h2><i class="fa-solid fa-file-contract" style="margin-right:10px;"></i>Ringkasan Laporan Praktikum</h2>
+                <p id="summary-timestamp">Dibuat pada: —</p>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button onclick="window.print()" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);color:white;border-radius:10px;padding:9px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-print"></i> Cetak
+                </button>
+                <button onclick="closeSummary()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:10px;padding:9px 14px;cursor:pointer;font-size:14px;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <div class="summary-body">
+            <div class="summary-grid" id="summary-grid">
+                <!-- Filled by JS -->
+            </div>
+            <div id="summary-verdict"></div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// ==================== STATE ====================
+let state = {
+    emisi: 0,
+    serapan: 0,
+    stock: 0,
+    agbPerHa: 0,
+    carbonStockTotal: 0,
+    co2eTotal: 0,
+    nilaiEkonomi: 0,
+    emisiBreakdown: {},
+    serapanDetails: {},
+};
+
+let carbonChart;
+
+// ==================== INIT ====================
+window.onload = () => {
+    // Show modal
+    setTimeout(() => {
+        const overlay = document.getElementById('modal-overlay');
+        overlay.style.display = 'flex';
+        setTimeout(() => overlay.classList.add('show'), 10);
+    }, 300);
+
+    // Init chart
+    const ctx = document.getElementById('carbonChart').getContext('2d');
+    carbonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Emisi Lab', 'Serapan Mangrove'],
+            datasets: [{
+                data: [0, 0],
+                backgroundColor: ['rgba(239,68,68,0.15)', 'rgba(16,185,129,0.15)'],
+                borderColor: ['rgb(239,68,68)', 'rgb(16,185,129)'],
+                borderWidth: 2,
+                borderRadius: 6,
+                hoverBackgroundColor: ['rgba(239,68,68,0.25)', 'rgba(16,185,129,0.25)'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y.toFixed(1)} kg CO₂e`
+                    }
                 }
-            });
-        };
-
-        // Tab Switching Logic
-        function switchTab(tabId) {
-            // Reset active states
-            document.getElementById('tab-emisi').className = 'flex-1 py-4 text-center tab-inactive transition';
-            document.getElementById('tab-mangrove').className = 'flex-1 py-4 text-center tab-inactive transition';
-            document.getElementById('content-emisi').classList.add('hidden');
-            document.getElementById('content-mangrove').classList.add('hidden');
-
-            // Set active state
-            document.getElementById(`tab-${tabId}`).className = 'flex-1 py-4 text-center tab-active transition';
-            document.getElementById(`content-${tabId}`).classList.remove('hidden');
-        }
-
-        // Calculate Emissions
-        function hitungEmisi() {
-            const listrik = parseFloat(document.getElementById('input-listrik').value) || 0;
-            const kertas = parseFloat(document.getElementById('input-kertas').value) || 0;
-            const sampah = parseFloat(document.getElementById('input-sampah').value) || 0;
-
-            // Simplified factors
-            const emisiListrik = listrik * 0.85; 
-            const emisiKertas = kertas * 2.5;
-            const emisiSampah = sampah * 1.2;
-
-            totalEmisi = emisiListrik + emisiKertas + emisiSampah;
-            
-            document.getElementById('res-emisi').innerHTML = `${totalEmisi.toFixed(1)} <span class="text-sm font-normal">kg CO₂e</span>`;
-            updateDashboard();
-            
-            // Auto switch to mangrove tab to guide user
-            if(totalSerapan === 0) {
-                setTimeout(() => switchTab('mangrove'), 500);
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { family: 'DM Sans', size: 11 } } },
+                x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 12, weight: '600' } } }
             }
         }
+    });
+};
 
-        // Calculate Absorption (Blue Carbon)
-        function hitungSerapan() {
-            const woodDensity = parseFloat(document.getElementById('input-spesies').value); // rho
-            const dbh = parseFloat(document.getElementById('input-dbh').value) || 0;
-            const jumlah = parseFloat(document.getElementById('input-jumlah').value) || 0;
+// ==================== MODAL ====================
+function openModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.style.display = 'flex';
+    setTimeout(() => overlay.classList.add('show'), 10);
+}
 
-            if (dbh <= 0 || jumlah <= 0) {
-                alert("Masukkan nilai DBH dan Jumlah pohon yang valid.");
-                return;
-            }
+function closeModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('show');
+    setTimeout(() => overlay.style.display = 'none', 300);
+}
 
-            // Rumus Allometrik Sederhana (Chave et al. simplified for educational purpose)
-            // AGB (kg) = 0.251 * rho * (DBH^2.46)
-            const agbPerTree = 0.251 * woodDensity * Math.pow(dbh, 2.46);
-            
-            // Konversi Biomassa ke Karbon (Fraksi karbon ~47%)
-            const carbonPerTree = agbPerTree * 0.47;
-            
-            // Konversi Karbon (C) ke Karbondioksida ekuivalen (CO2e) dikali rasio massa atom (44/12 = 3.67)
-            const co2ePerTree = carbonPerTree * 3.67;
+function handleModalClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
 
-            totalSerapan = co2ePerTree * jumlah;
-            
-            document.getElementById('res-serapan').innerHTML = `${totalSerapan.toFixed(1)} <span class="text-sm font-normal">kg CO₂e</span>`;
-            updateDashboard();
-        }
+// ==================== TABS ====================
+function switchTab(id) {
+    ['emisi','mangrove','stock'].forEach(t => {
+        document.getElementById(`tab-${t}`).className = 'tab-btn';
+        document.getElementById(`panel-${t}`).className = 'tab-panel';
+    });
+    document.getElementById(`tab-${id}`).className = `tab-btn active ${id === 'mangrove' ? 'green-tab' : id === 'stock' ? 'amber-tab' : ''}`;
+    document.getElementById(`panel-${id}`).className = 'tab-panel active';
+}
 
-        // Update Charts and Status
-        function updateDashboard() {
-            // Update chart data
-            carbonChart.data.datasets[0].data = [totalEmisi, totalSerapan];
-            carbonChart.update();
+// ==================== TOOLTIP ====================
+const ttPop = document.getElementById('tt-popup');
 
-            // Update Progress Bar & Status Text
-            const progressBar = document.getElementById('progress-bar');
-            const statusText = document.getElementById('status-text');
+function showTip(el, text) {
+    ttPop.textContent = text;
+    ttPop.style.display = 'block';
+    const rect = el.getBoundingClientRect();
+    ttPop.style.left = (rect.left + window.scrollX - ttPop.offsetWidth / 2 + 12) + 'px';
+    ttPop.style.top = (rect.top + window.scrollY - ttPop.offsetHeight - 12) + 'px';
+}
 
-            if (totalEmisi === 0 && totalSerapan === 0) return;
+function hideTip() { ttPop.style.display = 'none'; }
 
-            if (totalSerapan >= totalEmisi && totalEmisi > 0) {
-                progressBar.style.width = '100%';
-                progressBar.className = 'bg-mangrove-500 h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.8)]';
-                statusText.innerHTML = '<span class="text-mangrove-600 font-bold">Luar Biasa!</span> Lab Anda telah mencapai Net-Zero (Surplus Karbon).';
-            } else if (totalSerapan > 0 && totalEmisi > 0) {
-                const percent = Math.min((totalSerapan / totalEmisi) * 100, 100);
-                progressBar.style.width = `${percent}%`;
-                progressBar.className = 'bg-yellow-400 h-3 rounded-full transition-all duration-1000';
-                
-                const sisa = (totalEmisi - totalSerapan).toFixed(1);
-                statusText.innerHTML = `Serapan mencapai ${percent.toFixed(1)}%. <br>Masih kurang <span class="text-red-500 font-bold">${sisa} kg CO₂e</span> untuk Net-Zero.`;
-            } else if (totalEmisi > 0) {
-                progressBar.style.width = '5%';
-                progressBar.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
-                statusText.innerHTML = '<span class="text-red-500 font-bold">Defisit Karbon!</span> Segera lakukan aksi penanaman.';
-            }
-        }
-    </script>
+// ==================== ANIMATED COUNTER ====================
+function animateCount(el, targetVal, decimals = 1, suffix = '') {
+    const start = parseFloat(el.dataset.val || 0);
+    el.dataset.val = targetVal;
+    const duration = 700;
+    const startTime = performance.now();
+
+    function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (targetVal - start) * eased;
+        el.innerHTML = current.toFixed(decimals) + suffix + ' <span class="unit">' + (decimals === 1 ? 'kg CO₂e' : 't C/ha') + '</span>';
+        if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+// ==================== CALC 1: EMISI ====================
+function hitungEmisi() {
+    const listrik   = parseFloat(document.getElementById('in-listrik').value)   || 0;
+    const kertas    = parseFloat(document.getElementById('in-kertas').value)    || 0;
+    const sampah    = parseFloat(document.getElementById('in-sampah').value)    || 0;
+    const transport = parseFloat(document.getElementById('in-transport').value) || 0;
+    const air       = parseFloat(document.getElementById('in-air').value)       || 0;
+
+    const e = {
+        listrik:   listrik   * 0.85,
+        kertas:    kertas    * 2.5,
+        sampah:    sampah    * 1.2,
+        transport: transport * 0.11,
+        air:       air       * 0.344,
+    };
+
+    state.emisi = Object.values(e).reduce((a, b) => a + b, 0);
+    state.emisiBreakdown = e;
+
+    // Show breakdown bars
+    const bd = document.getElementById('emisi-breakdown');
+    const bars = document.getElementById('emisi-bars');
+    const labels = { listrik: '⚡ Listrik', kertas: '📄 Kertas', sampah: '🗑️ Limbah', transport: '🚗 Transportasi', air: '💧 Air' };
+    const max = Math.max(...Object.values(e));
+
+    if (state.emisi > 0) {
+        bd.style.display = 'block';
+        bars.innerHTML = Object.entries(e).filter(([,v]) => v > 0).map(([k, v]) => `
+            <div style="margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600);margin-bottom:4px;">
+                    <span>${labels[k]}</span>
+                    <span style="font-weight:600;">${v.toFixed(1)} kg</span>
+                </div>
+                <div style="background:var(--gray-100);border-radius:6px;height:7px;overflow:hidden;">
+                    <div style="height:100%;border-radius:6px;background:linear-gradient(90deg,var(--red-400),var(--red-500));width:${(v/max)*100}%;transition:width 0.8s ease;"></div>
+                </div>
+            </div>`).join('');
+    }
+
+    document.getElementById('dot-emisi').className = 'tab-dot filled-blue';
+
+    const el = document.getElementById('res-emisi');
+    animateCount(el, state.emisi);
+    updateDashboard();
+
+    // Auto-guide to mangrove
+    if (state.serapan === 0) setTimeout(() => switchTab('mangrove'), 600);
+}
+
+// ==================== CALC 2: SERAPAN ====================
+function hitungSerapan() {
+    const rho    = parseFloat(document.getElementById('in-spesies').value);
+    const dbh    = parseFloat(document.getElementById('in-dbh').value)    || 0;
+    const n      = parseFloat(document.getElementById('in-jumlah').value) || 0;
+    const luas   = parseFloat(document.getElementById('in-luas').value)   || 100;
+
+    if (dbh <= 0 || n <= 0) { alert('Masukkan nilai DBH dan Jumlah pohon yang valid.'); return; }
+
+    // Allometric formula (Chave et al.)
+    const agbPerTree    = 0.251 * rho * Math.pow(dbh, 2.46);      // kg/pohon
+    const carbonPerTree = agbPerTree * 0.47;                        // kg C/pohon
+    const co2ePerTree   = carbonPerTree * 3.67;                     // kg CO₂e/pohon
+
+    state.serapan = co2ePerTree * n;
+
+    // Per-ha calculations
+    const kerapatan = (n / luas) * 10000;    // batang/ha
+    state.agbPerHa  = (agbPerTree * kerapatan) / 1000;  // t/ha
+    const cPerHa    = state.agbPerHa * 0.47;
+
+    state.serapanDetails = { agbPerTree, carbonPerTree, co2ePerTree, kerapatan, agbPerHa: state.agbPerHa, cPerHa };
+
+    // Autofill to stock tab
+    document.getElementById('in-agb-stock').value = cPerHa.toFixed(2);
+    document.getElementById('in-bgb').value = (cPerHa * 0.26).toFixed(2);
+    document.getElementById('agb-autofill-hint').style.display = 'flex';
+
+    document.getElementById('dot-mangrove').className = 'tab-dot filled-green';
+
+    const el = document.getElementById('res-serapan');
+    animateCount(el, state.serapan);
+    updateDashboard();
+}
+
+// ==================== CALC 3: CARBON STOCK ====================
+function hitungStock() {
+    const agb     = parseFloat(document.getElementById('in-agb-stock').value) || 0;
+    const bgb     = parseFloat(document.getElementById('in-bgb').value)       || 0;
+    const serasah = parseFloat(document.getElementById('in-serasah').value)   || 0;
+    const soc     = parseFloat(document.getElementById('in-soc').value)       || 0;
+    const harga   = parseFloat(document.getElementById('in-harga').value)     || 20;
+
+    if (agb === 0 && bgb === 0 && soc === 0) { alert('Masukkan minimal satu nilai karbon stok.'); return; }
+
+    state.carbonStockTotal = agb + bgb + serasah + soc;       // t C/ha
+    state.co2eTotal        = state.carbonStockTotal * 3.67;    // t CO₂e/ha
+    state.nilaiEkonomi     = state.co2eTotal * harga;          // USD/ha
+
+    state.stock = state.carbonStockTotal;
+
+    document.getElementById('dot-stock').className = 'tab-dot filled-amber';
+
+    const el = document.getElementById('res-stock');
+    el.innerHTML = `${state.carbonStockTotal.toFixed(1)} <span class="unit">t C/ha</span>`;
+
+    updateInsights();
+    updateDashboard();
+}
+
+// ==================== UPDATE DASHBOARD ====================
+function updateDashboard() {
+    // Update chart
+    carbonChart.data.datasets[0].data = [state.emisi, state.serapan];
+    carbonChart.data.datasets[0].backgroundColor = [
+        state.emisi > 0 ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.05)',
+        state.serapan > 0 ? 'rgba(16,185,129,0.18)' : 'rgba(16,185,129,0.05)',
+    ];
+    carbonChart.update('active');
+
+    // Progress bar
+    const fill    = document.getElementById('progress-fill');
+    const pill    = document.getElementById('status-pill');
+    const pctLbl  = document.getElementById('pct-label');
+
+    if (state.emisi === 0 && state.serapan === 0) return;
+
+    let pct = 0;
+    if (state.emisi > 0) pct = Math.min((state.serapan / state.emisi) * 100, 100);
+    else if (state.serapan > 0) pct = 100;
+
+    fill.style.width = pct + '%';
+    pctLbl.textContent = pct.toFixed(1) + '%';
+
+    if (pct >= 100) {
+        fill.style.background = 'linear-gradient(90deg, var(--grove-400), var(--grove-600))';
+        pill.className = 'status-pill success';
+        const surplus = (state.serapan - state.emisi).toFixed(1);
+        pill.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i>Net-Zero Tercapai! Surplus ${surplus} kg CO₂e`;
+    } else if (pct >= 50) {
+        fill.style.background = 'linear-gradient(90deg, var(--amber-400), var(--grove-400))';
+        pill.className = 'status-pill warning';
+        const kurang = (state.emisi - state.serapan).toFixed(1);
+        pill.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Kurang ${kurang} kg CO₂e · Perlu tambah pohon`;
+    } else {
+        fill.style.background = 'linear-gradient(90deg, var(--red-400), var(--amber-400))';
+        pill.className = 'status-pill danger';
+        pill.innerHTML = `<i class="fa-solid fa-circle-xmark" style="margin-right:6px;"></i>Defisit karbon — tambah plot mangrove`;
+    }
+}
+
+// ==================== UPDATE INSIGHTS ====================
+function updateInsights() {
+    if (state.carbonStockTotal <= 0) return;
+
+    const container = document.getElementById('insight-container');
+    const usdK = (state.nilaiEkonomi / 1000).toFixed(1);
+    const eq_car = (state.co2eTotal / 2.3).toFixed(0); // avg car CO2/yr = 2.3 tCO2
+
+    container.innerHTML = `
+        <div class="insight-item">
+            <span class="insight-icon">💰</span>
+            <div class="insight-text">Carbon Stock plot ini bernilai sekitar <strong>USD ${state.nilaiEkonomi.toFixed(0)}/ha</strong> di pasar karbon sukarela — setara Rp ${(state.nilaiEkonomi * 16000 / 1e6).toFixed(1)} juta/ha.</div>
+        </div>
+        <div class="insight-item">
+            <span class="insight-icon">🚗</span>
+            <div class="insight-text">Ekuivalen dengan menyerap emisi karbon dari <strong>${eq_car} mobil</strong> selama setahun (rerata 2.3 t CO₂/mobil/tahun).</div>
+        </div>
+        <div class="insight-item">
+            <span class="insight-icon">🌊</span>
+            <div class="insight-text">Total CO₂e tersimpan: <strong>${state.co2eTotal.toFixed(1)} t CO₂e/ha</strong> — meliputi biomassa + tanah organik.</div>
+        </div>`;
+}
+
+// ==================== REPORT ====================
+function generateReport() {
+    const now = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+    document.getElementById('summary-timestamp').textContent = 'Dibuat pada: ' + now;
+
+    const pct = state.emisi > 0 ? Math.min((state.serapan / state.emisi) * 100, 100) : (state.serapan > 0 ? 100 : 0);
+    const surplus = state.serapan - state.emisi;
+
+    document.getElementById('summary-grid').innerHTML = `
+        <div class="summary-metric red">
+            <div class="sm-value">${state.emisi.toFixed(1)}</div>
+            <div class="sm-label">Total Emisi Lab<br>(kg CO₂e/bulan)</div>
+        </div>
+        <div class="summary-metric green">
+            <div class="sm-value">${state.serapan.toFixed(1)}</div>
+            <div class="sm-label">Serapan Mangrove<br>(kg CO₂e/bulan)</div>
+        </div>
+        <div class="summary-metric amber">
+            <div class="sm-value">${state.carbonStockTotal > 0 ? state.carbonStockTotal.toFixed(0) : '—'}</div>
+            <div class="sm-label">Carbon Stock<br>(t C/ha)</div>
+        </div>
+        <div class="summary-metric ocean">
+            <div class="sm-value">${pct.toFixed(1)}%</div>
+            <div class="sm-label">Progres Net-Zero<br>(Serapan vs Emisi)</div>
+        </div>
+        <div class="summary-metric green">
+            <div class="sm-value">${state.co2eTotal > 0 ? state.co2eTotal.toFixed(0) : '—'}</div>
+            <div class="sm-label">Total CO₂e Tersimpan<br>(t CO₂e/ha)</div>
+        </div>
+        <div class="summary-metric ${surplus >= 0 ? 'green' : 'red'}">
+            <div class="sm-value">${surplus >= 0 ? '+' : ''}${surplus.toFixed(1)}</div>
+            <div class="sm-label">Neraca Karbon<br>(kg CO₂e/bulan)</div>
+        </div>`;
+
+    let verdict, verdictColor, icon;
+    if (state.emisi === 0 && state.serapan === 0) {
+        verdict = 'Belum ada data kalkulasi. Lakukan pengisian di Tab 1, 2, dan/atau 3 terlebih dahulu.';
+        verdictColor = '#f1f5f9'; icon = '📋';
+    } else if (pct >= 100) {
+        verdict = `Lab/sekolah ini telah mencapai <strong>Net-Zero Carbon</strong> dengan surplus ${surplus.toFixed(1)} kg CO₂e per bulan. Plot mangrove yang dikelola berhasil menyerap seluruh emisi kegiatan laboratorium. Pertahankan dan perluas area mangrove untuk meningkatkan kapasitas serapan karbon.`;
+        verdictColor = '#ecfdf5'; icon = '🎉';
+    } else if (pct >= 50) {
+        verdict = `Lab telah menyerap ${pct.toFixed(1)}% emisi melalui mangrove. Masih diperlukan tambahan serapan sebesar <strong>${Math.abs(surplus).toFixed(1)} kg CO₂e/bulan</strong>. Pertimbangkan perluasan plot, penambahan spesies cepat tumbuh (Sonneratia spp.), dan efisiensi energi untuk mencapai Net-Zero.`;
+        verdictColor = '#fffbeb'; icon = '⚠️';
+    } else {
+        verdict = `Defisit karbon signifikan. Emisi lab ${state.emisi > 0 ? (state.emisi.toFixed(1) + ' kg CO₂e') : '(belum dihitung)'} jauh melebihi serapan ${state.serapan > 0 ? (state.serapan.toFixed(1) + ' kg CO₂e') : '(belum dihitung)'}. Direkomendasikan: audit energi lab, pengurangan penggunaan kertas, dan peningkatan luasan rehabilitasi mangrove secara signifikan.`;
+        verdictColor = '#fff5f5'; icon = '🔴';
+    }
+
+    document.getElementById('summary-verdict').innerHTML = `
+        <div class="summary-verdict" style="background:${verdictColor};border-radius:14px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start;">
+            <span style="font-size:28px;">${icon}</span>
+            <div>
+                <div class="verdict-title" style="font-size:15px;font-weight:700;font-family:'Sora',sans-serif;margin-bottom:5px;color:var(--gray-800);">Kesimpulan Praktikum</div>
+                <div class="verdict-text" style="font-size:13.5px;line-height:1.7;color:var(--gray-600);">${verdict}</div>
+            </div>
+        </div>`;
+
+    const sec = document.getElementById('summary-section');
+    sec.classList.add('visible');
+    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function closeSummary() {
+    document.getElementById('summary-section').classList.remove('visible');
+}
+
+function resetAll() {
+    if (!confirm('Reset semua data kalkulasi?')) return;
+    ['in-listrik','in-kertas','in-sampah','in-transport','in-air',
+     'in-dbh','in-jumlah','in-luas',
+     'in-agb-stock','in-bgb','in-serasah','in-soc'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('in-harga').value = '20';
+    state = { emisi: 0, serapan: 0, stock: 0, agbPerHa: 0, carbonStockTotal: 0, co2eTotal: 0, nilaiEkonomi: 0 };
+
+    ['emisi','mangrove','stock'].forEach(t => {
+        document.getElementById(`dot-${t}`).className = 'tab-dot';
+    });
+
+    document.getElementById('res-emisi').innerHTML   = '0 <span class="unit">kg CO₂e</span>';
+    document.getElementById('res-serapan').innerHTML = '0 <span class="unit">kg CO₂e</span>';
+    document.getElementById('res-stock').innerHTML   = '0 <span class="unit">t C/ha</span>';
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('pct-label').textContent = '0%';
+    document.getElementById('status-pill').className = 'status-pill';
+    document.getElementById('status-pill').innerHTML = 'Lakukan kalkulasi untuk melihat status Net-Zero';
+    document.getElementById('emisi-breakdown').style.display = 'none';
+    document.getElementById('agb-autofill-hint').style.display = 'none';
+    document.getElementById('summary-section').classList.remove('visible');
+
+    carbonChart.data.datasets[0].data = [0, 0];
+    carbonChart.update();
+    switchTab('emisi');
+}
+</script>
 </body>
 </html>
