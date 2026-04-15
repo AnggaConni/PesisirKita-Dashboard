@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apa itu Literasi Laut? | PesisirKita</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="thum/icon-192.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        ocean: { 50: '#f0f9ff', 500: '#0ea5e9', 800: '#075985', 900: '#0c4a6e', 950: '#082f49' },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Scroll Snap Setup */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #082f49;
+            overflow-x: hidden;
+        }
+
+        .slide-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: rgba(12, 74, 110, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Image Overlays */
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            transform: scale(1.05);
+            transition: transform 10s ease-out;
+        }
+        
+        .slide:hover .bg-overlay {
+            transform: scale(1.1);
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(8, 47, 73, 0.3), rgba(8, 47, 73, 0.9));
+            z-index: -1;
+        }
+
+        /* Navigation Dots */
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nav-dot.active {
+            background-color: #0ea5e9;
+            transform: scale(1.5);
+            box-shadow: 0 0 10px #0ea5e9;
+        }
+
+        /* Scroll Bounce Animation */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite ease-in-out;
+        }
+
+        /* ========================================= */
+        /* CUSTOM ANIMATION CLASSES (PENGGANTI AOS)  */
+        /* ========================================= */
+        .anim-fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .anim-zoom-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        
+        /* Delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* Triggered when slide is visible */
+        .slide.is-visible .anim-fade-up {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.is-visible .anim-zoom-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- Fixed Header / Back Button -->
+    <div class="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
+        <a href="index.html" class="pointer-events-auto group flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/20 transition-all duration-300">
+            <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+            <span class="font-semibold text-sm">Kembali ke Beranda</span>
+        </a>
+        <div class="pointer-events-auto hidden md:block">
+            <span class="text-xs font-bold tracking-widest uppercase text-white/50">Ocean Literacy Presentation (NOAA)</span>
+        </div>
+    </div>
+
+    <!-- Vertical Navigation Dots -->
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-4" id="dotNav">
+        <div class="nav-dot active" onclick="scrollToSlide(0)" title="Beranda"></div>
+        <div class="nav-dot" onclick="scrollToSlide(1)" title="Definisi"></div>
+        <div class="nav-dot" onclick="scrollToSlide(2)" title="Sistem Bumi"></div>
+        <div class="nav-dot" onclick="scrollToSlide(3)" title="Cuaca & Iklim"></div>
+        <div class="nav-dot" onclick="scrollToSlide(4)" title="Kehidupan"></div>
+        <div class="nav-dot" onclick="scrollToSlide(5)" title="Tindakan"></div>
+    </div>
+
+    <!-- Main Scroll Container -->
+    <div class="slide-container" id="mainContainer">
+
+        <!-- SLIDE 1: HERO -->
+        <section class="slide is-visible" id="slide-0">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1682687982501-1e5898cb4702?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay bg-gradient-to-b from-ocean-900/60 to-ocean-950/90"></div>
+            
+            <div class="text-center px-4 max-w-5xl z-10">
+                <span class="anim-fade-up inline-block py-1.5 px-4 rounded-full bg-ocean-500/20 text-ocean-300 border border-ocean-500/30 text-sm font-bold tracking-widest uppercase mb-6">
+                    Mengenal Lebih Dalam
+                </span>
+                <h1 class="anim-zoom-in delay-100 font-heading text-6xl md:text-8xl font-black mb-6 leading-tight drop-shadow-2xl">
+                    Apa itu <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-ocean-400">Literasi Laut?</span>
+                </h1>
+                <p class="anim-fade-up delay-300 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+                    Lebih dari sekadar tahu tentang laut. Ini adalah pemahaman tentang <b class="text-white">pengaruh laut terhadap Anda</b>, dan <b class="text-white">pengaruh Anda terhadap laut</b>.
+                </p>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce-subtle opacity-70">
+                <span class="text-xs uppercase tracking-widest mb-2 font-semibold">Scroll ke Bawah</span>
+                <i class="fa-solid fa-chevron-down text-2xl"></i>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: DEFINISI LITERASI LAUT -->
+        <section class="slide" id="slide-1">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay"></div>
+
+            <div class="px-4 max-w-6xl mx-auto z-10 w-full">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="anim-fade-up">
+                        <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6">Individu yang <span class="text-ocean-400">Sadar Kelautan</span> Mampu:</h2>
+                        <div class="w-20 h-1 bg-ocean-500 mb-8 rounded-full"></div>
+                        <p class="text-lg text-gray-300 mb-8 leading-relaxed">
+                            Konsep ini distandarisasi oleh Ilmuwan Kelautan global. Bukan hanya materi biologi, melainkan panduan membentuk agen perubahan masa depan dengan 3 kemampuan utama:
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Poin 1 -->
+                        <div class="glass-card p-6 rounded-2xl flex gap-4 items-start anim-fade-up delay-100">
+                            <div class="w-12 h-12 rounded-full bg-ocean-500/20 text-ocean-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-1">Memahami Konsep</h3>
+                                <p class="text-gray-300 text-sm">Mengerti 7 prinsip dasar kelautan dan konsep ekosistem bumi yang saling terhubung.</p>
+                            </div>
+                        </div>
+                        <!-- Poin 2 -->
+                        <div class="glass-card p-6 rounded-2xl flex gap-4 items-start anim-fade-up delay-200">
+                            <div class="w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-1">Berkomunikasi Bermakna</h3>
+                                <p class="text-gray-300 text-sm">Mampu mengkomunikasikan isu-isu laut secara relevan kepada keluarga dan masyarakat.</p>
+                            </div>
+                        </div>
+                        <!-- Poin 3 -->
+                        <div class="glass-card p-6 rounded-2xl flex gap-4 items-start anim-fade-up delay-300">
+                            <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-hands-holding-circle"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-1">Mengambil Keputusan</h3>
+                                <p class="text-gray-300 text-sm">Membuat keputusan sadar lingkungan (seperti konsumsi plastik) yang bertanggung jawab.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: 7 PRINSIP (1 & 2) -->
+        <section class="slide" id="slide-2">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay bg-gradient-to-t from-ocean-950 via-ocean-900/80 to-transparent"></div>
+
+            <div class="px-4 max-w-7xl mx-auto z-10 w-full text-center">
+                <h2 class="anim-fade-up font-heading text-sm font-bold tracking-[0.3em] text-ocean-300 uppercase mb-4">7 Prinsip Literasi Laut (NOAA)</h2>
+                <h3 class="anim-fade-up delay-100 text-4xl md:text-5xl font-bold mb-12">Sistem Fundamental Bumi</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Prinsip 1 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group anim-zoom-in delay-200">
+                        <div class="absolute -right-6 -top-6 text-9xl text-white/5 opacity-50"><i class="fa-solid fa-earth-americas"></i></div>
+                        <div class="text-ocean-400 font-bold text-xl mb-2">Prinsip #01</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Bumi memiliki satu samudra besar.</h4>
+                        <p class="text-gray-300 leading-relaxed">Semua samudra di bumi sebenarnya saling terhubung membentuk satu massa air raksasa. Apa yang terjadi di perairan satu benua (seperti tumpahan minyak/sampah), akan mengalir dan berdampak pada perairan di belahan bumi lainnya.</p>
+                    </div>
+
+                    <!-- Prinsip 2 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group anim-zoom-in delay-300">
+                        <div class="absolute -right-6 -top-6 text-9xl text-white/5 opacity-50"><i class="fa-solid fa-mountain-sun"></i></div>
+                        <div class="text-ocean-400 font-bold text-xl mb-2">Prinsip #02</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Laut membentuk fitur permukaan Bumi.</h4>
+                        <p class="text-gray-300 leading-relaxed">Kehidupan laut menentukan bentuk planet ini. Batu kapur yang membentuk gunung, hamparan pasir di pesisir, hingga oksigen purba, mayoritas dibentuk oleh aktivitas pergerakan tektonik dasar laut dan organisme laut jutaan tahun lalu.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: 7 PRINSIP (3 & 4) -->
+        <section class="slide" id="slide-3">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1498354063259-2475ec7df70a?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay bg-gradient-to-b from-ocean-950 via-gray-900/80 to-ocean-950"></div>
+
+            <div class="px-4 max-w-7xl mx-auto z-10 w-full text-center">
+                <h3 class="anim-fade-up text-4xl md:text-5xl font-bold mb-12">Cuaca, Iklim & Kehidupan</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Prinsip 3 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group anim-fade-up delay-100">
+                        <div class="absolute -right-4 -top-4 text-9xl text-white/5 opacity-50"><i class="fa-solid fa-cloud-bolt"></i></div>
+                        <div class="text-teal-400 font-bold text-xl mb-2">Prinsip #03</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Laut mengatur cuaca dan iklim dunia.</h4>
+                        <p class="text-gray-300 leading-relaxed">Laut menyerap sebagian besar panas radiasi matahari dan mendistribusikannya melalui arus laut. Ia juga mesin utama siklus air (hujan badai) dan penyerap karbon raksasa yang menahan laju pemanasan global (Blue Carbon).</p>
+                    </div>
+
+                    <!-- Prinsip 4 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group anim-fade-up delay-200">
+                        <div class="absolute -right-4 -top-4 text-9xl text-white/5 opacity-50"><i class="fa-solid fa-dna"></i></div>
+                        <div class="text-teal-400 font-bold text-xl mb-2">Prinsip #04</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Laut menjadikan Bumi dapat dihuni.</h4>
+                        <p class="text-gray-300 leading-relaxed">Fakta mengejutkan: Mayoritas oksigen (50-80%) yang kita hirup setiap hari diproduksi oleh fitoplankton mikroskopis di lautan, bukan hanya dari pohon di daratan. Kehidupan tertua juga bermula di samudra.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: 7 PRINSIP (5 & 6) -->
+        <section class="slide" id="slide-4">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1546026423-cc4642628d2b?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay bg-gradient-to-t from-ocean-950 via-teal-900/80 to-transparent"></div>
+
+            <div class="px-4 max-w-7xl mx-auto z-10 w-full text-center">
+                <h3 class="anim-fade-up text-4xl md:text-5xl font-bold mb-12">Koneksi Manusia & Ekosistem</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Prinsip 5 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group border-t-4 border-t-green-400 anim-zoom-in delay-100">
+                        <div class="text-green-400 font-bold text-xl mb-2">Prinsip #05</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Laut menopang keragaman hayati.</h4>
+                        <p class="text-gray-300 leading-relaxed">Ekosistem laut sangat beragam. Dari terumbu karang yang berwarna-warni hingga hutan mangrove yang lebat. Mangrove menjadi 'rumah persalinan' bagi udang dan ikan, memastikan ketersediaan pangan dunia.</p>
+                    </div>
+
+                    <!-- Prinsip 6 -->
+                    <div class="glass-panel p-10 text-left relative overflow-hidden group border-t-4 border-t-green-400 anim-zoom-in delay-200">
+                        <div class="text-green-400 font-bold text-xl mb-2">Prinsip #06</div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">Lautan dan manusia saling terhubung erat.</h4>
+                        <p class="text-gray-300 leading-relaxed">Kita bergantung mutlak pada laut untuk transportasi makanan, jalur internet, dan pariwisata. Sebaliknya, gaya hidup kita (seperti membuang sampah plastik sembarangan) merusak laut. Nasib kita saling terikat.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: PRINSIP 7 & CALL TO ACTION -->
+        <section class="slide" id="slide-5">
+            <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1498092651296-641e88c3b057?q=80&w=2000&auto=format&fit=crop');"></div>
+            <div class="gradient-overlay bg-gradient-to-b from-ocean-950 via-ocean-900/90 to-ocean-950"></div>
+
+            <div class="px-4 max-w-4xl mx-auto z-10 w-full text-center">
+                
+                <div class="anim-fade-up glass-card p-8 rounded-2xl mb-12 border border-ocean-400/30 bg-ocean-900/50 inline-block">
+                    <div class="text-ocean-300 font-bold text-xl mb-2">Prinsip Terakhir #07</div>
+                    <h4 class="text-3xl font-bold mb-2">Lautan sebagian besar belum dieksplorasi.</h4>
+                    <p class="text-gray-300">Kurang dari 20% isi lautan telah dipetakan atau dilihat oleh manusia. Artinya, masih banyak misteri, obat-obatan baru, dan sumber daya kelangsungan hidup umat manusia yang belum terungkap di dasar samudra.</p>
+                </div>
+
+                <h2 class="anim-fade-up delay-100 font-heading text-4xl md:text-6xl font-black mb-6">
+                    Aksi Kita Dimulai <span class="text-teal-400">Dari Sekolah</span>
+                </h2>
+                <p class="anim-fade-up delay-200 text-xl text-gray-300 mb-10">
+                    Mengetahui 7 prinsip ini saja tidak cukup. Melalui <b class="text-white">PesisirKita EcoEducation Hub</b>, kami mengajak siswa untuk bertindak: Menanam mangrove, membersihkan pantai, dan memonitor data lingkungan.
+                </p>
+                
+                <div class="anim-zoom-in delay-300 flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="index.html#dampak" class="bg-ocean-500 hover:bg-ocean-600 text-white px-8 py-4 rounded-full font-bold transition shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:shadow-[0_0_30px_rgba(14,165,233,0.6)] flex items-center justify-center text-lg">
+                        Lihat Dampak Kita <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="index.html" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-bold transition flex items-center justify-center text-lg">
+                        Kembali ke Beranda
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer text -->
+            <div class="absolute bottom-6 w-full text-center text-white/30 text-sm pointer-events-none">
+                <p>&copy; 2026 PesisirKita. Ocean Literacy Framework translated from NOAA Guidelines.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- CUSTOM SCROLL ANIMATION SCRIPT ---
+        const container = document.getElementById('mainContainer');
+        const dots = document.querySelectorAll('.nav-dot');
+        const slides = document.querySelectorAll('.slide');
+
+        // Function to click dot and scroll
+        function scrollToSlide(index) {
+            slides[index].scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Use IntersectionObserver to trigger animations and update dots
+        const observerOptions = {
+            root: container,
+            threshold: 0.5 // Memicu animasi saat layar sudah masuk 50%
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Tambahkan class 'is-visible' untuk menjalankan animasi
+                    entry.target.classList.add('is-visible');
+                    
+                    // Update titik navigasi di sebelah kanan
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    const index = Array.from(slides).indexOf(entry.target);
+                    if(dots[index]) dots[index].classList.add('active');
+                } else {
+                    // (Opsional) Hapus class jika ingin animasi berulang saat discroll balik
+                    entry.target.classList.remove('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        // Pantau semua slide
+        slides.forEach(slide => observer.observe(slide));
+    </script>
+</body>
+</html>
