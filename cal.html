@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Carbon Lab Calculator | PesisirKita</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        ocean: { 50: '#f0f9ff', 500: '#0ea5e9', 700: '#0369a1', 900: '#0c4a6e' },
+                        mangrove: { 50: '#ecfdf5', 500: '#10b981', 700: '#047857', 900: '#064e3b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar for aesthetic */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tab-active { border-bottom: 3px solid #0ea5e9; color: #0ea5e9; font-weight: 600; }
+        .tab-inactive { color: #64748b; font-weight: 500; }
+        .tab-inactive:hover { color: #334155; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="text-gray-400 hover:text-ocean-500 transition">
+                        <i class="fa-solid fa-arrow-left text-lg"></i>
+                    </a>
+                    <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <span class="font-bold text-xl text-gray-800">BlueCarbon <span class="text-ocean-600">Lab</span></span>
+                </div>
+                <div class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    <i class="fa-solid fa-graduation-cap mr-1"></i> Mode Edukasi Guru
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Simulator Net-Zero Laboratorium</h1>
+            <p class="text-gray-600">Bandingkan jejak emisi karbon fasilitas sekolah dengan potensi serapan karbon (Blue Carbon) dari plot mangrove yang diteliti oleh siswa.</p>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Inputs & Tools -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-200">
+                    <button onclick="switchTab('emisi')" id="tab-emisi" class="flex-1 py-4 text-center tab-active transition">
+                        <i class="fa-solid fa-industry mr-2"></i> 1. Emisi Lab/Sekolah
+                    </button>
+                    <button onclick="switchTab('mangrove')" id="tab-mangrove" class="flex-1 py-4 text-center tab-inactive transition">
+                        <i class="fa-solid fa-tree mr-2"></i> 2. Data Plot Mangrove
+                    </button>
+                </div>
+
+                <!-- Tab Content: Emisi -->
+                <div id="content-emisi" class="p-6 md:p-8">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
+                        <h4 class="font-semibold text-blue-800 text-sm"><i class="fa-solid fa-circle-info mr-1"></i> Modul Pembelajaran</h4>
+                        <p class="text-sm text-blue-700 mt-1">Masukkan data penggunaan energi di laboratorium atau sekolah dalam sebulan untuk menghitung *Carbon Footprint* (Jejak Karbon).</p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Penggunaan Listrik (kWh / bulan)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-bolt text-yellow-500"></i>
+                                </div>
+                                <input type="number" id="input-listrik" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 500">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~0.85 kg CO2e / kWh</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Penggunaan Kertas (Rim / bulan)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-file-lines text-gray-400"></i>
+                                </div>
+                                <input type="number" id="input-kertas" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 10">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~2.5 kg CO2e / rim</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Limbah Plastik/Organik Lab (Kg / bulan)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-trash-can text-red-400"></i>
+                                </div>
+                                <input type="number" id="input-sampah" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500" placeholder="Contoh: 50">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Faktor emisi: ~1.2 kg CO2e / kg sampah</p>
+                        </div>
+
+                        <button onclick="hitungEmisi()" class="w-full bg-ocean-600 hover:bg-ocean-700 text-white font-bold py-3 rounded-xl transition shadow-md mt-4">
+                            Kalkulasi Emisi Karbon
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Mangrove (Hidden by default) -->
+                <div id="content-mangrove" class="p-6 md:p-8 hidden">
+                    <div class="bg-green-50 border-l-4 border-mangrove-500 p-4 rounded mb-6 flex items-start gap-3">
+                        <i class="fa-solid fa-book-open text-mangrove-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-mangrove-800 text-sm">Praktikum Allometrik</h4>
+                            <p class="text-sm text-mangrove-700 mt-1">Gunakan rumus allometrik untuk mengestimasi Biomassa Atas Permukaan (Above Ground Biomass). Masukkan rata-rata DBH (Diameter at Breast Height) dari plot sampel siswa.</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Spesies Dominan di Plot</label>
+                            <select id="input-spesies" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500 focus:border-mangrove-500 bg-white">
+                                <option value="0.7">Rhizophora spp. (Kerapatan kayu ~0.7 g/cm³)</option>
+                                <option value="0.6">Avicennia spp. (Kerapatan kayu ~0.6 g/cm³)</option>
+                                <option value="0.5">Sonneratia spp. (Kerapatan kayu ~0.5 g/cm³)</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Rata-rata DBH (cm)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fa-solid fa-ruler text-gray-400"></i>
+                                    </div>
+                                    <input type="number" id="input-dbh" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500" placeholder="Contoh: 15">
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Diameter setinggi dada (1.3m)</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Pohon Ditanam/Plot</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fa-solid fa-seedling text-mangrove-500"></i>
+                                    </div>
+                                    <input type="number" id="input-jumlah" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mangrove-500" placeholder="Contoh: 100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rumus Visual -->
+                        <div class="bg-gray-100 p-4 rounded-lg text-center text-sm font-mono text-gray-600 border border-gray-200">
+                            Estimasi Biomassa (B) = 0.251 × ρ × (DBH)<sup class="text-[10px]">2.46</sup> <br>
+                            Serapan CO2 = B × 0.47 (Fraksi Karbon) × 3.67
+                        </div>
+
+                        <button onclick="hitungSerapan()" class="w-full bg-mangrove-600 hover:bg-mangrove-700 text-white font-bold py-3 rounded-xl transition shadow-md mt-4">
+                            Kalkulasi Serapan Blue Carbon
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Results & Dashboard -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Score Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Status Net-Zero</h3>
+                    
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-medium text-gray-500">Total Emisi (Bulanan)</span>
+                        <span class="text-xl font-bold text-red-500" id="res-emisi">0 <span class="text-sm font-normal">kg CO₂e</span></span>
+                    </div>
+                    
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="text-sm font-medium text-gray-500">Potensi Serapan Plot</span>
+                        <span class="text-xl font-bold text-mangrove-600" id="res-serapan">0 <span class="text-sm font-normal">kg CO₂e</span></span>
+                    </div>
+
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+                        <div id="progress-bar" class="bg-ocean-500 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <p id="status-text" class="text-xs text-center text-gray-500 font-medium">Silakan lakukan kalkulasi di form.</p>
+                </div>
+
+                <!-- Chart Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-sm font-bold text-gray-800 mb-4 text-center">Perbandingan Emisi vs Serapan</h3>
+                    <div class="relative h-48 w-full">
+                        <canvas id="carbonChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <button onclick="window.print()" class="w-full bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 rounded-xl transition flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak Laporan Praktikum
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // State variables
+        let totalEmisi = 0;
+        let totalSerapan = 0;
+        let carbonChart;
+
+        // Initialize Chart
+        window.onload = function() {
+            const ctx = document.getElementById('carbonChart').getContext('2d');
+            carbonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Emisi Lab', 'Serapan Mangrove'],
+                    datasets: [{
+                        label: 'Kilogram CO2e',
+                        data: [0, 0],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)', // Red for emission
+                            'rgba(16, 185, 129, 0.7)'  // Green for absorption
+                        ],
+                        borderColor: [
+                            'rgb(239, 68, 68)',
+                            'rgb(16, 185, 129)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Reset active states
+            document.getElementById('tab-emisi').className = 'flex-1 py-4 text-center tab-inactive transition';
+            document.getElementById('tab-mangrove').className = 'flex-1 py-4 text-center tab-inactive transition';
+            document.getElementById('content-emisi').classList.add('hidden');
+            document.getElementById('content-mangrove').classList.add('hidden');
+
+            // Set active state
+            document.getElementById(`tab-${tabId}`).className = 'flex-1 py-4 text-center tab-active transition';
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+        }
+
+        // Calculate Emissions
+        function hitungEmisi() {
+            const listrik = parseFloat(document.getElementById('input-listrik').value) || 0;
+            const kertas = parseFloat(document.getElementById('input-kertas').value) || 0;
+            const sampah = parseFloat(document.getElementById('input-sampah').value) || 0;
+
+            // Simplified factors
+            const emisiListrik = listrik * 0.85; 
+            const emisiKertas = kertas * 2.5;
+            const emisiSampah = sampah * 1.2;
+
+            totalEmisi = emisiListrik + emisiKertas + emisiSampah;
+            
+            document.getElementById('res-emisi').innerHTML = `${totalEmisi.toFixed(1)} <span class="text-sm font-normal">kg CO₂e</span>`;
+            updateDashboard();
+            
+            // Auto switch to mangrove tab to guide user
+            if(totalSerapan === 0) {
+                setTimeout(() => switchTab('mangrove'), 500);
+            }
+        }
+
+        // Calculate Absorption (Blue Carbon)
+        function hitungSerapan() {
+            const woodDensity = parseFloat(document.getElementById('input-spesies').value); // rho
+            const dbh = parseFloat(document.getElementById('input-dbh').value) || 0;
+            const jumlah = parseFloat(document.getElementById('input-jumlah').value) || 0;
+
+            if (dbh <= 0 || jumlah <= 0) {
+                alert("Masukkan nilai DBH dan Jumlah pohon yang valid.");
+                return;
+            }
+
+            // Rumus Allometrik Sederhana (Chave et al. simplified for educational purpose)
+            // AGB (kg) = 0.251 * rho * (DBH^2.46)
+            const agbPerTree = 0.251 * woodDensity * Math.pow(dbh, 2.46);
+            
+            // Konversi Biomassa ke Karbon (Fraksi karbon ~47%)
+            const carbonPerTree = agbPerTree * 0.47;
+            
+            // Konversi Karbon (C) ke Karbondioksida ekuivalen (CO2e) dikali rasio massa atom (44/12 = 3.67)
+            const co2ePerTree = carbonPerTree * 3.67;
+
+            totalSerapan = co2ePerTree * jumlah;
+            
+            document.getElementById('res-serapan').innerHTML = `${totalSerapan.toFixed(1)} <span class="text-sm font-normal">kg CO₂e</span>`;
+            updateDashboard();
+        }
+
+        // Update Charts and Status
+        function updateDashboard() {
+            // Update chart data
+            carbonChart.data.datasets[0].data = [totalEmisi, totalSerapan];
+            carbonChart.update();
+
+            // Update Progress Bar & Status Text
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+
+            if (totalEmisi === 0 && totalSerapan === 0) return;
+
+            if (totalSerapan >= totalEmisi && totalEmisi > 0) {
+                progressBar.style.width = '100%';
+                progressBar.className = 'bg-mangrove-500 h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.8)]';
+                statusText.innerHTML = '<span class="text-mangrove-600 font-bold">Luar Biasa!</span> Lab Anda telah mencapai Net-Zero (Surplus Karbon).';
+            } else if (totalSerapan > 0 && totalEmisi > 0) {
+                const percent = Math.min((totalSerapan / totalEmisi) * 100, 100);
+                progressBar.style.width = `${percent}%`;
+                progressBar.className = 'bg-yellow-400 h-3 rounded-full transition-all duration-1000';
+                
+                const sisa = (totalEmisi - totalSerapan).toFixed(1);
+                statusText.innerHTML = `Serapan mencapai ${percent.toFixed(1)}%. <br>Masih kurang <span class="text-red-500 font-bold">${sisa} kg CO₂e</span> untuk Net-Zero.`;
+            } else if (totalEmisi > 0) {
+                progressBar.style.width = '5%';
+                progressBar.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                statusText.innerHTML = '<span class="text-red-500 font-bold">Defisit Karbon!</span> Segera lakukan aksi penanaman.';
+            }
+        }
+    </script>
+</body>
+</html>
