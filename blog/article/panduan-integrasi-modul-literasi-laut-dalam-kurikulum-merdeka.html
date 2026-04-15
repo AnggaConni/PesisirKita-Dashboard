@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka | PesisirKita</title>
+    <meta name="description" content="Bagaimana pendidik dapat mengintegrasikan materi ekosistem pesisir dan Blue Carbon ke dalam mata pelajaran inti (IPA & IPS) menggunakan metode Project-Based Learning.">
+    <link rel="canonical" href="https://pesisirkita.id/blog/article/panduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html" />
+    
+    <!-- Open Graph / Facebook / LinkedIn / WA -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://pesisirkita.id/blog/article/panduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html">
+    <meta property="og:title" content="Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka">
+    <meta property="og:description" content="Bagaimana pendidik dapat mengintegrasikan materi ekosistem pesisir dan Blue Carbon ke dalam mata pelajaran inti (IPA & IPS) menggunakan metode Project-Based Learning.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://pesisirkita.id/blog/article/panduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html">
+    <meta name="twitter:title" content="Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka">
+    <meta name="twitter:description" content="Bagaimana pendidik dapat mengintegrasikan materi ekosistem pesisir dan Blue Carbon ke dalam mata pelajaran inti (IPA & IPS) menggunakan metode Project-Based Learning.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop">
+
+    <!-- Tailwind & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e' },
+                        mangrove: { 500: '#10b981', 600: '#059669', 800: '#065f46' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- CSS PRINT & RICH TEXT -->
+    <style>
+        /* Styling Tabel */
+        .prose table { width: 100%; border-collapse: collapse; margin-top: 2rem; margin-bottom: 2rem; }
+        .prose th, .prose td { border: 1px solid #e5e7eb; padding: 1rem; text-align: left; }
+        .prose th { background-color: #f0f9ff; color: #0c4a6e; font-weight: 700; }
+        
+        /* Callout / Info Box */
+        .callout { padding: 1.5rem; border-radius: 0.75rem; margin: 2rem 0; border-left: 4px solid #10b981; background-color: #ecfdf5; }
+        .callout h4 { margin-top: 0 !important; color: #065f46 !important; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .callout p:last-child { margin-bottom: 0 !important; }
+
+        /* ========================================================= */
+        /* CSS KHUSUS PRINT (MENGUBAH HALAMAN MENJADI PDF PROFESIONAL)*/
+        /* ========================================================= */
+        @media print {
+            /* Sembunyikan elemen UI yang tidak perlu di PDF */
+            .no-print, nav, .share-section, button {
+                display: none !important;
+            }
+            
+            /* Setup Margin & Kertas */
+            @page { margin: 2cm; size: A4 portrait; }
+            body { background: white; color: #111827; font-size: 12pt; }
+            
+            /* Pastikan layout utama mengambil 100% lebar kertas */
+            main, header, .max-w-3xl, .max-w-4xl, .max-w-5xl { 
+                max-width: 100% !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+            }
+            
+            /* Gambar Cover & Artikel */
+            img.cover-image { max-height: 300px; object-fit: cover; page-break-after: avoid; }
+            .prose img { max-width: 100%; height: auto; page-break-inside: avoid; }
+            
+            /* Cegah Judul & List terpotong antar halaman */
+            h1, h2, h3, h4 { page-break-after: avoid; color: black !important; }
+            p, ul, li { page-break-inside: avoid; }
+            
+            /* Hilangkan garis bawah link */
+            a { text-decoration: none; color: black; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- NAVBAR KHUSUS ARTIKEL -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 transition-all duration-300 no-print">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-ocean-500 to-mangrove-500 rounded flex items-center justify-center text-white font-bold text-sm shadow">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-ocean-800 to-mangrove-600">PesisirKita</span>
+                </a>
+                <div class="flex items-center gap-6">
+                    <a href="../../blog.html" class="text-sm font-semibold text-gray-600 hover:text-ocean-600 flex items-center gap-2 transition">
+                        <i class="fa-solid fa-arrow-left"></i> Semua Artikel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER ARTIKEL -->
+    <header class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <span class="inline-block bg-ocean-100 text-ocean-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-ocean-200 w-fit">
+                Kurikulum
+            </span>
+            
+            <!-- TOMBOL PRINT PDF -->
+            <button onclick="window.print()" class="no-print bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-ocean-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="fa-solid fa-file-pdf text-red-500"></i> Cetak Dokumen (PDF)
+            </button>
+        </div>
+
+        <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka</h1>
+        
+        <div class="flex items-center gap-4 text-sm text-gray-500 font-semibold uppercase tracking-wider">
+            <div class="flex items-center gap-2">
+                <i class="fa-regular fa-user-circle text-lg text-gray-400"></i> Tim Edukasi PesisirKita
+            </div>
+            <span>•</span>
+            <div class="flex items-center gap-2">
+                <i class="fa-regular fa-calendar text-lg text-gray-400"></i> 15 April 2026
+            </div>
+        </div>
+    </header>
+
+    <!-- GAMBAR COVER -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop" alt="Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka" class="cover-image w-full h-auto max-h-[500px] object-cover rounded-2xl shadow-lg border border-gray-100" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
+    </div>
+
+    <!-- MAIN CONTENT KONTEN ARTIKEL -->
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <article class="prose prose-lg max-w-none 
+            prose-headings:text-gray-900 prose-headings:font-bold 
+            prose-a:text-ocean-600 hover:prose-a:text-ocean-500 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline
+            prose-img:rounded-2xl prose-img:shadow-md
+            prose-li:marker:text-ocean-500">
+            <h2>Mengapa Literasi Laut Harus Masuk Kurikulum Inti?</h2><p>Pendidikan kelautan seringkali hanya dianggap sebagai materi sisipan atau ekstrakurikuler. Padahal, menurut prinsip <em>Ocean Literacy</em>, laut adalah pengatur iklim utama dan penopang kehidupan di bumi. Mengintegrasikan isu ini ke dalam Kurikulum Merdeka memungkinkan siswa belajar berbasis proyek (Project-Based Learning) yang relevan dengan krisis iklim global.</p><h3>Langkah Integrasi di Kelas Sains (IPA) dan Sosial (IPS)</h3><p>Guru tidak perlu menambah mata pelajaran baru. Isu laut dapat menjadi <strong>konteks</strong> dari materi yang sudah ada:</p><ul><li><strong>Sains (Biologi & Fisika):</strong> Mempelajari siklus karbon pesisir (Blue Carbon) pada hutan mangrove, proses asidifikasi laut akibat CO2, dan jaring-jaring makanan ekosistem terumbu karang.</li><li><strong>Ilmu Sosial (Geografi & Ekonomi):</strong> Menganalisis dampak ekonomi dari kerusakan pesisir bagi komunitas nelayan lokal, serta regulasi pemerintah terkait pengelolaan limbah.</li></ul><div class='callout'><h4><i class='fa-solid fa-lightbulb'></i> Tips Fasilitator</h4><p>Gunakan pendekatan <em>Experience-based learning</em>. Bawa siswa keluar kelas, setidaknya ke area perairan terdekat (sungai/pantai) untuk melakukan observasi langsung, bukan sekadar membaca buku teks.</p></div><h3>Contoh Alur Proyek Mini (2 Minggu)</h3><div class='table-responsive'><table><thead><tr><th>Fase Proyek</th><th>Aktivitas Siswa</th><th>Target Capaian (Outcome)</th></tr></thead><tbody><tr><td>Minggu 1: Riset</td><td>Mengumpulkan data jejak plastik harian keluarga.</td><td>Kemampuan analisis data kualitatif dan kuantitatif.</td></tr><tr><td>Minggu 2: Solusi</td><td>Merancang kampanye 'Diet Plastik' berbasis data.</td><td>Kemampuan komunikasi (berpikir kritis dan kreatif).</td></tr></tbody></table></div><p>Dengan menggeser fokus dari sekadar 'menghafal' menjadi 'merancang solusi', guru telah mengubah siswa dari pengamat pasif menjadi <strong>agen perubahan</strong> yang berkesadaran lingkungan.</p>
+        </article>
+        
+        <!-- SHARE SECTION (Disembunyikan saat di-print) -->
+        <div class="share-section mt-16 pt-8 border-t border-gray-200 text-center no-print">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Bagikan Materi Edukasi Ini</h3>
+            <div class="flex justify-center gap-4">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fpesisirkita.id%2Fblog%2Farticle%2Fpanduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html" target="_blank" class="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all shadow-sm text-xl"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fpesisirkita.id%2Fblog%2Farticle%2Fpanduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html&text=Panduan%20Integrasi%20Modul%20Literasi%20Laut%20dalam%20Kurikulum%20Merdeka" target="_blank" class="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm text-xl"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://api.whatsapp.com/send?text=Panduan%20Integrasi%20Modul%20Literasi%20Laut%20dalam%20Kurikulum%20Merdeka%20-%20Baca%20selengkapnya%3A%20https%3A%2F%2Fpesisirkita.id%2Fblog%2Farticle%2Fpanduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html" target="_blank" class="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all shadow-sm text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
+    
