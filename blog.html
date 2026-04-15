@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoEdu Hub (Ruang Guru) | PesisirKita</title>
+    
+    <meta name="description" content="Platform repositori khusus pendidik. Berisi RPP Lingkungan, artikel edukasi pesisir, dan panduan membimbing siswa.">
+    
+    <!-- Tailwind & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans:['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e' },
+                        mangrove: { 500: '#10b981', 600: '#059669', 800: '#065f46' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- NAVBAR UTAMA BLOG -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-ocean-500 to-mangrove-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <span class="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-ocean-800 to-mangrove-600">PesisirKita</span>
+                </a>
+                <a href="index.html" class="text-sm font-bold text-gray-600 hover:text-ocean-600 flex items-center gap-2 transition bg-gray-100 hover:bg-ocean-50 px-4 py-2 rounded-full">
+                    <i class="fa-solid fa-house"></i> Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="pt-16 pb-12 bg-ocean-900 bg-[url('https://images.unsplash.com/photo-1544551763-46a0e38eeba5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center bg-blend-overlay text-center px-4">
+        <span class="inline-block py-1 px-3 rounded-full bg-mangrove-500/20 text-mangrove-400 font-semibold text-sm mb-4 border border-mangrove-500/30">
+            <i class="fa-solid fa-chalkboard-user mr-2"></i>Repositori Pendidik
+        </span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">EcoEdu Hub (Ruang Guru)</h1>
+        <p class="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">Pusat materi, Rencana Pelaksanaan Pembelajaran (RPP) lingkungan, dan artikel edukasi untuk membimbing siswa menjadi agen sadar kelautan.</p>
+    </section>
+
+    <!-- FILTER SECTION -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="relative w-full md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="Cari materi edukasi..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition">
+            </div>
+            <div class="flex gap-3 w-full md:w-auto">
+                <select id="categoryFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
+                    <option value="all">Semua Kategori</option>
+                </select>
+                <select id="sortFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRID ARTIKEL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div id="articleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+        </div>
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-gray-100">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Materi tidak ditemukan</h3>
+            <p class="text-gray-500">Coba ubah kata kunci pencarian atau kategori filter.</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const sortFilter = document.getElementById('sortFilter');
+            const articleGrid = document.getElementById('articleGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            let cards = Array.from(document.querySelectorAll('.article-card'));
+
+            function filterAndSort() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const category = categoryFilter.value;
+                const sortOrder = sortFilter.value;
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').innerText.toLowerCase();
+                    const cardCategory = card.getAttribute('data-category');
+                    
+                    const matchesSearch = title.includes(searchTerm);
+                    const matchesCategory = category === 'all' || cardCategory === category;
+
+                    if (matchesSearch && matchesCategory) {
+                        card.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                const visibleCards = cards.filter(card => card.style.display !== 'none');
+                
+                visibleCards.sort((a, b) => {
+                    const timeA = parseInt(a.getAttribute('data-timestamp'));
+                    const timeB = parseInt(b.getAttribute('data-timestamp'));
+                    return sortOrder === 'newest' ? timeB - timeA : timeA - timeB;
+                });
+
+                visibleCards.forEach(card => articleGrid.appendChild(card));
+
+                if (visibleCount === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+            }
+
+            searchInput.addEventListener('input', filterAndSort);
+            categoryFilter.addEventListener('change', filterAndSort);
+            sortFilter.addEventListener('change', filterAndSort);
+        });
+    </script>
+</body>
+</html>
