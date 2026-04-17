@@ -55,14 +55,17 @@
         <p class="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">Pusat materi, Rencana Pelaksanaan Pembelajaran (RPP) lingkungan, dan artikel edukasi untuk membimbing siswa menjadi agen sadar kelautan.</p>
     </section>
 
-    <!-- FILTER SECTION -->
+    <!-- FILTER SECTION DENGAN FASE -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-8">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div class="relative w-full md:w-96">
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="relative w-full lg:w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input type="text" id="searchInput" placeholder="Cari materi edukasi..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition">
             </div>
-            <div class="flex gap-3 w-full md:w-auto">
+            <div class="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
+                <select id="faseFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
+                    <option value="all">Semua Fase</option>
+                </select>
                 <select id="categoryFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
                     <option value="all">Semua Kategori</option><option value="Kurikulum">Kurikulum</option><option value="Aksi Ekstra">Aksi Ekstra</option><option value="Youth Diplomacy">Youth Diplomacy</option><option value="Eco-School">Eco-School</option>
                 </select>
@@ -78,12 +81,13 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div id="articleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-        <a href="blog/article/panduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html" data-category="Kurikulum" data-timestamp="1776211200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
+        <a href="blog/article/panduan-integrasi-modul-literasi-laut-dalam-kurikulum-merdeka.html" data-category="Kurikulum" data-fase="" data-timestamp="1776211200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
             <div class="h-48 overflow-hidden relative border-b border-gray-50">
                 <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop" alt="Panduan Integrasi Modul Literasi Laut dalam Kurikulum Merdeka" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
                 <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     Kurikulum
                 </span>
+                
             </div>
             
             <div class="p-6 flex-1 flex flex-col">
@@ -99,20 +103,27 @@
                     Bagaimana pendidik dapat mengintegrasikan materi ekosistem pesisir dan Blue Carbon ke dalam mata pelajaran inti (IPA & IPS) menggunakan metode Project-Based Learning.
                 </p>
                 
-                <div class="mt-auto">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
+                            T
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">Tim Edukasi PesisirKita</span>
+                    </div>
                     <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca Artikel <i class="fa-solid fa-arrow-right"></i>
+                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
             </div>
         </a>
     
-        <a href="blog/article/merancang-ekspedisi-pesisir-audit-sampah-bukan-sekadar-kerja-bakti.html" data-category="Aksi Ekstra" data-timestamp="1775779200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
+        <a href="blog/article/merancang-ekspedisi-pesisir-audit-sampah-bukan-sekadar-kerja-bakti.html" data-category="Aksi Ekstra" data-fase="" data-timestamp="1775779200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
             <div class="h-48 overflow-hidden relative border-b border-gray-50">
                 <img src="https://images.unsplash.com/photo-1618477461853-cf6ed80f0400?q=80&w=1200&auto=format&fit=crop" alt="Merancang Ekspedisi Pesisir: Audit Sampah Bukan Sekadar Kerja Bakti" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
                 <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     Aksi Ekstra
                 </span>
+                
             </div>
             
             <div class="p-6 flex-1 flex flex-col">
@@ -128,20 +139,27 @@
                     Aksi bersih-bersih (Clean-up) saja tidak cukup. Panduan bagi guru untuk merancang kegiatan pesisir yang fokus pada audit data limbah sebagai bahan riset sekolah.
                 </p>
                 
-                <div class="mt-auto">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
+                            D
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">Divisi Konservasi PesisirKita</span>
+                    </div>
                     <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca Artikel <i class="fa-solid fa-arrow-right"></i>
+                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
             </div>
         </a>
     
-        <a href="blog/article/diplomasi-iklim-pemuda-menggelar-simulasi-model-un-cop-di-sekolah.html" data-category="Youth Diplomacy" data-timestamp="1775347200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
+        <a href="blog/article/diplomasi-iklim-pemuda-menggelar-simulasi-model-un-cop-di-sekolah.html" data-category="Youth Diplomacy" data-fase="" data-timestamp="1775347200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
             <div class="h-48 overflow-hidden relative border-b border-gray-50">
                 <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=1200&auto=format&fit=crop" alt="Diplomasi Iklim Pemuda: Menggelar Simulasi Model UN (COP) di Sekolah" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
                 <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     Youth Diplomacy
                 </span>
+                
             </div>
             
             <div class="p-6 flex-1 flex flex-col">
@@ -157,20 +175,27 @@
                     Latih keterampilan negosiasi, public speaking, dan pemecahan masalah global siswa melalui simulasi Konferensi Perubahan Iklim (COP).
                 </p>
                 
-                <div class="mt-auto">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
+                            H
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">Hubungan Eksternal PesisirKita</span>
+                    </div>
                     <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca Artikel <i class="fa-solid fa-arrow-right"></i>
+                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
             </div>
         </a>
     
-        <a href="blog/article/membangun-living-lab-dan-budaya-ekokultur-di-sekolah.html" data-category="Eco-School" data-timestamp="1774656000000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
+        <a href="blog/article/membangun-living-lab-dan-budaya-ekokultur-di-sekolah.html" data-category="Eco-School" data-fase="" data-timestamp="1774656000000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
             <div class="h-48 overflow-hidden relative border-b border-gray-50">
                 <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop" alt="Membangun 'Living Lab' dan Budaya Ekokultur di Sekolah" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
                 <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     Eco-School
                 </span>
+                
             </div>
             
             <div class="p-6 flex-1 flex flex-col">
@@ -186,9 +211,15 @@
                     Transformasi infrastruktur sekolah bukanlah sekadar menyediakan tong sampah beda warna. Ini tentang membangun laboratorium hidup dan tanggung jawab komunal.
                 </p>
                 
-                <div class="mt-auto">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
+                            M
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">Manajemen Sistem PesisirKita</span>
+                    </div>
                     <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca Artikel <i class="fa-solid fa-arrow-right"></i>
+                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
             </div>
@@ -208,6 +239,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
             const categoryFilter = document.getElementById('categoryFilter');
+            const faseFilter = document.getElementById('faseFilter'); // Ambil filter fase
             const sortFilter = document.getElementById('sortFilter');
             const articleGrid = document.getElementById('articleGrid');
             const emptyState = document.getElementById('emptyState');
@@ -217,17 +249,21 @@
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const category = categoryFilter.value;
+                const fase = faseFilter ? faseFilter.value : 'all'; // Nilai filter fase
                 const sortOrder = sortFilter.value;
                 let visibleCount = 0;
 
                 cards.forEach(card => {
                     const title = card.querySelector('h3').innerText.toLowerCase();
                     const cardCategory = card.getAttribute('data-category');
+                    const cardFase = card.getAttribute('data-fase');
                     
                     const matchesSearch = title.includes(searchTerm);
                     const matchesCategory = category === 'all' || cardCategory === category;
+                    const matchesFase = fase === 'all' || cardFase === fase;
 
-                    if (matchesSearch && matchesCategory) {
+                    // Syarat: Ketiganya harus sesuai (AND logic)
+                    if (matchesSearch && matchesCategory && matchesFase) {
                         card.style.display = 'flex';
                         visibleCount++;
                     } else {
@@ -254,6 +290,7 @@
 
             searchInput.addEventListener('input', filterAndSort);
             categoryFilter.addEventListener('change', filterAndSort);
+            if(faseFilter) faseFilter.addEventListener('change', filterAndSort); // Listener Fase
             sortFilter.addEventListener('change', filterAndSort);
         });
     </script>
