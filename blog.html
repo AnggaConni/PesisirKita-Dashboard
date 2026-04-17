@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoEdu Hub (Ruang Guru) | PesisirKita</title>
+    <title>Inventory Kurikulum | PesisirKita</title>
+    <meta name="description" content="Pusat panduan kompetensi, capaian pembelajaran, dan referensi materi dari tim ahli untuk pendidik PesisirKita.">
     
-    <meta name="description" content="Platform repositori khusus pendidik. Berisi RPP Lingkungan, artikel edukasi pesisir, dan panduan membimbing siswa.">
-    
-    <!-- Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,303 +17,403 @@
                 extend: {
                     fontFamily: { sans:['"Plus Jakarta Sans"', 'sans-serif'] },
                     colors: {
-                        ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e' },
-                        mangrove: { 500: '#10b981', 600: '#059669', 800: '#065f46' }
+                        sky: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e' },
+                        emerald: { 500: '#10b981', 600: '#059669', 800: '#065f46' }
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- NAVBAR UTAMA BLOG -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+    <!-- NAVBAR ATAS -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
                 <a href="index.html" class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-gradient-to-br from-ocean-500 to-mangrove-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold shadow-md">
                         <i class="fa-solid fa-leaf"></i>
                     </div>
-                    <span class="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-ocean-800 to-mangrove-600">PesisirKita</span>
+                    <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-sky-800 to-emerald-600 hidden sm:block">
+                        PesisirKita
+                    </span>
+                    <span class="mx-3 text-slate-300 hidden sm:block">|</span>
+                    <span class="font-semibold text-slate-600">Inventory Kurikulum</span>
                 </a>
-                <a href="index.html" class="text-sm font-bold text-gray-600 hover:text-ocean-600 flex items-center gap-2 transition bg-gray-100 hover:bg-ocean-50 px-4 py-2 rounded-full">
-                    <i class="fa-solid fa-house"></i> Kembali ke Beranda
+                <a href="index.html" class="text-sm font-bold text-slate-600 hover:text-sky-600 flex items-center gap-2 transition bg-slate-100 hover:bg-sky-50 px-4 py-2 rounded-full">
+                    <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Kembali ke Beranda</span>
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="pt-16 pb-12 bg-ocean-900 bg-[url('https://images.unsplash.com/photo-1544551763-46a0e38eeba5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center bg-blend-overlay text-center px-4">
-        <span class="inline-block py-1 px-3 rounded-full bg-mangrove-500/20 text-mangrove-400 font-semibold text-sm mb-4 border border-mangrove-500/30">
-            <i class="fa-solid fa-chalkboard-user mr-2"></i>Repositori Pendidik
-        </span>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">EcoEdu Hub (Ruang Guru)</h1>
-        <p class="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">Pusat materi, Rencana Pelaksanaan Pembelajaran (RPP) lingkungan, dan artikel edukasi untuk membimbing siswa menjadi agen sadar kelautan.</p>
-    </section>
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- SIDEBAR KIRI (Untuk Layar Besar) -->
+        <aside class="w-72 bg-white border-r border-slate-200 flex-col hidden lg:flex overflow-y-auto">
+            <div class="p-6 space-y-8 flex-1 mt-4">
+                <nav class="space-y-2" id="sidebarCategories">
+                    <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Tema Utama</p>
+                    
+    <button data-filter-type="category" data-value="all" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors">
+        <i class="fa-solid fa-layer-group w-5"></i>
+        <span>Semua Kurikulum</span>
+    </button>
 
-    <!-- FILTER SECTION DENGAN FASE -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-8">
-        <div class="flex flex-col lg:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div class="relative w-full lg:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchInput" placeholder="Cari materi edukasi..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition">
-            </div>
-            <div class="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
-                <select id="faseFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
-                    <option value="all">Semua Fase</option><option value="Fase D - F (SMP & SMA)">Fase D - F (SMP & SMA)</option><option value="Fase D–E (SD & SMP)">Fase D–E (SD & SMP)</option><option value="Fase D–F (SD, SMP & SMA)">Fase D–F (SD, SMP & SMA)</option><option value="Fase E–F (SMP & SMA)">Fase E–F (SMP & SMA)</option><option value="Fase Profesional">Fase Profesional</option>
-                </select>
-                <select id="categoryFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
-                    <option value="all">Semua Kategori</option><option value="Pedagogi & Manajemen Kelas">Pedagogi & Manajemen Kelas</option><option value="Kurikulum">Kurikulum</option><option value="Aksi Ekstra">Aksi Ekstra</option><option value="Youth Diplomacy">Youth Diplomacy</option><option value="Eco-School">Eco-School</option>
-                </select>
-                <select id="sortFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
-                    <option value="newest">Terbaru</option>
-                    <option value="oldest">Terlama</option>
-                </select>
-            </div>
-        </div>
-    </div>
+        <button data-filter-type="category" data-value="Pedagogi & Manajemen Kelas" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
+            <i class="fa-regular fa-folder w-5"></i>
+            <span>Pedagogi & Manajemen Kelas</span>
+        </button>
+    
+        <button data-filter-type="category" data-value="Kurikulum" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
+            <i class="fa-regular fa-folder w-5"></i>
+            <span>Kurikulum</span>
+        </button>
+    
+        <button data-filter-type="category" data-value="Aksi Ekstra" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
+            <i class="fa-regular fa-folder w-5"></i>
+            <span>Aksi Ekstra</span>
+        </button>
+    
+        <button data-filter-type="category" data-value="Youth Diplomacy" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
+            <i class="fa-regular fa-folder w-5"></i>
+            <span>Youth Diplomacy</span>
+        </button>
+    
+        <button data-filter-type="category" data-value="Eco-School" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
+            <i class="fa-regular fa-folder w-5"></i>
+            <span>Eco-School</span>
+        </button>
+    
+                </nav>
 
-    <!-- GRID ARTIKEL -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div id="articleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-        <a href="blog/article/protokol-neurosains-mengajar.html" data-category="Pedagogi & Manajemen Kelas" data-fase="Fase D - F (SMP & SMA)" data-timestamp="1776384000000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
-            <div class="h-48 overflow-hidden relative border-b border-gray-50">
-                <img src="../../thum/amy.png" alt="Protokol Membaca Ruang Kelas dan Neurosains Pembelajaran yang Tak Terlupakan" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
-                <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    Pedagogi & Manajemen Kelas
-                </span>
-                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Fase D - F (SMP & SMA)</span>
+                <nav class="space-y-2" id="sidebarFases">
+                    <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Berdasarkan Fase</p>
+                    
+    <button data-filter-type="fase" data-value="all" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200">
+        Semua Fase
+    </button>
+
+            <button data-filter-type="fase" data-value="Fase D - F (SMP & SMA)" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+                Fase D - F (SMP & SMA)
+            </button>
+        
+            <button data-filter-type="fase" data-value="Fase D–E (SD & SMP)" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+                Fase D–E (SD & SMP)
+            </button>
+        
+            <button data-filter-type="fase" data-value="Fase D–F (SD, SMP & SMA)" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+                Fase D–F (SD, SMP & SMA)
+            </button>
+        
+            <button data-filter-type="fase" data-value="Fase E–F (SMP & SMA)" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+                Fase E–F (SMP & SMA)
+            </button>
+        
+            <button data-filter-type="fase" data-value="Fase Profesional" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+                Fase Profesional
+            </button>
+        
+                </nav>
             </div>
+
+            <div class="p-6">
+                <div class="bg-sky-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-lg">
+                    <i class="fa-solid fa-globe absolute -right-4 -bottom-4 opacity-20 text-sky-200 text-7xl"></i>
+                    <div class="relative z-10">
+                        <p class="text-xs text-sky-300 font-semibold uppercase tracking-wider">Divalidasi Oleh</p>
+                        <p class="text-lg font-bold mt-1">Tim Ahli Nasional</p>
+                        <p class="text-xs text-sky-200 mt-2 line-clamp-2">Pusat data kurikulum resmi PesisirKita.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA KANAN -->
+        <main class="flex-1 overflow-y-auto bg-slate-50/50">
+            <div class="max-w-6xl mx-auto p-6 md:p-10 space-y-8">
+                
+                <!-- HEADER & PENCARIAN -->
+                <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-sky-500"></i> Direktori Capaian
+                        </h1>
+                        <p class="text-slate-500 text-sm mt-1">Telusuri panduan kompetensi dan referensi materi dari tim ahli.</p>
+                    </div>
+                    
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                        <!-- Dropdown Filter Mobile (Sembunyi di Desktop) -->
+                        <select id="mobileCategory" class="lg:hidden w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-sky-500/50 outline-none">
+                            <option value="all">Semua Kategori</option><option value="Pedagogi & Manajemen Kelas">Pedagogi & Manajemen Kelas</option><option value="Kurikulum">Kurikulum</option><option value="Aksi Ekstra">Aksi Ekstra</option><option value="Youth Diplomacy">Youth Diplomacy</option><option value="Eco-School">Eco-School</option>
+                        </select>
+                        <select id="mobileFase" class="lg:hidden w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-sky-500/50 outline-none">
+                            <option value="all">Semua Fase</option><option value="Fase D - F (SMP & SMA)">Fase D - F (SMP & SMA)</option><option value="Fase D–E (SD & SMP)">Fase D–E (SD & SMP)</option><option value="Fase D–F (SD, SMP & SMA)">Fase D–F (SD, SMP & SMA)</option><option value="Fase E–F (SMP & SMA)">Fase E–F (SMP & SMA)</option><option value="Fase Profesional">Fase Profesional</option>
+                        </select>
+
+                        <!-- Input Pencarian -->
+                        <div class="relative w-full md:w-80">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchInput" placeholder="Cari materi atau topik..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-inner">
+                        </div>
+                    </div>
+                </header>
+
+                <!-- GRID KARTU (HASIL JS) -->
+                <div id="articleGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    
+        <div data-title="protokol membaca ruang kelas dan neurosains pembelajaran yang tak terlupakan" data-category="Pedagogi & Manajemen Kelas" data-fase="Fase D - F (SMP & SMA)" data-timestamp="1776384000000" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
             
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> 17 April 2026
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100">
+                        Pedagogi & Manajemen Kelas
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <i class="fa-regular fa-calendar mr-1"></i> 17 April 2026
+                    </span>
                 </div>
                 
-                <h3 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-ocean-600 transition-colors">
+                <h3 class="text-lg font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors mb-3">
                     Protokol Membaca Ruang Kelas dan Neurosains Pembelajaran yang Tak Terlupakan
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3 leading-relaxed">
+                <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
                     Mengapa murid lebih mengingat cerita konyol Anda dibandingkan rumus di Bab 4? Pelajari cara membaca bahasa tubuh siswa dan menggunakan neurobiologi untuk membuat pelajaran Anda menempel kuat di ingatan mereka.
                 </p>
-                
-                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
-                            A
-                        </div>
-                        <span class="text-xs font-medium text-gray-700">Angga Conni Saputra</span>
+
+                <div class="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Fase D - F (SMP & SMA)</span>
                     </div>
-                    <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
+                    
+                    <a href="blog/article/protokol-neurosains-mengajar.html" class="text-sm font-bold text-sky-600 flex items-center space-x-1 group-hover:text-sky-700 transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-lg">
+                        <span>Buka Panduan</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div data-title="panduan integrasi literasi laut dalam kurikulum merdeka" data-category="Kurikulum" data-fase="Fase D–E (SD & SMP)" data-timestamp="1776211200000" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
+            
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100">
+                        Kurikulum
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <i class="fa-regular fa-calendar mr-1"></i> 2026-04-15
                     </span>
                 </div>
-            </div>
-        </a>
-    
-        <a href="blog/article/panduan-integrasi-literasi-laut-dalam-kurikulum-merdeka.html" data-category="Kurikulum" data-fase="Fase D–E (SD & SMP)" data-timestamp="1776211200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
-            <div class="h-48 overflow-hidden relative border-b border-gray-50">
-                <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop" alt="Panduan Integrasi Literasi Laut dalam Kurikulum Merdeka" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
-                <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    Kurikulum
-                </span>
-                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Fase D–E (SD & SMP)</span>
-            </div>
-            
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> 2026-04-15
-                </div>
                 
-                <h3 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-ocean-600 transition-colors">
+                <h3 class="text-lg font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors mb-3">
                     Panduan Integrasi Literasi Laut dalam Kurikulum Merdeka
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3 leading-relaxed">
+                <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
                     Panduan bagi pendidik untuk mengintegrasikan ekosistem pesisir dan Blue Carbon ke dalam mata pelajaran inti (IPA & IPS) melalui pendekatan Project-Based Learning.
                 </p>
-                
-                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
-                            T
-                        </div>
-                        <span class="text-xs font-medium text-gray-700">Tim Edukasi PesisirKita</span>
+
+                <div class="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Fase D–E (SD & SMP)</span>
                     </div>
-                    <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
+                    
+                    <a href="blog/article/panduan-integrasi-literasi-laut-dalam-kurikulum-merdeka.html" class="text-sm font-bold text-sky-600 flex items-center space-x-1 group-hover:text-sky-700 transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-lg">
+                        <span>Buka Panduan</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div data-title="merancang ekspedisi pesisir: audit sampah sebagai pembelajaran berbasis data" data-category="Aksi Ekstra" data-fase="Fase D–F (SD, SMP & SMA)" data-timestamp="1775779200000" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
+            
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100">
+                        Aksi Ekstra
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <i class="fa-regular fa-calendar mr-1"></i> 2026-04-10
                     </span>
                 </div>
-            </div>
-        </a>
-    
-        <a href="blog/article/merancang-ekspedisi-pesisir-audit-sampah-sebagai-pembelajaran-berbasis-data.html" data-category="Aksi Ekstra" data-fase="Fase D–F (SD, SMP & SMA)" data-timestamp="1775779200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
-            <div class="h-48 overflow-hidden relative border-b border-gray-50">
-                <img src="https://images.unsplash.com/photo-1618477461853-cf6ed80f0400?q=80&w=1200&auto=format&fit=crop" alt="Merancang Ekspedisi Pesisir: Audit Sampah sebagai Pembelajaran Berbasis Data" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
-                <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    Aksi Ekstra
-                </span>
-                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Fase D–F (SD, SMP & SMA)</span>
-            </div>
-            
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> 2026-04-10
-                </div>
                 
-                <h3 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-ocean-600 transition-colors">
+                <h3 class="text-lg font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors mb-3">
                     Merancang Ekspedisi Pesisir: Audit Sampah sebagai Pembelajaran Berbasis Data
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3 leading-relaxed">
+                <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
                     Panduan merancang kegiatan pesisir berbasis audit data limbah, bukan sekadar aksi bersih-bersih.
                 </p>
-                
-                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
-                            D
-                        </div>
-                        <span class="text-xs font-medium text-gray-700">Divisi Konservasi PesisirKita</span>
+
+                <div class="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Fase D–F (SD, SMP & SMA)</span>
                     </div>
-                    <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
+                    
+                    <a href="blog/article/merancang-ekspedisi-pesisir-audit-sampah-sebagai-pembelajaran-berbasis-data.html" class="text-sm font-bold text-sky-600 flex items-center space-x-1 group-hover:text-sky-700 transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-lg">
+                        <span>Buka Panduan</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div data-title="diplomasi iklim pemuda: simulasi model cop di sekolah" data-category="Youth Diplomacy" data-fase="Fase E–F (SMP & SMA)" data-timestamp="1775347200000" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
+            
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100">
+                        Youth Diplomacy
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <i class="fa-regular fa-calendar mr-1"></i> 2026-04-05
                     </span>
                 </div>
-            </div>
-        </a>
-    
-        <a href="blog/article/diplomasi-iklim-pemuda-simulasi-model-cop-di-sekolah.html" data-category="Youth Diplomacy" data-fase="Fase E–F (SMP & SMA)" data-timestamp="1775347200000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
-            <div class="h-48 overflow-hidden relative border-b border-gray-50">
-                <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=1200&auto=format&fit=crop" alt="Diplomasi Iklim Pemuda: Simulasi Model COP di Sekolah" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
-                <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    Youth Diplomacy
-                </span>
-                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Fase E–F (SMP & SMA)</span>
-            </div>
-            
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> 2026-04-05
-                </div>
                 
-                <h3 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-ocean-600 transition-colors">
+                <h3 class="text-lg font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors mb-3">
                     Diplomasi Iklim Pemuda: Simulasi Model COP di Sekolah
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3 leading-relaxed">
+                <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
                     Mengembangkan keterampilan negosiasi, public speaking, dan pemecahan masalah melalui simulasi konferensi iklim.
                 </p>
-                
-                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
-                            H
-                        </div>
-                        <span class="text-xs font-medium text-gray-700">Hubungan Eksternal PesisirKita</span>
+
+                <div class="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Fase E–F (SMP & SMA)</span>
                     </div>
-                    <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
+                    
+                    <a href="blog/article/diplomasi-iklim-pemuda-simulasi-model-cop-di-sekolah.html" class="text-sm font-bold text-sky-600 flex items-center space-x-1 group-hover:text-sky-700 transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-lg">
+                        <span>Buka Panduan</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div data-title="membangun living lab dan budaya ekokultur di sekolah" data-category="Eco-School" data-fase="Fase Profesional" data-timestamp="1774656000000" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
+            
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-100">
+                        Eco-School
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <i class="fa-regular fa-calendar mr-1"></i> 2026-03-28
                     </span>
                 </div>
-            </div>
-        </a>
-    
-        <a href="blog/article/membangun-living-lab-dan-budaya-ekokultur-di-sekolah.html" data-category="Eco-School" data-fase="Fase Profesional" data-timestamp="1774656000000" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
-            <div class="h-48 overflow-hidden relative border-b border-gray-50">
-                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop" alt="Membangun Living Lab dan Budaya Ekokultur di Sekolah" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop'">
-                <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    Eco-School
-                </span>
-                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Fase Profesional</span>
-            </div>
-            
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> 2026-03-28
-                </div>
                 
-                <h3 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-ocean-600 transition-colors">
+                <h3 class="text-lg font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors mb-3">
                     Membangun Living Lab dan Budaya Ekokultur di Sekolah
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3 leading-relaxed">
+                <p class="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
                     Membangun sekolah sebagai laboratorium hidup untuk mendorong perubahan perilaku dan budaya lingkungan.
                 </p>
-                
-                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
-                            M
-                        </div>
-                        <span class="text-xs font-medium text-gray-700">Manajemen Sistem PesisirKita</span>
+
+                <div class="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Fase Profesional</span>
                     </div>
-                    <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
-                    </span>
+                    
+                    <a href="blog/article/membangun-living-lab-dan-budaya-ekokultur-di-sekolah.html" class="text-sm font-bold text-sky-600 flex items-center space-x-1 group-hover:text-sky-700 transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-lg">
+                        <span>Buka Panduan</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
                 </div>
             </div>
-        </a>
+        </div>
     
-        </div>
-        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-gray-100">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-3xl mx-auto mb-4">
-                <i class="fa-solid fa-folder-open"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Materi tidak ditemukan</h3>
-            <p class="text-gray-500">Coba ubah kata kunci pencarian atau kategori filter.</p>
-        </div>
-    </main>
+                </div>
+                
+                <!-- KOSONG / EMPTY STATE -->
+                <div id="emptyState" class="hidden text-center py-20 bg-white rounded-2xl border border-slate-200">
+                    <i class="fa-solid fa-magnifying-glass text-5xl text-slate-200 mb-4 block"></i>
+                    <h3 class="text-lg font-bold text-slate-900">Kurikulum tidak ditemukan</h3>
+                    <p class="text-slate-500 mt-1">Coba gunakan kata kunci lain atau ubah filter fase.</p>
+                </div>
 
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT LOGIKA FILTER -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
-            const categoryFilter = document.getElementById('categoryFilter');
-            const faseFilter = document.getElementById('faseFilter'); // Ambil filter fase
-            const sortFilter = document.getElementById('sortFilter');
+            const mobileCategory = document.getElementById('mobileCategory');
+            const mobileFase = document.getElementById('mobileFase');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
             const articleGrid = document.getElementById('articleGrid');
             const emptyState = document.getElementById('emptyState');
-            
             let cards = Array.from(document.querySelectorAll('.article-card'));
 
-            function filterAndSort() {
+            // State bawaan
+            let currentCategory = 'all';
+            let currentFase = 'all';
+
+            // 1. Fungsi Update UI Sidebar
+            function updateSidebarUI() {
+                filterBtns.forEach(btn => {
+                    const type = btn.getAttribute('data-filter-type');
+                    const val = btn.getAttribute('data-value');
+                    
+                    if (type === 'category') {
+                        if (val === currentCategory) {
+                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors';
+                        } else {
+                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium';
+                        }
+                    } else if (type === 'fase') {
+                        if (val === currentFase) {
+                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200';
+                        } else {
+                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50';
+                        }
+                    }
+                });
+
+                // Sinkronkan ke dropdown mobile
+                if(mobileCategory) mobileCategory.value = currentCategory;
+                if(mobileFase) mobileFase.value = currentFase;
+            }
+
+            // 2. Fungsi Filter Kartu
+            function filterCards() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const category = categoryFilter.value;
-                const fase = faseFilter ? faseFilter.value : 'all'; // Nilai filter fase
-                const sortOrder = sortFilter.value;
                 let visibleCount = 0;
 
                 cards.forEach(card => {
-                    const title = card.querySelector('h3').innerText.toLowerCase();
+                    const title = card.getAttribute('data-title');
                     const cardCategory = card.getAttribute('data-category');
                     const cardFase = card.getAttribute('data-fase');
                     
-                    const matchesSearch = title.includes(searchTerm);
-                    const matchesCategory = category === 'all' || cardCategory === category;
-                    const matchesFase = fase === 'all' || cardFase === fase;
+                    const matchSearch = title.includes(searchTerm);
+                    const matchCategory = currentCategory === 'all' || cardCategory === currentCategory;
+                    const matchFase = currentFase === 'all' || cardFase === currentFase;
 
-                    // Syarat: Ketiganya harus sesuai (AND logic)
-                    if (matchesSearch && matchesCategory && matchesFase) {
+                    if (matchSearch && matchCategory && matchFase) {
                         card.style.display = 'flex';
                         visibleCount++;
                     } else {
                         card.style.display = 'none';
                     }
                 });
-
-                const visibleCards = cards.filter(card => card.style.display !== 'none');
-                
-                visibleCards.sort((a, b) => {
-                    const timeA = parseInt(a.getAttribute('data-timestamp'));
-                    const timeB = parseInt(b.getAttribute('data-timestamp'));
-                    return sortOrder === 'newest' ? timeB - timeA : timeA - timeB;
-                });
-
-                visibleCards.forEach(card => articleGrid.appendChild(card));
 
                 if (visibleCount === 0) {
                     emptyState.classList.remove('hidden');
@@ -324,10 +422,38 @@
                 }
             }
 
-            searchInput.addEventListener('input', filterAndSort);
-            categoryFilter.addEventListener('change', filterAndSort);
-            if(faseFilter) faseFilter.addEventListener('change', filterAndSort); // Listener Fase
-            sortFilter.addEventListener('change', filterAndSort);
+            // 3. Listener Tombol Sidebar
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const type = btn.currentTarget.getAttribute('data-filter-type');
+                    const val = btn.currentTarget.getAttribute('data-value');
+                    
+                    if (type === 'category') currentCategory = val;
+                    if (type === 'fase') currentFase = val;
+                    
+                    updateSidebarUI();
+                    filterCards();
+                });
+            });
+
+            // 4. Listener Dropdown Mobile
+            if (mobileCategory) {
+                mobileCategory.addEventListener('change', (e) => {
+                    currentCategory = e.target.value;
+                    updateSidebarUI();
+                    filterCards();
+                });
+            }
+            if (mobileFase) {
+                mobileFase.addEventListener('change', (e) => {
+                    currentFase = e.target.value;
+                    updateSidebarUI();
+                    filterCards();
+                });
+            }
+
+            // 5. Listener Pencarian
+            searchInput.addEventListener('input', filterCards);
         });
     </script>
 </body>
