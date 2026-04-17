@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesisir Kita - Interactive Proposal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 leading-relaxed">
+
+    <!-- Header/Hero Section -->
+    <header class="bg-gradient-to-r from-blue-900 to-teal-800 text-white py-12 px-6 lg:px-12 relative overflow-hidden">
+        <div class="absolute top-0 right-0 opacity-10 pointer-events-none">
+            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12h4l3-9 5 18 3-9h5"/>
+            </svg>
+        </div>
+        
+        <div class="max-w-5xl mx-auto relative z-10">
+            <div class="inline-block bg-teal-500/30 border border-teal-300/50 text-teal-100 text-xs font-bold px-3 py-1 rounded-full mb-4 backdrop-blur-sm">
+                PAIR SULAWESI: SECOND INVESTMENT CALL — FULL PROPOSAL
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
+                Pesisir Kita <br/>
+                <span class="text-teal-300 font-light text-xl md:text-3xl block mt-2">
+                    Digitalisasi Monitoring Mangrove dan Integrasi Kebijakan untuk Ketahanan Iklim Komunitas Pesisir di Sulawesi
+                </span>
+            </h1>
+
+            <!-- Quick Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20">
+                    <i data-lucide="target" class="text-teal-300 mb-2 w-6 h-6"></i>
+                    <div class="text-xs text-blue-200 uppercase tracking-wider mb-1">Kluster Riset</div>
+                    <div class="font-bold text-sm leading-tight">Governance and Inclusion (Core Research Area 3)</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20">
+                    <i data-lucide="monitor" class="text-teal-300 mb-2 w-6 h-6"></i>
+                    <div class="text-xs text-blue-200 uppercase tracking-wider mb-1">Subtopik & Output</div>
+                    <div class="font-bold text-sm leading-tight">3C — Digital Monitoring<br/>Technology Output Project</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20">
+                    <i data-lucide="calendar" class="text-teal-300 mb-2 w-6 h-6"></i>
+                    <div class="text-xs text-blue-200 uppercase tracking-wider mb-1">Durasi & Lokasi</div>
+                    <div class="font-bold text-sm leading-tight">12 Bulan (Sep 26 - Okt 27)<br/>Sulsel & Sulbar</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20">
+                    <i data-lucide="dollar-sign" class="text-teal-300 mb-2 w-6 h-6"></i>
+                    <div class="text-xs text-blue-200 uppercase tracking-wider mb-1">Anggaran</div>
+                    <div class="font-bold text-sm leading-tight">IDR 1.000.000.000 (LPDP)<br/>AUD 50.000 (DFAT)</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-5xl mx-auto px-6 lg:px-12 flex overflow-x-auto hide-scrollbar">
+            <button id="btn-overview" onclick="switchTab('overview')" class="tab-btn flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap transition-all border-b-4 border-teal-600 text-teal-700 bg-teal-50/50">
+                <i data-lucide="globe" class="w-[18px] h-[18px]"></i>
+                1 & 2: Ringkasan & Konteks
+            </button>
+            <button id="btn-goals" onclick="switchTab('goals')" class="tab-btn flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap transition-all border-b-4 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50">
+                <i data-lucide="target" class="w-[18px] h-[18px]"></i>
+                3 & 5: Tujuan & Luaran
+            </button>
+            <button id="btn-methodology" onclick="switchTab('methodology')" class="tab-btn flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap transition-all border-b-4 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50">
+                <i data-lucide="activity" class="w-[18px] h-[18px]"></i>
+                4, 8, 10: Metodologi & GEDSI
+            </button>
+            <button id="btn-management" onclick="switchTab('management')" class="tab-btn flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap transition-all border-b-4 border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50">
+                <i data-lucide="briefcase" class="w-[18px] h-[18px]"></i>
+                6, 7, 9: Tim & Anggaran
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-6 lg:px-12 py-10">
+        
+        <!-- ================= TAB 1: OVERVIEW ================= -->
+        <div id="tab-overview" class="tab-content space-y-12 animate-fade-in text-slate-700">
+            <!-- 1. Ringkasan Eksekutif -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">1. Ringkasan Eksekutif</h2>
+                <div class="space-y-4 text-sm md:text-base">
+                    <p>
+                        Proyek <strong>“Pesisir Kita”</strong> mengusulkan pengembangan dan implementasi <em>integrated digital ecosystem</em> untuk monitoring ekosistem mangrove sekaligus penguatan kapasitas kelembagaan pemerintah daerah dalam pengambilan keputusan berbasis data di Sulawesi Selatan dan Sulawesi Barat. Inisiatif ini secara langsung merespons Subtopik 3C PAIR Sulawesi Second Call, dengan fokus pada pengembangan sistem data digital, alat pemantauan, serta teknologi pendukung kebijakan iklim.
+                    </p>
+                    <p>
+                        Kerusakan ekosistem mangrove di wilayah pesisir Sulawesi telah berdampak signifikan terhadap ketahanan iklim, produktivitas perikanan, serta keberlanjutan ekonomi masyarakat pesisir. Namun demikian, keterbatasan sistem data yang terstruktur, real-time, dan terintegrasi masih menjadi hambatan utama bagi pemerintah daerah dalam merancang kebijakan yang efektif dan adaptif.
+                    </p>
+                    <p>Sebagai lokasi percontohan (pilot sites), proyek ini akan diimplementasikan di:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>Desa Torosiaje</strong>, sebuah komunitas pesisir unik berbasis permukiman laut yang merepresentasikan interaksi langsung masyarakat dengan ekosistem mangrove dan pesisir;</li>
+                        <li><strong>Taman Nasional Taka Bonerate</strong>, salah satu kawasan atol terbesar di dunia yang memiliki nilai strategis dalam konservasi keanekaragaman hayati laut dan ekonomi biru.</li>
+                    </ul>
+                    <p>
+                        Kombinasi kedua lokasi ini memungkinkan pengujian sistem dalam dua konteks berbeda: <em>community-driven coastal management</em> dan <em>protected marine ecosystem governance</em>, sehingga menghasilkan model yang adaptif dan dapat direplikasi di berbagai wilayah pesisir Indonesia.
+                    </p>
+                    <p>Untuk menjawab tantangan tersebut, proyek ini akan mengembangkan <strong>“Pesisir Kita Dashboard v2.0”</strong>, sebuah platform terpadu yang mengintegrasikan:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li>data monitoring ekosistem berbasis komunitas (<em>participatory sensing</em>),</li>
+                        <li>sistem pelaporan lapangan,</li>
+                        <li><em>decision-support tools</em> termasuk kalkulator ekologi dan ekonomi biru,</li>
+                        <li>serta modul manajemen pengetahuan yang mencakup kurikulum Blue Economy dan Ocean Literacy.</li>
+                    </ul>
+                    <p>
+                        Berbeda dari pendekatan konvensional yang berfokus pada solusi teknologi semata, proyek ini juga mengembangkan kerangka pemetaan kompetensi (<em>skills mapping</em>) yang akan diterjemahkan menjadi modul pembelajaran kontekstual bagi sekolah-sekolah pesisir. Dengan demikian, “Pesisir Kita” tidak hanya memperkuat kapasitas pemerintah, tetapi juga membangun fondasi literasi kelautan dan ekonomi biru sejak tingkat pendidikan dasar hingga menengah.
+                    </p>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-5 mt-6">
+                        <h4 class="font-bold text-blue-900 mb-2">Dalam 12 bulan pelaksanaan, proyek ini akan menghasilkan:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-blue-800">
+                            <li>Prototipe dashboard yang tervalidasi dan siap digunakan oleh Dinas Kelautan dan Perikanan daerah;</li>
+                            <li>Modul kebijakan dan Standar Operasional Prosedur (SOP) pengelolaan data mangrove;</li>
+                            <li>Sistem pemetaan kompetensi dan paket kurikulum Ocean Literacy dan Blue Economy untuk sekolah pesisir;</li>
+                            <li>Laporan riset dan policy brief yang disusun bersama tim kolaborasi Australia–Indonesia;</li>
+                            <li>Satu manuskrip ilmiah yang disubmit ke jurnal internasional bereputasi (Q1/Q2).</li>
+                        </ul>
+                    </div>
+                    <p class="mt-4">
+                        Proyek ini juga mengintegrasikan prinsip GEDSI (<em>Gender Equality, Disability, and Social Inclusion</em>) secara substantif, dengan memastikan perempuan pesisir dan penyandang disabilitas terlibat aktif dalam proses <em>co-design</em>, pengumpulan data, serta pengembangan solusi.
+                    </p>
+                    <p class="font-semibold">
+                        Dengan menggabungkan inovasi teknologi, penguatan kebijakan, dan transformasi pendidikan, “Pesisir Kita” dirancang sebagai model replikasi nasional untuk tata kelola pesisir berbasis data yang inklusif dan berkelanjutan.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 2. Latar Belakang -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">2. Latar Belakang dan Konteks Masalah</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">2.1 Konteks Kawasan Pesisir Sulawesi</h3>
+                <div class="space-y-4 mb-8 text-sm md:text-base">
+                    <p>Indonesia merupakan negara kepulauan dengan garis pantai sepanjang lebih dari 81.000 km, di mana sebagian besar populasi tinggal dan bergantung pada wilayah pesisir. Di Sulawesi, komunitas pesisir memiliki ketergantungan yang tinggi terhadap ekosistem mangrove sebagai sumber mata pencaharian—melalui budidaya ikan, udang, dan kepiting—serta sebagai pelindung alami terhadap abrasi dan penyangga stabilitas iklim mikro.</p>
+                    <p>Namun, dalam satu dekade terakhir, tekanan antropogenik seperti alih fungsi lahan, eksploitasi sumber daya yang tidak berkelanjutan, serta dampak perubahan iklim telah menyebabkan degradasi mangrove secara signifikan. Penurunan kualitas ekosistem ini tidak hanya berdampak pada aspek ekologis, tetapi juga secara langsung melemahkan ketahanan ekonomi masyarakat pesisir.</p>
+                    <p>Kondisi ini semakin diperparah selama pandemi COVID-19, di mana tingkat kemiskinan ekstrem di kawasan pesisir dilaporkan meningkat hingga tiga kali lipat. Fenomena ini menunjukkan keterkaitan erat antara kesehatan ekosistem pesisir dengan kesejahteraan sosial-ekonomi masyarakat, sekaligus menegaskan pentingnya intervensi berbasis data yang mampu menjembatani aspek lingkungan dan pembangunan manusia.</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">2.2 Kesenjangan Data dan Kapasitas Kelembagaan</h3>
+                <div class="space-y-4 mb-6 text-sm md:text-base">
+                    <p>Meskipun urgensi pengelolaan ekosistem pesisir semakin meningkat, pemerintah daerah di Sulawesi masih menghadapi sejumlah hambatan struktural dalam mengimplementasikan kebijakan berbasis data. Terdapat tiga kesenjangan utama yang menjadi tantangan:</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
+                            <div class="text-orange-500 mb-3"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-2">1. Fragmentasi data dan ketiadaan sistem terpadu</h4>
+                            <p class="text-sm">Data terkait kondisi mangrove dan ekosistem pesisir tersebar di berbagai Organisasi Perangkat Daerah (OPD), tidak terstandarisasi, serta belum tersedia dalam format real-time yang dapat diakses dan digunakan secara lintas sektor.</p>
+                        </div>
+                        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
+                            <div class="text-orange-500 mb-3"><i data-lucide="monitor" class="w-8 h-8"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-2">2. Keterbatasan kapasitas digital aparatur</h4>
+                            <p class="text-sm">Pemanfaatan teknologi digital untuk analisis, visualisasi, dan pengambilan keputusan berbasis data masih belum optimal, sehingga potensi data yang ada belum sepenuhnya diterjemahkan menjadi kebijakan yang responsif.</p>
+                        </div>
+                        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
+                            <div class="text-orange-500 mb-3"><i data-lucide="users" class="w-8 h-8"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-2">3. Minimnya partisipasi komunitas</h4>
+                            <p class="text-sm">Mekanisme formal yang memungkinkan masyarakat pesisir—termasuk perempuan dan kelompok rentan—untuk berkontribusi dalam pengumpulan data, pelaporan lapangan, serta umpan balik kebijakan masih sangat terbatas.</p>
+                        </div>
+                    </div>
+                    <p>Akibatnya, proses perencanaan dan evaluasi program seringkali bersifat reaktif, tidak terintegrasi, dan kurang sensitif terhadap dinamika lokal.</p>
+                </div>
+
+                <!-- IMAGE 1 -->
+                <div class="my-8 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden relative min-h-[200px]">
+                        <img 
+                            src="thum/pesisirkita.png" 
+                            alt="Alur Kegiatan Pesisir Kita" 
+                            class="w-full h-auto object-contain max-h-[500px]"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        />
+                        <div class="hidden absolute inset-0 items-center justify-center flex-col text-slate-400 p-4 text-center">
+                            <i data-lucide="file-text" class="w-12 h-12 mb-2 opacity-50"></i>
+                            <p class="text-sm">Gambar tidak ditemukan (thum/pesisirkita.png)</p>
+                            <p class="text-xs mt-2">Pastikan folder "thum" berada sejajar dengan file HTML ini.</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-slate-500 mt-3 font-semibold">GAMBAR 1: Visualisasi Alur Kegiatan</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3 mt-8">2.3 Urgensi dan Relevansi dengan PAIR Sulawesi</h3>
+                <div class="space-y-4 text-sm md:text-base">
+                    <p>Dalam konteks tersebut, proyek “Pesisir Kita” menawarkan pendekatan yang menjawab kebutuhan sistemik, bukan hanya teknis. Proyek ini secara langsung berkontribusi pada Core Research Area 3 (Governance and Inclusion), khususnya Subtopik 3C, melalui penguatan kapasitas kelembagaan pemerintah daerah dalam perencanaan, implementasi, dan pemantauan program terkait iklim berbasis sistem data digital.</p>
+                    <p>Lebih lanjut, proyek ini mendukung:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>EOPO 2 (Utilisation of Evidence)</strong> dengan mendorong penggunaan data secara aktif dalam proses pengambilan keputusan;</li>
+                        <li><strong>EOPO 3 (GEDSI)</strong> melalui integrasi partisipasi inklusif dalam desain dan implementasi sistem;</li>
+                        <li>serta selaras dengan prioritas nasional dalam <strong>Rencana Induk Riset Nasional (RIRN)</strong> dan agenda <strong>Diktisaintek Berdampak</strong>, khususnya pada penguatan inovasi berbasis kebutuhan masyarakat dan keberlanjutan lingkungan.</li>
+                    </ul>
+                    <p>Dengan demikian, proyek ini tidak hanya relevan secara tematik, tetapi juga strategis dalam mendukung transformasi tata kelola pesisir menuju sistem yang lebih adaptif, inklusif, dan berbasis bukti.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= TAB 2: GOALS & OUTPUTS ================= -->
+        <div id="tab-goals" class="tab-content hidden space-y-12 animate-fade-in text-slate-700">
+            <!-- 3. Tujuan -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">3. Tujuan dan Pertanyaan Penelitian</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">3.1 Tujuan Utama</h3>
+                <div class="bg-teal-50 border-l-4 border-teal-500 p-5 rounded-r-xl mb-6">
+                    <p class="text-base md:text-lg text-teal-900 font-medium">Membangun dan mengimplementasikan sistem informasi digital partisipatif (Pesisir Kita Dashboard v2.0) yang dapat digunakan oleh pemerintah daerah Sulawesi sebagai alat pemantauan kondisi mangrove dan pendukung pengambilan keputusan kebijakan iklim berbasis bukti.</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">3.2 Tujuan Spesifik</h3>
+                <ul class="space-y-3 mb-8 text-sm md:text-base">
+                    <li class="flex gap-3 items-start">
+                        <div class="mt-1 bg-teal-200 text-teal-800 rounded-full p-1"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
+                        <p>Mengembangkan dan memvalidasi prototipe Pesisir Kita Dashboard v2.0 dengan fitur input partisipatif komunitas, integrasi data lapangan, dan visualisasi spasial kondisi mangrove.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="mt-1 bg-teal-200 text-teal-800 rounded-full p-1"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
+                        <p>Meningkatkan kapasitas aparatur Dinas Kelautan & Perikanan serta Dinas Lingkungan Hidup dalam menggunakan sistem digital untuk perencanaan dan pelaporan berbasis data.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="mt-1 bg-teal-200 text-teal-800 rounded-full p-1"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
+                        <p>Menyusun Standar Operasional Prosedur (SOP) dan instrumen kebijakan bagi pemerintah daerah untuk integrasi data dashboard ke dalam dokumen perencanaan resmi (RPJMD, RKP).</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <div class="mt-1 bg-teal-200 text-teal-800 rounded-full p-1"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
+                        <p>Memastikan partisipasi bermakna perempuan pesisir dan penyandang disabilitas dalam proses ko-desain platform dan validasi output kebijakan (komponen GEDSI).</p>
+                    </li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">3.3 Pertanyaan Penelitian</h3>
+                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                    <ol class="list-decimal list-inside space-y-4 text-slate-800 font-medium text-sm md:text-base">
+                        <li>Bagaimana desain sistem informasi digital partisipatif yang efektif untuk mendukung pemantauan mangrove oleh pemerintah daerah di Sulawesi?</li>
+                        <li>Faktor-faktor apa yang menentukan tingkat adopsi dan keberlanjutan platform digital oleh aparatur pemerintah daerah dalam konteks tata kelola pesisir?</li>
+                        <li>Bagaimana data partisipatif dari komunitas pesisir — termasuk perempuan dan penyandang disabilitas — dapat diintegrasikan secara valid dan etis ke dalam sistem pemantauan resmi pemerintah daerah?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 5. Luaran Penelitian -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">5. Luaran Penelitian (Research Outputs)</h2>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">5.1 Technology Focus Outputs</h3>
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <h4 class="font-bold text-teal-700 flex items-center gap-2 mb-2"><i data-lucide="monitor" class="w-5 h-5"></i> Pesisir Kita Dashboard v2.0</h4>
+                        <p class="text-sm mb-3">Sistem informasi berbasis web yang telah dikembangkan, diuji, dan siap diimplementasikan oleh pemerintah daerah. Platform ini mencakup:</p>
+                        <ul class="list-disc list-inside text-sm space-y-1 mb-3 text-slate-600">
+                            <li>modul input partisipatif komunitas (<em>participatory sensing</em>),</li>
+                            <li>visualisasi spasial kondisi mangrove,</li>
+                            <li>sistem pelaporan lapangan,</li>
+                            <li>serta <em>decision-support tools</em> termasuk kalkulator ekologi dan ekonomi biru.</li>
+                        </ul>
+                        <div class="text-xs bg-slate-100 p-2 rounded break-all">Prototipe awal: <a href="https://anggaconni.github.io/PesisirKita-Dashboard/" target="_blank" rel="noreferrer" class="text-blue-600 underline">https://anggaconni.github.io/PesisirKita-Dashboard/</a><br/>Versi final akan melalui iterasi UAT dan validasi.</div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <h4 class="font-bold text-teal-700 flex items-center gap-2 mb-2"><i data-lucide="book-open" class="w-5 h-5"></i> Kurikulum "Ocean Literacy & Blue Economy"</h4>
+                        <p class="text-sm mb-3">Paket kurikulum berbasis kompetensi yang dikembangkan melalui <em>co-design</em> dan telah diuji di lapangan. Mencakup:</p>
+                        <ul class="list-disc list-inside text-sm space-y-1 mb-3 text-slate-600">
+                            <li>kerangka pemetaan kompetensi (<em>skills mapping</em>) konteks pesisir,</li>
+                            <li>modul pembelajaran kontekstual sekolah & komunitas,</li>
+                            <li>panduan fasilitator dan materi pelatihan,</li>
+                            <li>integrasi data nyata dari platform sebagai bahan ajar.</li>
+                        </ul>
+                        <p class="text-xs text-slate-500 mt-2">Dirancang sebagai jembatan antara sistem data dan proses pembelajaran berkelanjutan.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <h4 class="font-bold text-teal-700 mb-2">Panduan Teknis dan SOP Penggunaan</h4>
+                        <p class="text-sm text-slate-600">Dokumen panduan operasional dalam Bahasa Indonesia yang aksesibel, termasuk versi sederhana (<em>easy-to-read</em>) untuk pengguna lapangan dan komunitas.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <h4 class="font-bold text-teal-700 mb-2">Hak Kekayaan Intelektual (HKI)</h4>
+                        <p class="text-sm text-slate-600">Pengajuan pendaftaran hak cipta untuk sistem dashboard, struktur database, serta modul kurikulum dan pembelajaran, sesuai dengan panduan program PAIR.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">5.2 Policy Focus Outputs</h3>
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2">Policy Brief</h4>
+                        <p class="text-sm text-slate-700">Dokumen rekomendasi kebijakan kepada pemerintah daerah terkait pemanfaatan sistem digital dalam tata kelola pesisir, termasuk integrasi ke dalam dokumen perencanaan seperti RKP dan RPJMD.</p>
+                    </div>
+                    <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2">Research Report</h4>
+                        <p class="text-sm text-slate-700 mb-2">Laporan penelitian komprehensif yang mencakup:</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700">
+                            <li>temuan riset utama,</li>
+                            <li>hasil proses co-design,</li>
+                            <li>dokumentasi implementasi GEDSI,</li>
+                            <li>matriks rekomendasi kebijakan.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2">Serah Terima Mitra</h4>
+                        <p class="text-sm text-slate-700">Dokumentasi formal serah terima seluruh luaran proyek kepada mitra (pemerintah daerah dan stakeholder terkait) sebelum penutupan proyek, sebagai bagian strategi adopsi.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">5.3 Academic Publication (Wajib)</h3>
+                <div class="text-sm md:text-base space-y-4">
+                    <p>Tim peneliti akan menghasilkan minimal satu manuskrip ilmiah dan mengajukannya ke jurnal internasional bereputasi (Q1 atau Q2) dalam masa pelaksanaan proyek. Manuskrip akan disusun secara kolaboratif oleh tim Australia dan Indonesia.</p>
+                    <p>Status manuskrip ditargetkan telah mencapai tahap <em>under review</em> paling lambat pada Bulan ke-12–18, dan akan dipantau oleh LPPM UNHAS sesuai dengan ketentuan program.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= TAB 3: METHODOLOGY, GEDSI, MONEV ================= -->
+        <div id="tab-methodology" class="tab-content hidden space-y-12 animate-fade-in text-slate-700">
+            <!-- 4. Metodologi -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">4. Metodologi Penelitian</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">4.1 Pendekatan Umum</h3>
+                <div class="space-y-4 mb-6 text-sm md:text-base">
+                    <p>Proyek ini menggunakan pendekatan <strong>Research-through-Design (RtD)</strong> yang bersifat iteratif, partisipatif, dan berorientasi pada solusi, dikombinasikan dengan metode <strong>Rapid Action Learning (RAL)</strong> untuk memastikan proses pembelajaran yang adaptif selama implementasi.</p>
+                    <p>Melalui pendekatan ini, pengembangan sistem tidak dilakukan secara linear, melainkan melalui siklus berulang yang mengintegrasikan eksplorasi desain, pengujian lapangan, serta refleksi berbasis data. Desain platform akan dikembangkan bersama Impact Partners—termasuk pemerintah daerah, komunitas pesisir, dan institusi pendidikan—melalui tahapan:</p>
+                    <div class="text-center font-bold text-teal-700 bg-teal-50 p-4 rounded-xl my-4 text-sm md:text-base">
+                        ko-desain → pengembangan prototipe → uji lapangan → iterasi dan penyempurnaan
+                    </div>
+                    <p>Siklus ini akan berlangsung secara intensif pada Fase 1 (Bulan 1–8), dengan fokus pada validasi fungsionalitas sistem, kegunaan (usability), serta relevansi konteks lokal di lokasi pilot.</p>
+                    <p>Pendekatan RtD dalam proyek ini tidak hanya menghasilkan artefak teknologi (dashboard dan aplikasi), tetapi juga menghasilkan pengetahuan terapan (<em>design knowledge</em>) terkait bagaimana sistem digital, partisipasi komunitas, dan pengambilan kebijakan dapat diintegrasikan secara efektif dalam konteks tata kelola pesisir.</p>
+                    <p>Untuk memperkuat relevansi kebijakan, pendekatan ini dilengkapi dengan analisis kebijakan komparatif, yang membandingkan kerangka regulasi nasional dan praktik internasional terkait pengelolaan ekosistem pesisir, ekonomi biru, serta literasi kelautan. Analisis ini bertujuan memastikan bahwa:</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>desain sistem selaras dengan kebutuhan dan mandat pemerintah daerah,</li>
+                        <li>modul kurikulum yang dikembangkan kontekstual namun tetap mengacu pada standar global,</li>
+                        <li>serta output proyek dapat diadopsi dan direplikasi dalam kerangka kebijakan yang lebih luas.</li>
+                    </ul>
+                    <p>Dengan kombinasi RtD dan Rapid Action Learning, metodologi ini memungkinkan proyek untuk tidak hanya menghasilkan solusi yang inovatif, tetapi juga responsif terhadap dinamika lapangan dan kebutuhan pemangku kepentingan yang terus berkembang.</p>
+                </div>
+
+                <!-- IMAGE 2 -->
+                <div class="my-8 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden relative min-h-[200px]">
+                        <img 
+                            src="thum/rtd.png" 
+                            alt="Alur Research-through-Design" 
+                            class="w-full h-auto object-contain max-h-[500px]"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        />
+                        <div class="hidden absolute inset-0 items-center justify-center flex-col text-slate-400 p-4 text-center">
+                            <i data-lucide="activity" class="w-12 h-12 mb-2 opacity-50"></i>
+                            <p class="text-sm">Gambar tidak ditemukan (thum/rtd.png)</p>
+                            <p class="text-xs mt-2">Pastikan folder "thum" berada sejajar dengan file HTML ini.</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-slate-500 mt-3 font-semibold">GAMBAR 2: Visualisasi Alur Research-through-Design</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3 mt-8">4.2 Fase Pelaksanaan</h3>
+                <p class="mb-4 text-sm md:text-base">Proyek dilaksanakan dalam tiga fase sesuai dengan kerangka PAIR:</p>
+                <div class="overflow-x-auto mb-8 pb-4">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[600px]">
+                        <thead class="bg-slate-100 text-slate-700">
+                            <tr>
+                                <th class="border border-slate-200 px-4 py-3 font-bold w-1/6">Fase</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold w-1/6">Periode</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Kegiatan Utama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white">
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Fase 1</td>
+                                <td class="border border-slate-200 px-4 py-3">Bulan 1–8</td>
+                                <td class="border border-slate-200 px-4 py-3">Ko-desain <em>Pesisir Kita Dashboard v2.0</em> bersama Impact Partners; pengembangan modul partisipatif (monitoring, pelaporan, dan kurikulum); pengumpulan dan validasi data lapangan; iterasi prototipe berbasis umpan balik pengguna; pelaksanaan FGD dengan komunitas pesisir, termasuk kelompok perempuan dan organisasi penyandang disabilitas (OPwD/WRO).</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Fase 2</td>
+                                <td class="border border-slate-200 px-4 py-3">Bulan 9–11</td>
+                                <td class="border border-slate-200 px-4 py-3">Penyusunan policy brief dan Standar Operasional Prosedur (SOP); pelatihan aparatur pemerintah daerah dalam penggunaan sistem; penyelenggaraan forum advokasi dan dialog kebijakan; serta serah terima dan adopsi awal sistem oleh Impact Partners.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Fase 3</td>
+                                <td class="border border-slate-200 px-4 py-3">Bulan 12</td>
+                                <td class="border border-slate-200 px-4 py-3">Evaluasi akhir implementasi; finalisasi manuskrip ilmiah untuk publikasi internasional; dokumentasi pembelajaran (<em>lessons learned</em>); serta penyusunan rekomendasi untuk replikasi dan keberlanjutan program.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">4.3 Metode Pengumpulan Data</h3>
+                <p class="mb-4 text-sm md:text-base">Pengumpulan data dalam proyek ini menggunakan pendekatan <em>mixed-methods</em> yang menggabungkan teknik kuantitatif dan kualitatif untuk memastikan validitas, reliabilitas, dan kedalaman analisis. Metode yang digunakan meliputi:</p>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 border border-slate-200 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800">User Acceptance Testing (UAT)</h4>
+                        <p class="text-sm mt-1">Dilakukan untuk mengukur tingkat penerimaan, kegunaan (usability), dan relevansi sistem oleh pengguna akhir. UAT akan melibatkan sekitar 30–50 aparatur pemerintah daerah serta 50–100 anggota komunitas pesisir dari dua lokasi pilot di Sulawesi Selatan dan Sulawesi Barat.</p>
+                    </div>
+                    <div class="bg-white p-4 border border-slate-200 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800">Focus Group Discussion (FGD)</h4>
+                        <p class="text-sm mt-1">Sesi ko-desain partisipatif yang melibatkan kelompok perempuan nelayan, organisasi penyandang disabilitas (OPwD), serta perwakilan OPD terkait. FGD bertujuan untuk memvalidasi desain fitur, antarmuka pengguna, serta memastikan integrasi prinsip GEDSI dalam sistem.</p>
+                    </div>
+                    <div class="bg-white p-4 border border-slate-200 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800">Observasi Lapangan dan Ground-Truthing</h4>
+                        <p class="text-sm mt-1">Dilakukan untuk memverifikasi kesesuaian antara data yang diinput dalam sistem dengan kondisi aktual di lapangan, khususnya terkait data spasial dan kesehatan ekosistem mangrove.</p>
+                    </div>
+                    <div class="bg-white p-4 border border-slate-200 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800">Analisis Kebijakan</h4>
+                        <p class="text-sm mt-1">Telaah dokumen strategis seperti RPJMD, PERDA, dan RZWP-3K untuk mengidentifikasi peluang integrasi sistem ke dalam proses perencanaan dan pengambilan kebijakan daerah.</p>
+                    </div>
+                    <div class="bg-white p-4 border border-slate-200 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800">Wawancara Mendalam (Semi-Terstruktur)</h4>
+                        <p class="text-sm mt-1">Dilakukan dengan pemangku kepentingan kunci, termasuk pejabat di Dinas Kelautan dan Perikanan serta Dinas Lingkungan Hidup, untuk menggali perspektif kebijakan, kebutuhan kelembagaan, serta potensi adopsi sistem.</p>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 8. Integrasi GEDSI -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-indigo-500 pl-4">8. Integrasi GEDSI</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">8.1 Prinsip Panduan</h3>
+                <div class="space-y-4 mb-6 text-sm md:text-base">
+                    <p>Proyek ini mengadopsi pendekatan <em>Gender Equality, Disability, and Social Inclusion</em> (GEDSI) sebagai prinsip inti yang terintegrasi dalam seluruh siklus penelitian, bukan sebagai komponen tambahan.</p>
+                    <p>Pendekatan GEDSI dalam proyek ini berfokus pada pencapaian hasil inklusi yang terdemonstrasikan (<em>demonstrable inclusion outcomes</em>), di mana perspektif kelompok perempuan, penyandang disabilitas, dan kelompok rentan lainnya secara nyata mempengaruhi:</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>desain sistem digital,</li>
+                        <li>proses pengambilan keputusan,</li>
+                        <li>serta arah rekomendasi kebijakan yang dihasilkan.</li>
+                    </ul>
+                    <p>Dengan demikian, GEDSI diposisikan tidak hanya sebagai prinsip etis, tetapi juga sebagai strategi untuk meningkatkan relevansi, keberterimaan, dan efektivitas solusi yang dikembangkan.</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">8.2 Implementasi GEDSI dalam Setiap Fase</h3>
+                <p class="mb-4 text-sm md:text-base">Integrasi GEDSI dilakukan secara sistematis dalam setiap fase pelaksanaan proyek:</p>
+                <div class="space-y-4 mb-6">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold rounded-full shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Fase 1 – Co-Design (Inclusion by Design)</h4>
+                            <p class="text-sm mt-1">Sesi FGD terpisah dan terfasilitasi dengan kelompok perempuan nelayan serta organisasi penyandang disabilitas (OPwD) untuk memastikan:</p>
+                            <ul class="list-disc list-inside text-sm mt-2 space-y-1 ml-2 text-slate-600">
+                                <li>fitur partisipatif dashboard mudah digunakan oleh berbagai kelompok,</li>
+                                <li>desain antarmuka memperhatikan prinsip aksesibilitas (misalnya navigasi sederhana, opsi <em>audio guidance</em>, dan penggunaan bahasa lokal),</li>
+                                <li>serta kebutuhan spesifik pengguna rentan terakomodasi sejak tahap desain awal.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold rounded-full shrink-0">2</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Fase 2 – Policy Engagement (Voice to Influence)</h4>
+                            <p class="text-sm mt-1">Perempuan pesisir dan perwakilan OPwD dilibatkan sebagai <em>co-presenter</em> dalam forum kebijakan daerah, sehingga mereka tidak hanya menjadi objek intervensi, tetapi juga aktor yang menyampaikan perspektif langsung kepada pengambil keputusan.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold rounded-full shrink-0">3</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Fase 3 – Evaluation & Learning (Evidence of Inclusion)</h4>
+                            <p class="text-sm mt-1">Data penelitian dianalisis secara terpilah (<em>disaggregated data</em>) berdasarkan gender dan status disabilitas, sejauh memungkinkan, untuk mengidentifikasi kesenjangan akses, penggunaan, dan manfaat dari sistem yang dikembangkan.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold rounded-full shrink-0"><i data-lucide="users" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Tata Kelola Tim Peneliti</h4>
+                            <p class="text-sm mt-1">Tim proyek berkomitmen pada keseimbangan gender, termasuk dalam posisi pengambilan keputusan, untuk memastikan perspektif yang beragam dalam proses perancangan dan implementasi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">8.3 Anggaran GEDSI</h3>
+                <div class="text-sm md:text-base space-y-4">
+                    <p>Sesuai dengan ketentuan program PAIR, alokasi anggaran khusus untuk kegiatan GEDSI dimasukkan dalam komponen pendanaan Australia (DFAT). Komponen ini mencakup:</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4 mb-4">
+                        <li>fasilitasi FGD inklusif (termasuk kebutuhan aksesibilitas),</li>
+                        <li>pengembangan materi yang aksesibel (audio, braille-ready, dan format sederhana),</li>
+                        <li>honorarium untuk konsultan dari organisasi perempuan dan OPwD/WRO,</li>
+                        <li>serta penerjemahan materi ke dalam bahasa daerah.</li>
+                    </ul>
+                    <p>Investasi ini dirancang untuk memastikan bahwa prinsip GEDSI tidak hanya tercantum dalam dokumen, tetapi benar-benar terimplementasi dalam praktik lapangan.</p>
+                </div>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 10. Monitoring & Evaluasi -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">10. Monitoring dan Evaluasi</h2>
+                <div class="text-sm md:text-base space-y-6">
+                    <p>Tim peneliti akan mematuhi seluruh siklus monitoring dan evaluasi yang ditetapkan oleh PAIR PMT dan RISPRO LPDP, dengan pendekatan yang tidak hanya berfokus pada pelaporan administratif, tetapi juga pada pembelajaran adaptif (<em>adaptive learning</em>) untuk memastikan kualitas implementasi dan kesiapan adopsi hasil.</p>
+                    <p class="font-semibold">Mekanisme monitoring dan evaluasi meliputi:</p>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-slate-100 p-5 rounded-xl">
+                            <h4 class="font-bold text-slate-800">Monthly Monitoring (Pemantauan Rutin Bulanan)</h4>
+                            <p class="text-sm mt-1">Koordinator Indonesia akan menyampaikan laporan kemajuan bulanan melalui platform E-RISPRO LPDP, mencakup perkembangan kegiatan, capaian output, serta realisasi anggaran. Tim Australia akan berpartisipasi dalam rapat koordinasi tematik bulanan yang difasilitasi oleh PAIR PMT.</p>
+                        </div>
+                        <div class="bg-slate-100 p-5 rounded-xl">
+                            <h4 class="font-bold text-slate-800">Internal Monitoring (Bulan ke-5)</h4>
+                            <p class="text-sm mt-1">Evaluasi internal terhadap kemajuan implementasi awal, pencapaian milestones, penggunaan anggaran, serta bukti keterlibatan aktif <em>Impact Partners</em> dalam proses co-design dan pengembangan sistem.</p>
+                        </div>
+                        <div class="bg-slate-100 p-5 rounded-xl">
+                            <h4 class="font-bold text-slate-800">External Monitoring (Bulan ke-6)</h4>
+                            <p class="text-sm mt-1">Review oleh PAIR PMT, LPDP, dan MoHEST untuk menilai relevansi, kualitas implementasi, serta kesesuaian dengan tujuan program. Pada tahap ini, <em>Impact Partners</em> akan turut mempresentasikan keterkaitan hasil awal proyek dengan kebutuhan kebijakan mereka.</p>
+                        </div>
+                        <div class="bg-slate-100 p-5 rounded-xl">
+                            <h4 class="font-bold text-slate-800">Internal Evaluation (Bulan ke-11)</h4>
+                            <p class="text-sm mt-1">Penilaian terhadap capaian output sementara, termasuk kesiapan teknis platform, efektivitas kurikulum pelatihan, serta tingkat penerimaan pengguna. Hasil evaluasi digunakan untuk penyesuaian akhir sebelum fase adopsi.</p>
+                        </div>
+                        <div class="bg-slate-100 p-5 rounded-xl">
+                            <h4 class="font-bold text-slate-800">External Evaluation (Bulan ke-13)</h4>
+                            <p class="text-sm mt-1">Evaluasi komprehensif oleh LPDP dan MoHEST terhadap keseluruhan pelaksanaan proyek. <em>Impact Partners</em> akan melaporkan tingkat pengujian, penggunaan awal, serta potensi adopsi berkelanjutan dari output yang dihasilkan.</p>
+                        </div>
+                    </div>
+                    <p class="font-semibold">Pendekatan ini memastikan bahwa proses monitoring dan evaluasi tidak hanya berfungsi sebagai alat kontrol, tetapi juga sebagai mekanisme refleksi dan peningkatan kualitas secara berkelanjutan.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= TAB 4: TEAM, BUDGET, PARTNERS ================= -->
+        <div id="tab-management" class="tab-content hidden space-y-12 animate-fade-in text-slate-700">
+            <!-- 6. Impact Partners -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">6. Impact Partners dan Strategi Keterlibatan</h2>
+                <p class="mb-6 text-sm md:text-base">Sesuai dengan pendekatan <em>demand-driven</em> dalam program PAIR, seluruh Impact Partners dalam proyek ini telah dikonsultasikan sejak tahap awal untuk memvalidasi kebutuhan riset, mengidentifikasi prioritas implementasi, serta mengkonfirmasi komitmen mereka sebagai mitra aktif dalam proses <em>co-design</em> dan adopsi hasil.</p>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">6.1 Daftar Impact Partners</h3>
+                <div class="overflow-x-auto mb-8 pb-4">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[600px]">
+                        <thead class="bg-blue-50 text-blue-900">
+                            <tr>
+                                <th class="border border-slate-200 px-4 py-3 font-bold w-1/4">Impact Partner</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold w-1/4">Tipe</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Peran dalam Proyek</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Dinas Kelautan & Perikanan Provinsi Sulawesi Selatan</td>
+                                <td class="border border-slate-200 px-4 py-3">Pemerintah Daerah (Primer)</td>
+                                <td class="border border-slate-200 px-4 py-3">Mitra utama dalam co-design fitur dashboard; adopsi Standar Operasional Prosedur (SOP); serta integrasi sistem ke dalam perencanaan tahunan (RKP Dinas).</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Dinas Lingkungan Hidup Kabupaten Mamuju, Sulawesi Barat</td>
+                                <td class="border border-slate-200 px-4 py-3">Pemerintah Daerah (Sekunder)</td>
+                                <td class="border border-slate-200 px-4 py-3">Validasi data lapangan; lokasi pilot untuk implementasi awal kebijakan berbasis data; serta umpan balik terhadap integrasi lintas sektor.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Komunitas Nelayan Perempuan Pesisir Takalar</td>
+                                <td class="border border-slate-200 px-4 py-3">Komunitas / Mitra GEDSI</td>
+                                <td class="border border-slate-200 px-4 py-3">Co-design antarmuka partisipatif; pengujian user experience (UX) berbasis kebutuhan perempuan pesisir; serta kontribusi data lapangan.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold">Organisasi Penyandang Disabilitas (OPwD) Sulawesi Selatan</td>
+                                <td class="border border-slate-200 px-4 py-3">Masyarakat Sipil / OPwD</td>
+                                <td class="border border-slate-200 px-4 py-3">Audit aksesibilitas platform; fasilitasi FGD inklusif; serta advokasi integrasi prinsip aksesibilitas dalam kebijakan daerah.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mb-6 italic text-sm text-slate-500">Seluruh Impact Partners akan menyampaikan Surat Pernyataan Kesanggupan sebagai Mitra (Letter of Commitment) sebelum pencairan dana proyek, sesuai dengan format resmi yang ditetapkan oleh program PAIR Sulawesi. Komitmen ini menjadi dasar bagi keterlibatan aktif dan keberlanjutan adopsi hasil proyek.</p>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">6.2 Strategi Keterlibatan Berkelanjutan</h3>
+                <p class="mb-4 text-sm md:text-base">Keterlibatan Impact Partners dirancang tidak bersifat konsultatif semata, tetapi sebagai proses kolaboratif yang berkelanjutan sepanjang siklus proyek. Strategi yang diterapkan meliputi:</p>
+                <ul class="space-y-4 text-sm md:text-base">
+                    <li>
+                        <strong>Koordinasi rutin lintas pemangku kepentingan:</strong> Pertemuan bulanan antara tim riset dan Dinas Kelautan & Perikanan untuk memantau progres, mengidentifikasi hambatan implementasi, serta memastikan keselarasan dengan prioritas kebijakan daerah.
+                    </li>
+                    <li>
+                        <strong>Siklus co-design dan iterasi berbasis pengguna:</strong> Sesi kuartalan dengan komunitas nelayan dan organisasi penyandang disabilitas untuk menguji, mengevaluasi, dan menyempurnakan fitur platform berdasarkan pengalaman pengguna langsung.
+                    </li>
+                    <li>
+                        <strong>Integrasi dalam forum perencanaan dan kebijakan daerah:</strong> Penyampaian temuan sementara (interim findings) dalam forum resmi seperti musrenbang dan rapat koordinasi OPD, guna mendorong pemanfaatan data dalam proses pengambilan keputusan.
+                    </li>
+                    <li>
+                        <strong>Pendampingan teknis pasca implementasi (post-deployment support):</strong> Dukungan teknis kepada aparatur pemerintah daerah dalam penggunaan sistem, termasuk pelatihan lanjutan dan troubleshooting, untuk memastikan tingkat adopsi yang tinggi dan berkelanjutan.
+                    </li>
+                </ul>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 7. Tim Peneliti -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">7. Komposisi Tim Peneliti</h2>
+                <div class="text-sm md:text-base space-y-4 mb-6">
+                    <p>Tim peneliti disusun sesuai dengan persyaratan komposisi tim PAIR Sulawesi Second Call (Technical Guidelines), dengan memastikan:</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>representasi lintas institusi (Indonesia–Australia),</li>
+                        <li>pendekatan interdisipliner (teknologi, kebijakan, dan ekologi),</li>
+                        <li>serta keseimbangan gender dan inklusi GEDSI.</li>
+                    </ul>
+                    <p>Struktur tim dirancang untuk mengintegrasikan keahlian teknis, analisis kebijakan, serta pengalaman lapangan dalam pengelolaan pesisir.</p>
+                </div>
+
+                <div class="overflow-x-auto mb-4 pb-4">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[700px]">
+                        <thead class="bg-teal-50 text-teal-900">
+                            <tr>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Peran</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Institusi</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Bidang Keahlian</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Peran Strategis dalam Proyek</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">Indonesian Co-lead / Project Coordinator</td>
+                                <td class="border border-slate-200 px-4 py-3">Universitas Hasanuddin (UNHAS)</td>
+                                <td class="border border-slate-200 px-4 py-3">Sistem Informasi / Digital Governance</td>
+                                <td class="border border-slate-200 px-4 py-3">Memimpin keseluruhan proyek; pengelolaan dana Indonesia; integrasi pengembangan sistem dengan kebutuhan kebijakan daerah</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">Australian Co-lead</td>
+                                <td class="border border-slate-200 px-4 py-3">Monash University / University of Queensland / University of Melbourne</td>
+                                <td class="border border-slate-200 px-4 py-3">Environmental Policy / Digital Governance</td>
+                                <td class="border border-slate-200 px-4 py-3">Memimpin komponen riset internasional; pengelolaan dana Australia; penguatan metodologi dan publikasi</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">Partner Investigator (Indonesia)</td>
+                                <td class="border border-slate-200 px-4 py-3">HEI Sulawesi Selatan / Sulawesi Barat</td>
+                                <td class="border border-slate-200 px-4 py-3">Ekologi Mangrove / Kebijakan Publik</td>
+                                <td class="border border-slate-200 px-4 py-3">Memastikan validitas ilmiah dan relevansi kebijakan lokal; menjembatani integrasi dengan institusi daerah</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">Technical Lead (Dashboard & Data Systems)</td>
+                                <td class="border border-slate-200 px-4 py-3">(UNHAS / Tim Teknis)</td>
+                                <td class="border border-slate-200 px-4 py-3">Software Development / GIS</td>
+                                <td class="border border-slate-200 px-4 py-3">Memimpin pengembangan Pesisir Kita Dashboard v2.0; arsitektur sistem; integrasi data dan fitur analitik</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">GEDSI Partner Investigator</td>
+                                <td class="border border-slate-200 px-4 py-3">OPwD / WRO Sulawesi</td>
+                                <td class="border border-slate-200 px-4 py-3">GEDSI / Disability Inclusion</td>
+                                <td class="border border-slate-200 px-4 py-3">Memastikan prinsip inklusi terintegrasi dalam desain sistem; co-design fitur aksesibilitas; validasi pengalaman pengguna</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-200 px-4 py-3 font-bold text-teal-700">Research Assistant (×2)</td>
+                                <td class="border border-slate-200 px-4 py-3">HEI berbasis Sulawesi (lokasi riset)</td>
+                                <td class="border border-slate-200 px-4 py-3">GIS / Ilmu Kelautan / Data Collection</td>
+                                <td class="border border-slate-200 px-4 py-3">Mendukung pengumpulan data, ground-truthing, serta implementasi lapangan; memperkuat kapasitas lokal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="italic text-xs text-slate-500">Catatan: Nama spesifik anggota tim akan dilengkapi setelah konfirmasi ketersediaan dan kesesuaian dengan kriteria kelayakan PAIR Technical Guidelines. Setiap institusi hanya dapat menunjuk satu Co-lead per proyek.</p>
+            </section>
+
+            <hr class="border-slate-200" />
+
+            <!-- 9. Anggaran -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-l-4 border-teal-500 pl-4">9. Rencana Anggaran</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-3">9.1 Komponen Indonesia (RISPRO LPDP) — Maks. IDR 1.000.000.000</h3>
+                <p class="mb-4 text-sm md:text-base">Alokasi anggaran komponen Indonesia dirancang untuk memastikan keseimbangan antara kebutuhan sumber daya manusia, pengembangan teknologi, serta implementasi lapangan. Proporsi anggaran mengikuti ketentuan program, dengan penekanan pada komponen non-personil untuk mendukung kegiatan operasional dan adopsi sistem.</p>
+                
+                <div class="overflow-x-auto mb-8 pb-4">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[600px]">
+                        <thead class="bg-slate-100 text-slate-700">
+                            <tr>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Komponen Anggaran</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold text-center">% Alokasi</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold text-right whitespace-nowrap">Estimasi (IDR)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr class="bg-blue-50 font-bold">
+                                <td class="border border-slate-200 px-4 py-3">A. Biaya Personil (maks. 30% total)</td>
+                                <td class="border border-slate-200 px-4 py-3 text-center">30%</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right">300.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Project Coordinator — IDR 3.600.000/bln × 12 bln</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">43.200.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Co-lead & PI — IDR 2.400.000/bln × 12 bln × 3 orang</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">86.400.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Research Assistant — IDR 1.500.000/bln × 12 bln × 2 orang</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">36.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Admin & Finance Staff (UNHAS) — IDR 820.000/bln × 12 bln × 2 orang</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">19.680.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Honorarium tenaga ahli, konsultan, narasumber</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">114.720.000</td>
+                            </tr>
+                            
+                            <tr class="bg-teal-50 font-bold">
+                                <td class="border border-slate-200 px-4 py-3">B. Biaya Non-Personil (min. 65% total)</td>
+                                <td class="border border-slate-200 px-4 py-3 text-center">65%</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right">650.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Pengembangan software & lisensi platform <br/><span class="inline-block mt-1 text-xs text-orange-600 font-semibold bg-orange-100 px-2 py-0.5 rounded">KALAU MAU DI TAKE OVER</span></td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">200.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Pengadaan perangkat lapangan & sensor school LAB</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">100.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Survei lapangan, perjalanan dalam negeri</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">150.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">FGD, workshop, seminar, diseminasi</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">80.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Biaya publikasi jurnal internasional</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">40.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Pendaftaran HKI / Hak Cipta Platform</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">30.000.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-2 md:pl-8">Bahan habis pakai, cetak, desain grafis</td>
+                                <td class="border border-slate-200 px-4 py-2 text-center"></td>
+                                <td class="border border-slate-200 px-4 py-2 text-right">50.000.000</td>
+                            </tr>
+                            
+                            <tr class="bg-slate-100 font-bold">
+                                <td class="border border-slate-200 px-4 py-3">C. Biaya Tidak Langsung / Indirect Costs (5%)</td>
+                                <td class="border border-slate-200 px-4 py-3 text-center">5%</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right">50.000.000</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-blue-900 text-white font-bold text-base md:text-lg">
+                                <td class="border border-slate-200 px-4 py-3">TOTAL KOMPONEN INDONESIA</td>
+                                <td class="border border-slate-200 px-4 py-3 text-center">100%</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right">1.000.000.000</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-3">9.2 Komponen Australia (DFAT) — Maks. AUD 50.000</h3>
+                <div class="overflow-x-auto mb-8 pb-4 max-w-3xl">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 min-w-[500px]">
+                        <thead class="bg-indigo-50 text-indigo-900">
+                            <tr>
+                                <th class="border border-slate-200 px-4 py-3 font-bold">Komponen Anggaran</th>
+                                <th class="border border-slate-200 px-4 py-3 font-bold text-right">Estimasi (AUD)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">GEDSI budget line (ko-desain, aksesibilitas, konsultan OPwD/WRO)</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">8.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">Perjalanan internasional ke Indonesia (Co-lead Australia)</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">12.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">Research Assistant (Australia) — technical/data analysis</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">10.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">Biaya layanan validasi algoritma & infrastruktur data</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">8.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">Biaya terjemahan, penyuntingan, desain materi komunikasi</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">6.000</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 px-4 py-3">Workshop internasional / policy forum engagement</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right font-semibold">6.000</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-indigo-900 text-white font-bold text-base md:text-lg">
+                                <td class="border border-slate-200 px-4 py-3">TOTAL KOMPONEN AUSTRALIA</td>
+                                <td class="border border-slate-200 px-4 py-3 text-right">AUD 50.000</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </section>
+        </div>
+
+    </main>
+
+    <!-- ================= 11. SDGs Footer ================= -->
+    <footer class="bg-slate-900 text-slate-300 py-12 px-6 lg:px-12 border-t-8 border-teal-500">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-xl md:text-2xl font-bold text-white mb-4">11. Kontribusi pada SDGs dan Agenda Nasional</h2>
+                <p class="mb-4 text-sm text-slate-400">Proyek ini juga selaras dengan Rencana Induk Riset Nasional (RIRN), agenda Diktisaintek Berdampak, dan Asta Cita Pillar 5 (penguatan modal manusia dan inovasi berbasis dampak sosial).</p>
+                <p class="mb-6 text-sm text-slate-400">Proyek “Pesisir Kita” berkontribusi secara langsung terhadap pencapaian Tujuan Pembangunan Berkelanjutan (Sustainable Development Goals / SDGs), khususnya:</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm mb-10">
+                <div class="flex flex-col sm:flex-row gap-4 items-start bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="bg-green-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center font-bold text-xl md:text-2xl shrink-0">13</div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">SDG 13 – Climate Action</h4>
+                        <p class="text-slate-400 mt-1">Memperkuat kapasitas adaptasi perubahan iklim di wilayah pesisir melalui sistem monitoring berbasis data yang mendukung pengambilan keputusan yang responsif dan berbasis bukti.</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 items-start bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="bg-red-500 text-white w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center font-bold text-xl md:text-2xl shrink-0">5</div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">SDG 5 – Gender Equality</h4>
+                        <p class="text-slate-400 mt-1">Mendorong partisipasi aktif perempuan pesisir dalam proses co-design, pengumpulan data, serta advokasi kebijakan, sehingga memperkuat peran mereka dalam tata kelola sumber daya pesisir.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 items-start bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="bg-blue-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center font-bold text-xl md:text-2xl shrink-0">16</div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">SDG 16 – Peace, Justice, & Strong Inst.</h4>
+                        <p class="text-slate-400 mt-1">Mendukung tata kelola yang inklusif dan transparan dengan melibatkan komunitas—termasuk kelompok rentan—dalam proses perencanaan dan evaluasi kebijakan.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 items-start bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="bg-indigo-800 text-white w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center font-bold text-xl md:text-2xl shrink-0">17</div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">SDG 17 – Partnerships for the Goals</h4>
+                        <p class="text-slate-400 mt-1">Memperkuat kolaborasi penelitian dan inovasi antara Indonesia dan Australia dalam mendukung pembangunan berkelanjutan berbasis pengetahuan dan teknologi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-sm text-slate-400">
+                <h4 class="font-bold text-white mb-3 text-base">Selain itu, proyek ini selaras dengan prioritas pembangunan nasional Indonesia, termasuk:</h4>
+                <ul class="list-disc list-inside space-y-2 ml-2">
+                    <li><strong>Rencana Induk Riset Nasional (RIRN)</strong>, khususnya dalam penguatan inovasi berbasis kebutuhan masyarakat dan keberlanjutan lingkungan;</li>
+                    <li><strong>Agenda Diktisaintek Berdampak</strong>, melalui integrasi riset, inovasi, dan implementasi kebijakan;</li>
+                    <li>serta <strong>Asta Cita Pilar 5</strong>, yang menekankan penguatan modal manusia dan inovasi berbasis dampak sosial.</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mt-12 text-xs text-slate-600 border-t border-slate-800 pt-6">
+                Pesisir Kita — PAIR Sulawesi Second Investment Call
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Tab Switching and Icon Initialization -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(function(el) {
+                el.classList.add('hidden');
+            });
+            
+            // Show the selected tab content
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            // Reset all tab buttons style
+            document.querySelectorAll('.tab-btn').forEach(function(btn) {
+                btn.classList.remove('border-teal-600', 'text-teal-700', 'bg-teal-50/50');
+                btn.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:bg-slate-50');
+            });
+
+            // Set active style for the clicked button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:bg-slate-50');
+            activeBtn.classList.add('border-teal-600', 'text-teal-700', 'bg-teal-50/50');
+        }
+    </script>
+</body>
+</html>
