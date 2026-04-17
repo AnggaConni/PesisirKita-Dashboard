@@ -44,18 +44,18 @@ articles.sort((a, b) => new Date(b.date) - new Date(a.date));
 // Ambil Kategori Unik
 const uniqueCategories = [...new Set(articles.map(article => article.category))];
 let sidebarCategories = `
-    <button data-filter-type="category" data-value="all" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors">
-        <i class="fa-solid fa-layer-group w-5"></i>
-        <span>Semua Kurikulum</span>
+    <button data-filter-type="category" data-value="all" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors text-left cursor-pointer">
+        <div class="w-5 flex-shrink-0 flex justify-center"><i class="fa-solid fa-layer-group text-lg"></i></div>
+        <span class="flex-1 leading-snug">Semua Kurikulum</span>
     </button>
 `;
 let mobileCategoryOptions = `<option value="all">Semua Kategori</option>`;
 
 uniqueCategories.forEach(cat => {
     sidebarCategories += `
-        <button data-filter-type="category" data-value="${cat}" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium">
-            <i class="fa-regular fa-folder w-5"></i>
-            <span>${cat}</span>
+        <button data-filter-type="category" data-value="${cat}" class="filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium text-left cursor-pointer">
+            <div class="w-5 flex-shrink-0 flex justify-center"><i class="fa-regular fa-folder text-lg"></i></div>
+            <span class="flex-1 leading-snug">${cat}</span>
         </button>
     `;
     mobileCategoryOptions += `<option value="${cat}">${cat}</option>`;
@@ -64,7 +64,7 @@ uniqueCategories.forEach(cat => {
 // Ambil Fase Unik
 const uniqueFases = [...new Set(articles.map(article => article.fase || 'Tanpa Fase'))];
 let sidebarFases = `
-    <button data-filter-type="fase" data-value="all" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200">
+    <button data-filter-type="fase" data-value="all" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200 cursor-pointer">
         Semua Fase
     </button>
 `;
@@ -73,7 +73,7 @@ let mobileFaseOptions = `<option value="all">Semua Fase</option>`;
 uniqueFases.forEach(fase => {
     if (fase !== 'Tanpa Fase') {
         sidebarFases += `
-            <button data-filter-type="fase" data-value="${fase}" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50">
+            <button data-filter-type="fase" data-value="${fase}" class="filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50 cursor-pointer">
                 ${fase}
             </button>
         `;
@@ -101,7 +101,6 @@ articles.forEach(article => {
     }
 
     // A. Buat Card Bergaya Inventory / Direktori (TANPA GAMBAR)
-    // Menggunakan warna gradient bar di atas untuk estetika
     articleCards += `
         <div data-title="${article.title.toLowerCase()}" data-category="${article.category}" data-fase="${fase}" data-timestamp="${new Date(article.date).getTime()}" class="article-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden">
             <div class="h-1.5 w-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
@@ -140,6 +139,8 @@ articles.forEach(article => {
     `;
 
     // B. Template untuk Halaman Artikel Individu (Tetap mempertahankan format dokumen cetak)
+    // Tweak: Ganti tanda kutip ganda jadi &quot; di description meta tag agar HTML valid
+    const safeExcerpt = article.excerpt.replace(/"/g, '&quot;');
     const singleArticleHtml = `
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
@@ -147,19 +148,19 @@ articles.forEach(article => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${article.title} | PesisirKita</title>
-    <meta name="description" content="${article.excerpt}">
+    <meta name="description" content="${safeExcerpt}">
     <link rel="canonical" href="${articleAbsoluteUrl}" />
     
     <meta property="og:type" content="article">
     <meta property="og:url" content="${articleAbsoluteUrl}">
     <meta property="og:title" content="${article.title}">
-    <meta property="og:description" content="${article.excerpt}">
+    <meta property="og:description" content="${safeExcerpt}">
     <meta property="og:image" content="${ogImageUrl}">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="${articleAbsoluteUrl}">
     <meta name="twitter:title" content="${article.title}">
-    <meta name="twitter:description" content="${article.excerpt}">
+    <meta name="twitter:description" content="${safeExcerpt}">
     <meta name="twitter:image" content="${ogImageUrl}">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -431,15 +432,15 @@ const blogIndexHtml = `
                     
                     if (type === 'category') {
                         if (val === currentCategory) {
-                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors';
+                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-700 font-bold border border-sky-100 transition-colors text-left cursor-pointer';
                         } else {
-                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium';
+                            btn.className = 'filter-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium text-left cursor-pointer';
                         }
                     } else if (type === 'fase') {
                         if (val === currentFase) {
-                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200';
+                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium bg-emerald-500 text-white shadow-md shadow-emerald-200 cursor-pointer';
                         } else {
-                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50';
+                            btn.className = 'filter-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium text-slate-600 hover:bg-slate-50 cursor-pointer';
                         }
                     }
                 });
