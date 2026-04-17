@@ -7,7 +7,7 @@ const blogIndexPath = path.join(__dirname, '../blog.html');
 const articlesDir = path.join(__dirname, '../blog/article');
 
 // Base URL website PesisirKita (PENTING untuk Meta Tag Social Media & Sitemap)
-const baseUrl = 'https://pesisirkita.id'; // Ganti dengan domain asli Anda nanti
+const baseUrl = 'https://anggaconni.github.io/PesisirKita-Dashboard/'; // Ganti dengan domain asli Anda nanti
 
 // Buat folder 'blog/article' jika belum ada
 if (!fs.existsSync(articlesDir)) {
@@ -26,16 +26,31 @@ function slugify(text) {
 }
 
 // 3. Baca data dari JSON
-const articles = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+let articles = [];
+try {
+    articles = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+} catch (error) {
+    console.error(`⚠️ Error membaca ${dataPath}. Pastikan file JSON ada dan valid.`, error.message);
+    process.exit(1);
+}
 
 // Urutkan artikel dari yang paling baru (Newest) ke yang lama (Oldest)
 articles.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-// Ambil Kategori Unik untuk Filter
+// Ambil Kategori & Fase Unik untuk Filter Dropdown
 const uniqueCategories = [...new Set(articles.map(article => article.category))];
 let categoryOptions = `<option value="all">Semua Kategori</option>`;
 uniqueCategories.forEach(cat => {
     categoryOptions += `<option value="${cat}">${cat}</option>`;
+});
+
+// Menambahkan ekstraksi Fase
+const uniqueFases = [...new Set(articles.map(article => article.fase || 'Tanpa Fase'))];
+let faseOptions = `<option value="all">Semua Fase</option>`;
+uniqueFases.forEach(fase => {
+    if (fase !== 'Tanpa Fase') {
+        faseOptions += `<option value="${fase}">${fase}</option>`;
+    }
 });
 
 // Variabel penampung untuk daftar artikel di blog.html
@@ -44,12 +59,13 @@ let articleCards = '';
 // 4. Generate HTML untuk setiap Artikel INDIVIDU & Buat Card-nya
 articles.forEach(article => {
     // Buat slug dan URL untuk sistem
-    const slug = slugify(article.title);
+    const slug = article.slug || slugify(article.title);
     const articleUrl = `blog/article/${slug}.html`;
     const fallbackImage = 'https://images.unsplash.com/photo-1544551763-46a0e38eeba5?q=80&w=1200&auto=format&fit=crop';
     
-    // Normalisasi Gambar
+    // Normalisasi Gambar & Fase
     let imageUrl = article.image || article.imageUrl || fallbackImage;
+    let fase = article.fase || '';
     
     // TWEAK: URL Absolute untuk SEO & Sosmed
     const articleAbsoluteUrl = `${baseUrl}/${articleUrl}`;
@@ -62,12 +78,13 @@ articles.forEach(article => {
 
     // A. Buat Card untuk dimasukkan ke blog.html (List)
     articleCards += `
-        <a href="${articleUrl}" data-category="${article.category}" data-timestamp="${new Date(article.date).getTime()}" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
+        <a href="${articleUrl}" data-category="${article.category}" data-fase="${fase}" data-timestamp="${new Date(article.date).getTime()}" class="article-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group transform hover:-translate-y-1">
             <div class="h-48 overflow-hidden relative border-b border-gray-50">
                 <img src="${imageUrl.startsWith('http') ? imageUrl : '../../' + imageUrl.replace(/^[\.\/]+/, '')}" alt="${article.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${fallbackImage}'">
                 <span class="absolute top-4 left-4 bg-mangrove-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     ${article.category}
                 </span>
+                ${fase ? `<span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-ocean-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">${fase}</span>` : ''}
             </div>
             
             <div class="p-6 flex-1 flex flex-col">
@@ -83,9 +100,15 @@ articles.forEach(article => {
                     ${article.excerpt}
                 </p>
                 
-                <div class="mt-auto">
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-xs font-bold">
+                            ${(article.author || 'A').charAt(0)}
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">${article.author || 'Admin'}</span>
+                    </div>
                     <span class="text-ocean-600 text-sm font-bold flex items-center gap-2 group-hover:text-ocean-800 transition-colors">
-                        Baca Artikel <i class="fa-solid fa-arrow-right"></i>
+                        Baca <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
             </div>
@@ -206,9 +229,12 @@ articles.forEach(article => {
     <!-- HEADER ARTIKEL -->
     <header class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <span class="inline-block bg-ocean-100 text-ocean-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-ocean-200 w-fit">
-                ${article.category}
-            </span>
+            <div class="flex gap-2 items-center">
+                <span class="inline-block bg-ocean-100 text-ocean-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-ocean-200">
+                    ${article.category}
+                </span>
+                ${fase ? `<span class="inline-block bg-mangrove-100 text-mangrove-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-mangrove-200">${fase}</span>` : ''}
+            </div>
             
             <!-- TOMBOL PRINT PDF -->
             <button onclick="window.print()" class="no-print bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-ocean-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition">
@@ -220,7 +246,7 @@ articles.forEach(article => {
         
         <div class="flex items-center gap-4 text-sm text-gray-500 font-semibold uppercase tracking-wider">
             <div class="flex items-center gap-2">
-                <i class="fa-regular fa-user-circle text-lg text-gray-400"></i> ${article.author}
+                <i class="fa-regular fa-user-circle text-lg text-gray-400"></i> ${article.author || 'Admin'}
             </div>
             <span>•</span>
             <div class="flex items-center gap-2">
@@ -323,14 +349,17 @@ const blogIndexHtml = `
         <p class="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">Pusat materi, Rencana Pelaksanaan Pembelajaran (RPP) lingkungan, dan artikel edukasi untuk membimbing siswa menjadi agen sadar kelautan.</p>
     </section>
 
-    <!-- FILTER SECTION -->
+    <!-- FILTER SECTION DENGAN FASE -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-8">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div class="relative w-full md:w-96">
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="relative w-full lg:w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input type="text" id="searchInput" placeholder="Cari materi edukasi..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition">
             </div>
-            <div class="flex gap-3 w-full md:w-auto">
+            <div class="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
+                <select id="faseFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
+                    ${faseOptions}
+                </select>
                 <select id="categoryFilter" class="w-full md:w-auto px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:border-ocean-500 transition cursor-pointer">
                     ${categoryOptions}
                 </select>
@@ -360,6 +389,7 @@ const blogIndexHtml = `
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
             const categoryFilter = document.getElementById('categoryFilter');
+            const faseFilter = document.getElementById('faseFilter'); // Ambil filter fase
             const sortFilter = document.getElementById('sortFilter');
             const articleGrid = document.getElementById('articleGrid');
             const emptyState = document.getElementById('emptyState');
@@ -369,17 +399,21 @@ const blogIndexHtml = `
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const category = categoryFilter.value;
+                const fase = faseFilter ? faseFilter.value : 'all'; // Nilai filter fase
                 const sortOrder = sortFilter.value;
                 let visibleCount = 0;
 
                 cards.forEach(card => {
                     const title = card.querySelector('h3').innerText.toLowerCase();
                     const cardCategory = card.getAttribute('data-category');
+                    const cardFase = card.getAttribute('data-fase');
                     
                     const matchesSearch = title.includes(searchTerm);
                     const matchesCategory = category === 'all' || cardCategory === category;
+                    const matchesFase = fase === 'all' || cardFase === fase;
 
-                    if (matchesSearch && matchesCategory) {
+                    // Syarat: Ketiganya harus sesuai (AND logic)
+                    if (matchesSearch && matchesCategory && matchesFase) {
                         card.style.display = 'flex';
                         visibleCount++;
                     } else {
@@ -406,6 +440,7 @@ const blogIndexHtml = `
 
             searchInput.addEventListener('input', filterAndSort);
             categoryFilter.addEventListener('change', filterAndSort);
+            if(faseFilter) faseFilter.addEventListener('change', filterAndSort); // Listener Fase
             sortFilter.addEventListener('change', filterAndSort);
         });
     </script>
@@ -464,7 +499,7 @@ let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 
 // Tambahkan URL dinamis untuk setiap artikel
 articles.forEach(article => {
-    const slug = slugify(article.title);
+    const slug = article.slug || slugify(article.title);
     sitemapXml += `
   <url>
     <loc>${baseUrl}/blog/article/${slug}.html</loc>
