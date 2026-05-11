@@ -757,10 +757,13 @@
     <div id="profile-modal" class="fixed inset-0 z-[110] hidden">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeProfileModal()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-11/12 max-w-sm overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-teal-600 text-white">
-                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-user"></i> Pengaturan Data Diri</h3>
-                <button onclick="closeProfileModal()" class="text-teal-200 hover:text-white transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
-            </div>
+            
+
+    <div class="px-5 py-4 border-b border-teal-700 flex justify-between items-center bg-teal-600 text-white">
+      <h3 class="text-base font-bold flex items-center gap-2 truncate"><i class="ph-bold ph-user text-xl shrink-0"></i> Profil Tim</h3>
+       <button onclick="closeProfileModal()" class="text-teal-200 hover:text-white transition-colors shrink-0 ml-2"><i class="ph-bold ph-x text-xl"></i></button>
+    </div>
+
             <div class="p-6">
                 <p class="text-xs text-gray-500 mb-4">Data ini otomatis dilampirkan setiap kali kamu sinkronisasi ke server.</p>
                 
