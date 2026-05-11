@@ -505,11 +505,14 @@
                             
                             <div>
                                 <label class="text-xs font-bold text-gray-500 uppercase">Jenis Kegiatan</label>
-                                <select id="form-type" onchange="toggleFormInputs()" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500">
+
+                                <select id="form-type" onchange="toggleFormInputs()" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold">
                                     <option value="cleanup">Pembersihan Sampah Pesisir</option>
-                                    <option value="observation">Observasi Ekosistem & Tanam</option>
                                     <option value="planting">Penanaman Mangrove</option> 
+                                    <option value="observation">Observasi Ekosistem Rutin</option>
+                                    <option value="early_warning" class="text-red-600 font-bold">🚨 Lapor Anomali / Early Warning</option>
                                 </select>
+
                             </div>
 
                             <!-- KOTAK KHUSUS PENANAMAN MANGROVE (Awalnya disembunyikan pakai style="display:none") -->
@@ -534,6 +537,106 @@
                                     </select>
                                 </div>
                             </div>
+
+                            
+                        <div id="input-warning-container" style="display: none;" class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-red-800 uppercase">Kategori Sinyal Lemah (Weak Signal)</label>
+                                <select id="form-kategori-anomali" onchange="toggleAnomaliInputs()" class="w-full mt-1 p-3 bg-white border border-red-200 rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium">
+                                    <option value="Geologis">🌍 Geologis (Tanah Retak, Abrasi Cepat, Longsor)</option>
+                                    <option value="Hidrologis">🌊 Hidrologis (Air Laut Naik/Rob, Perubahan Suhu Air)</option>
+                                    <option value="Biologis">🦀 Bio-Indikator (Biota Mati Massal, Hewan Pindah)</option>
+                                    <option value="Infrastruktur">🧱 Infrastruktur (Tanggul Retak, Drainase Mampet)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-red-800 uppercase">Tingkat Urgensi Menurut Warga</label>
+                                <div class="grid grid-cols-3 gap-2 mt-1">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="urgensi" value="Waspada" class="peer hidden" checked>
+                                        <div class="text-center py-2 bg-white border border-red-200 text-gray-500 font-bold text-xs rounded-lg peer-checked:bg-yellow-400 peer-checked:text-yellow-900 peer-checked:border-yellow-500 transition-colors">🟡 Waspada</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="urgensi" value="Kritis" class="peer hidden">
+                                        <div class="text-center py-2 bg-white border border-red-200 text-gray-500 font-bold text-xs rounded-lg peer-checked:bg-orange-500 peer-checked:text-white peer-checked:border-orange-600 transition-colors">🟠 Kritis</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="urgensi" value="Bahaya" class="peer hidden">
+                                        <div class="text-center py-2 bg-white border border-red-200 text-gray-500 font-bold text-xs rounded-lg peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-700 transition-colors shadow-sm">🔴 Bahaya</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="dynamic-anomali-fields" class="mt-4 pt-4 border-t border-red-200">
+                                <h4 class="text-xs font-bold text-red-800 uppercase mb-3 flex items-center gap-1"><i class="ph-bold ph-radar"></i> Konteks Lapangan</h4>
+                                
+                                <div id="dyn-geologis" class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Sejak Kapan?</label>
+                                            <select id="geo-waktu" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                                <option value="Baru saja (< 1 Jam)">Baru saja (< 1 Jam)</option>
+                                                <option value="Hari ini (< 24 Jam)">Hari ini (< 24 Jam)</option>
+                                                <option value="Sudah berhari-hari">Sudah berhari-hari</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Estimasi Panjang (m)</label>
+                                            <input type="number" id="geo-panjang" placeholder="Misal: 10" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-bertambah" class="accent-red-500 w-3 h-3"> Makin parah/lebar</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-suara" class="accent-red-500 w-3 h-3"> Ada suara/getaran</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-pemukiman" class="accent-red-500 w-3 h-3"> Dekat pemukiman</label>
+                                    </div>
+                                </div>
+
+                                <div id="dyn-hidrologis" class="space-y-3 hidden">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Kecepatan Naik</label>
+                                            <select id="hidro-cepat" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                                <option value="Sangat Cepat (Menit)">Sangat Cepat (Menit)</option>
+                                                <option value="Perlahan (Jam)">Perlahan (Jam)</option>
+                                                <option value="Stabil / Menggenang">Stabil / Menggenang</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Tinggi Air (cm)</label>
+                                            <input type="number" id="hidro-tinggi" placeholder="Misal: 50" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-hujan" class="accent-red-500 w-3 h-3"> Hujan lebih dari 3 hari</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-berulang" class="accent-red-500 w-3 h-3"> Titik banjir baru</label>
+                                    </div>
+                                </div>
+
+                                <div id="dyn-biologis" class="space-y-3 hidden">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Apa yang terdampak?</label>
+                                        <select id="bio-kejadian" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                            <option value="Ikan / Biota Laut Mati Massal">Ikan / Biota Laut Mati Massal</option>
+                                            <option value="Pohon Mangrove Mendadak Kering">Pohon Mangrove Mendadak Kering</option>
+                                            <option value="Hewan Darat Berpindah Wajar">Hewan Darat Berpindah Tidak Wajar</option>
+                                            <option value="Air Berubah Warna/Bau Tajam">Air Berubah Warna/Bau Tajam</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="dyn-infrastruktur" class="space-y-3 hidden">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Fokus Kerusakan (Sistemik)</label>
+                                        <select id="infra-fokus" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                            <option value="Tanggul Laut Rembes / Retak">Tanggul Laut Rembes / Retak</option>
+                                            <option value="Sistem Drainase Utama Tersumbat">Sistem Drainase Utama Tersumbat Total</option>
+                                            <option value="Penurunan Tanah Jalanan">Penurunan Tanah Jalanan Pesisir</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                             <div id="input-amount-container">
                                 <label class="text-xs font-bold text-gray-500 uppercase">Total Sampah Terkumpul (Kg)</label>
@@ -799,10 +902,25 @@
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         // --- 1. STATE & DATA INITIALIZATION ---
-        let reports = JSON.parse(localStorage.getItem('pesisir_reports')) || [];
-        let userProfile = JSON.parse(localStorage.getItem('pesisir_profile')) || { nama: '', organisasi: '' };
-        let ideas = JSON.parse(localStorage.getItem('pesisir_ideas')) || [];
-        let listSampahUrai = JSON.parse(localStorage.getItem('pesisir_sampah')) ||[];
+        let reports =[];
+        let userProfile = { nama: '', organisasi: '' };
+        let ideas = [];
+        let listSampahUrai =[];
+
+        // 👇 Gunakan Try-Catch agar aplikasi tidak crash jika memori HP/Browser error 👇
+        try {
+            reports = JSON.parse(localStorage.getItem('pesisir_reports')) ||[];
+            userProfile = JSON.parse(localStorage.getItem('pesisir_profile')) || { nama: '', organisasi: '' };
+            ideas = JSON.parse(localStorage.getItem('pesisir_ideas')) ||[];
+            listSampahUrai = JSON.parse(localStorage.getItem('pesisir_sampah')) ||[];
+        } catch (error) {
+            console.error("Error membaca LocalStorage:", error);
+            // Jika error (misal data korup), biarkan tetap array/object kosong agar web tidak blank
+            reports =[];
+            userProfile = { nama: '', organisasi: '' };
+            ideas = [];
+            listSampahUrai = []; 
+        }
         
         let currentPhotoBase64 = null;
         let currentGeoJSONLapangan = null;
@@ -861,6 +979,7 @@ const kamusData =[
         let mapLapangan = null; let drawnItemsLapangan = null;
         let modalMap = null; let modalFeatureGroup = null; // Untuk Modal Popup
         
+
         function createEsriMap(containerId, drawnItemsGroup, onDrawCreated) {
             const mapInstance = L.map(containerId).setView([-0.789, 113.921], 5);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -868,11 +987,17 @@ const kamusData =[
             }).addTo(mapInstance);
 
             mapInstance.addLayer(drawnItemsGroup);
+            
+            // AKTIFKAN POLYLINE DAN MARKER
             const drawControl = new L.Control.Draw({
                 edit: { featureGroup: drawnItemsGroup },
                 draw: {
                     polygon: { shapeOptions: { color: (containerId === 'map-lapangan-container' ? '#3b82f6' : '#14b8a6'), weight: 4, fillOpacity: 0.5 } }, 
-                    polyline: false, rectangle: true, circle: false, marker: false, circlemarker: false
+                    polyline: { shapeOptions: { color: '#ef4444', weight: 5, dashArray: '5, 10' } }, // Garis putus-putus merah tebal untuk retakan
+                    marker: true, // Titik spesifik
+                    rectangle: true, 
+                    circle: false, 
+                    circlemarker: false
                 }
             });
             mapInstance.addControl(drawControl);
@@ -1434,23 +1559,32 @@ function hitungKarbon() {
             if(show) resetLapanganForm();
         }
 
+
         function toggleFormInputs() {
             const type = document.getElementById('form-type').value;
             const amtBox = document.getElementById('input-amount-container');
             const amtInput = document.getElementById('form-amount');
             const plantingBox = document.getElementById('input-planting-container');
+            const warningBox = document.getElementById('input-warning-container');
 
-            // Reset semua form terlebih dahulu
+            // Reset semua display
             amtBox.style.display = 'none'; 
             amtInput.required = false; 
             plantingBox.style.display = 'none';
+            warningBox.style.display = 'none';
 
             if (type === 'cleanup') {
                 amtBox.style.display = 'block'; 
                 amtInput.required = true;
             } else if (type === 'planting') {
                 plantingBox.style.display = 'block';
-                // Anda bisa buat input bibit required di sini jika mau
+            } else if (type === 'early_warning') {
+                warningBox.style.display = 'block';
+                // Ganti placeholder notes agar lebih kontekstual
+                document.getElementById('form-notes').placeholder = "Jelaskan detail anomali yang kamu lihat. Kapan mulai terjadi? Seberapa cepat perubahannya?";
+                toggleAnomaliInputs();
+            } else {
+                document.getElementById('form-notes').placeholder = "Misal: Banyak ditemukan cangkang kepiting mati atau dominasi botol kaca...";
             }
         }
 
@@ -1536,39 +1670,89 @@ function hitungKarbon() {
 
         function saveReport(event) {
             event.preventDefault();
+            
+            // TANGKAP DATA PROGRESSIVE FORM JIKA EARLY WARNING
+            let metadataAnomali = null;
+            const jenisKegiatan = document.getElementById('form-type').value;
+            
+            if (jenisKegiatan === 'early_warning') {
+                const kat = document.getElementById('form-kategori-anomali').value;
+                if(kat === 'Geologis') {
+                    metadataAnomali = {
+                        waktu: document.getElementById('geo-waktu').value,
+                        panjang: document.getElementById('geo-panjang').value,
+                        bertambah: document.getElementById('geo-bertambah').checked,
+                        suara: document.getElementById('geo-suara').checked,
+                        pemukiman: document.getElementById('geo-pemukiman').checked
+                    };
+                } else if (kat === 'Hidrologis') {
+                    metadataAnomali = {
+                        cepat: document.getElementById('hidro-cepat').value,
+                        tinggi: document.getElementById('hidro-tinggi').value,
+                        hujan: document.getElementById('hidro-hujan').checked,
+                        berulang: document.getElementById('hidro-berulang').checked
+                    };
+                } else if (kat === 'Biologis') {
+                    metadataAnomali = { kejadian: document.getElementById('bio-kejadian').value };
+                } else if (kat === 'Infrastruktur') {
+                    metadataAnomali = { fokus: document.getElementById('infra-fokus').value };
+                }
+            }
+
+            // 1. BUAT OBJECT DASAR (Hanya data yang pasti ada di semua jenis laporan)
             const newReport = {
                 id: Date.now(), 
                 timestamp: new Date().toISOString(), 
-                type: document.getElementById('form-type').value,
-                amount: document.getElementById('form-amount').value, 
+                type: jenisKegiatan,
                 notes: document.getElementById('form-notes').value,
                 lat: document.getElementById('form-lat').value, 
                 lng: document.getElementById('form-lng').value,
                 areaHa: document.getElementById('form-area-ha').value, 
                 geojson: currentGeoJSONLapangan, 
-                photo: currentPhotoBase64,
-                
-                // TAMBAHAN DATA PENANAMAN
-                bibit: document.getElementById('form-bibit') ? document.getElementById('form-bibit').value : '',
-                jarak: document.getElementById('form-jarak') ? document.getElementById('form-jarak').value : '',
-                jenis: document.getElementById('form-jenis') ? document.getElementById('form-jenis').value : ''
+                photo: currentPhotoBase64
             };
 
-        if (editingReportId) {
-            // JIKA MODE EDIT: Cari data lama, timpa dengan data baru
-            const index = reports.findIndex(r => r.id === editingReportId);
-            newReport.id = editingReportId; // pertahankan ID lama
-            newReport.timestamp = reports[index].timestamp; // pertahankan waktu lama
-            reports[index] = newReport;
-            editingReportId = null; // Selesai edit
-        } else {
-            // JIKA DATA BARU
-            reports.unshift(newReport); 
-        }
+            // 2. TAMBAHKAN DATA SPESIFIK BERDASARKAN TIPE (Mencegah data tercampur)
+            if (jenisKegiatan === 'cleanup') {
+                newReport.amount = document.getElementById('form-amount').value;
+            } 
+            else if (jenisKegiatan === 'planting') {
+                newReport.bibit = document.getElementById('form-bibit').value;
+                newReport.jarak = document.getElementById('form-jarak').value;
+                newReport.jenis = document.getElementById('form-jenis').value;
+            } 
+            else if (jenisKegiatan === 'early_warning') {
+                newReport.kategoriAnomali = document.getElementById('form-kategori-anomali').value;
+                const urgensiEl = document.querySelector('input[name="urgensi"]:checked');
+                newReport.urgensi = urgensiEl ? urgensiEl.value : 'Waspada';
+                newReport.metadataAnomali = metadataAnomali;
+            }
 
+            // 3. LOGIKA SAVE (BARU ATAU EDIT) - Sudah Fix Bug Index -1
+            if (editingReportId) {
+                const index = reports.findIndex(r => r.id === editingReportId);
+                
+                // Pengecekan aman, pastikan data lama benar-benar ada
+                if (index !== -1) {
+                    newReport.id = editingReportId; // pertahankan ID lama
+                    newReport.timestamp = reports[index].timestamp; // pertahankan waktu lama
+                    reports[index] = newReport;
+                } else {
+                    // Jika anehnya tidak ketemu, anggap data baru
+                    reports.unshift(newReport);
+                }
+                editingReportId = null; // Selesai edit, kembalikan ke null
+            } else {
+                // JIKA DATA BARU
+                reports.unshift(newReport); 
+            }
+
+            // 4. SIMPAN KE MEMORI & UPDATE TAMPILAN
             localStorage.setItem('pesisir_reports', JSON.stringify(reports));
             
-            toggleFormLapangan(false); renderReports(); updateDashboard();
+            toggleFormLapangan(false); 
+            renderReports(); 
+            updateDashboard();
         }
 
         function resetLapanganForm() {
@@ -1583,11 +1767,38 @@ function hitungKarbon() {
             currentGeoJSONLapangan = null; if(drawnItemsLapangan) drawnItemsLapangan.clearLayers();
             document.getElementById('map-lapangan-wrapper').className = 'hidden'; // Hide map completely when reset
 
+            // Cukup satu blok ini saja untuk mereset input penanaman
             if(document.getElementById('form-bibit')) document.getElementById('form-bibit').value = '';
             if(document.getElementById('form-jarak')) document.getElementById('form-jarak').value = '';
             if(document.getElementById('form-jenis')) document.getElementById('form-jenis').value = 'Rhizophora';
 
+            // 👇 TAMBAHKAN KODE INI UNTUK RESET ANOMALI 👇
+            if(document.getElementById('form-kategori-anomali')) document.getElementById('form-kategori-anomali').value = 'Geologis';
+            const defaultUrgensi = document.querySelector('input[name="urgensi"][value="Waspada"]');
+            if(defaultUrgensi) defaultUrgensi.checked = true;
+            
+            // Uncheck semua checkbox anomali
+            document.querySelectorAll('#dynamic-anomali-fields input[type="checkbox"]').forEach(cb => cb.checked = false);
+            // 👆 BATAS TAMBAHAN KODE 👆
+
             toggleFormInputs(); removePhoto();
+        }
+
+
+        function toggleAnomaliInputs() {
+            const kategori = document.getElementById('form-kategori-anomali').value;
+            
+            // Sembunyikan semua dulu
+            document.getElementById('dyn-geologis').classList.add('hidden');
+            document.getElementById('dyn-hidrologis').classList.add('hidden');
+            document.getElementById('dyn-biologis').classList.add('hidden');
+            document.getElementById('dyn-infrastruktur').classList.add('hidden');
+
+            // Tampilkan yang sesuai pilihan
+            if(kategori === 'Geologis') document.getElementById('dyn-geologis').classList.remove('hidden');
+            if(kategori === 'Hidrologis') document.getElementById('dyn-hidrologis').classList.remove('hidden');
+            if(kategori === 'Biologis') document.getElementById('dyn-biologis').classList.remove('hidden');
+            if(kategori === 'Infrastruktur') document.getElementById('dyn-infrastruktur').classList.remove('hidden');
         }
 
 
@@ -1626,7 +1837,42 @@ function hitungKarbon() {
                 if (!compact && r.jenis) {
                     extraDetail = `<div class="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md mt-2 inline-block font-medium"><i class="ph-bold ph-tree"></i> Jenis: ${r.jenis} | Jarak: ${r.jarak || '-'} m</div>`;
                 }
+            } else if (r.type === 'early_warning') {
+                iconClass = 'ph-warning-octagon text-red-600 bg-red-100';
+                title = `Sinyal: ${r.kategoriAnomali || 'Anomali'}`;
+                
+                // Badge Urgensi
+                const urgensiWarna = r.urgensi === 'Bahaya' ? 'bg-red-600 text-white' : (r.urgensi === 'Kritis' ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900');
+                highlightStat = `<div class="font-black text-[10px] px-2 py-1 rounded uppercase tracking-widest shadow-sm ${urgensiWarna}">${r.urgensi || 'Waspada'}</div>`;
+                
+                // Render Contextual Tags (Hanya jika tidak di tampilan compact/mini)
+                if (!compact && r.metadataAnomali) {
+                    let tags = [];
+                    const m = r.metadataAnomali;
+                    
+                    if (r.kategoriAnomali === 'Geologis') {
+                        if(m.waktu) tags.push(`<i class="ph-bold ph-clock"></i> ${m.waktu}`);
+                        if(m.panjang) tags.push(`<i class="ph-bold ph-ruler"></i> Panjang ${m.panjang}m`);
+                        if(m.bertambah) tags.push(`<span class="text-red-600">Makin Parah</span>`);
+                        if(m.suara) tags.push(`Ada Suara/Getaran`);
+                        if(m.pemukiman) tags.push(`Dekat Rumah Warga`);
+                    } else if (r.kategoriAnomali === 'Hidrologis') {
+                        if(m.cepat) tags.push(`Naik ${m.cepat}`);
+                        if(m.tinggi) tags.push(`Air ${m.tinggi}cm`);
+                        if(m.hujan) tags.push(`Hujan > 3 Hari`);
+                        if(m.berulang) tags.push(`Titik Baru`);
+                    } else if (r.kategoriAnomali === 'Biologis' && m.kejadian) {
+                        tags.push(m.kejadian);
+                    } else if (r.kategoriAnomali === 'Infrastruktur' && m.fokus) {
+                        tags.push(m.fokus);
+                    }
+                    
+                    if(tags.length > 0) {
+                        extraDetail = `<div class="flex flex-wrap gap-1.5 mt-3 text-[10px] font-bold text-red-800">${tags.map(t => `<span class="bg-red-50 border border-red-200 px-2 py-1 rounded-md shadow-sm">${t}</span>`).join('')}</div>`;
+                    }
+                }
             }
+            
 
             return `
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4 hover:border-teal-300 transition-colors">
@@ -1719,10 +1965,11 @@ function exportLaporanLengkap() {
                 .page-break { page-break-before: always; }
                 .no-break { page-break-inside: avoid; }
                 .leaflet-control-container { display: none !important; }
-            }
+
+}
             body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1e293b; padding: 2rem; }
         </style>
-    </head>
+    <\/head>
     <body class="max-w-4xl mx-auto">
         
         <!-- HEADER PROFESIONAL -->
@@ -1958,8 +2205,8 @@ function exportLaporanLengkap() {
             // TUNGGU 2 DETIK AGAR GAMBAR SATELIT SELESAI LOADING, LALU PRINT
             setTimeout(() => { window.print(); }, 2000);
         <\/script>
-    </body>
-    </html>
+    <\/body>
+    <\/html>
     `;
     
     // 4. Suntikkan HTML ke Tab Baru
@@ -2245,6 +2492,39 @@ function exportLaporanLengkap() {
                 document.getElementById('form-bibit').value = r.bibit || '';
                 document.getElementById('form-jarak').value = r.jarak || '';
                 document.getElementById('form-jenis').value = r.jenis || 'Rhizophora';
+            }
+
+                        // 👇 TAMBAHKAN KODE INI UNTUK RESTORE EARLY WARNING 👇
+            if (r.type === 'early_warning') {
+                document.getElementById('form-kategori-anomali').value = r.kategoriAnomali || 'Geologis';
+                
+                // Kembalikan Radio Button Urgensi
+                if(r.urgensi) {
+                    const radio = document.querySelector(`input[name="urgensi"][value="${r.urgensi}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                toggleAnomaliInputs(); // Munculkan input sesuai kategori
+
+                // Kembalikan inputan detail anomali
+                if (r.metadataAnomali) {
+                    if (r.kategoriAnomali === 'Geologis') {
+                        document.getElementById('geo-waktu').value = r.metadataAnomali.waktu || '';
+                        document.getElementById('geo-panjang').value = r.metadataAnomali.panjang || '';
+                        document.getElementById('geo-bertambah').checked = r.metadataAnomali.bertambah || false;
+                        document.getElementById('geo-suara').checked = r.metadataAnomali.suara || false;
+                        document.getElementById('geo-pemukiman').checked = r.metadataAnomali.pemukiman || false;
+                    } else if (r.kategoriAnomali === 'Hidrologis') {
+                        document.getElementById('hidro-cepat').value = r.metadataAnomali.cepat || '';
+                        document.getElementById('hidro-tinggi').value = r.metadataAnomali.tinggi || '';
+                        document.getElementById('hidro-hujan').checked = r.metadataAnomali.hujan || false;
+                        document.getElementById('hidro-berulang').checked = r.metadataAnomali.berulang || false;
+                    } else if (r.kategoriAnomali === 'Biologis') {
+                        document.getElementById('bio-kejadian').value = r.metadataAnomali.kejadian || '';
+                    } else if (r.kategoriAnomali === 'Infrastruktur') {
+                        document.getElementById('infra-fokus').value = r.metadataAnomali.fokus || '';
+                    }
+                }
             }
 
             // Restore Map/GeoJSON state
