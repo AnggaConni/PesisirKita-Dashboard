@@ -2,1305 +2,1067 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Mangrove & Hackathon</title>
-    
-    <!-- Tailwind CSS untuk Styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - PesisirKita Command Center</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome untuk Ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Leaflet CSS & JS untuk Peta -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- PapaParse untuk membaca file CSV -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        primary: '#2563eb', // Blue-600
-                        secondary: '#0ea5e9', // Sky-500
-                        success: '#10b981', // Emerald-500
-                        background: '#f8fafc', // Slate-50
-                        surface: '#ffffff',
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4',
+                            500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+                            800: '#115e59', 900: '#134e4a',
+                        }
                     }
                 }
             }
         }
     </script>
+
     <style>
-        body { background-color: #f8fafc; }
-        .glass-header {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .tab-active {
-            color: #2563eb;
-            border-bottom: 2px solid #2563eb;
-        }
-        .tab-inactive {
-            color: #64748b;
-            border-bottom: 2px solid transparent;
-        }
-        .tab-inactive:hover { color: #334155; }
-        #map { z-index: 10; }
-        .cut-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
+            background-size: 24px 24px;
         }
 
-        /* --- CSS KHUSUS EASTER EGG GAME --- */
-        #easter-egg-container {
-            background-color: #0f172a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            touch-action: none;
-        }
-        .game-ui-overlay {
+        .gradient-brand { background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%); }
+        .gradient-emerald { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .gradient-amber { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .gradient-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .gradient-slate { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+
+        .timeline-line::before {
+            content: '';
             position: absolute;
-            top: 20px;
-            left: 20px;
-            pointer-events: none;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            z-index: 10;
+            left: 19px;
+            top: 36px;
+            bottom: -10px;
+            width: 2px;
+            background: linear-gradient(to bottom, #cbd5e1, #e2e8f0);
+            z-index: 0;
         }
-        .game-message-box {
+        .timeline-item:last-child .timeline-line::before { display: none; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .view-section { display: none; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-in-out; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px 0 rgba(13, 148, 136, 0.4);
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        }
+        .pulse-dot { animation: pulseDot 2s infinite; }
+
+        .map-legend {
             position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
+            bottom: 16px;
+            right: 16px;
+            background: white;
+            padding: 12px 14px;
             border-radius: 12px;
-            border: 2px solid #3b82f6;
-            color: #fbbf24;
-            font-weight: bold;
-            max-width: 80%;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 10;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+            z-index: 400;
+            font-size: 11px;
         }
-        .show-msg {
-            opacity: 1;
+
+        .obj-card { transition: all 0.2s ease; }
+        .obj-card:hover { transform: translateY(-2px); }
+        .obj-card.active {
+            border-color: #0d9488 !important;
+            background: linear-gradient(to right, #f0fdfa, #ffffff);
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.15);
         }
-        .score-popup {
-            position: absolute;
-            color: #4ade80;
-            font-weight: bold;
-            font-size: 24px;
-            pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            z-index: 15;
+
+        .progress-bar { background: #e2e8f0; height: 6px; border-radius: 999px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.025em; text-transform: uppercase;
         }
-        @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-50px); opacity: 0; }
-        }
+
+        .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15) !important; }
+        .leaflet-popup-content { margin: 12px 16px !important; font-family: 'Inter', sans-serif !important; }
     </style>
 </head>
-<body class="text-slate-800 antialiased font-sans flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden">
 
-    <!-- Navigasi -->
-    <nav class="glass-header sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center gap-3">
-                    <div class="bg-primary text-white p-2 rounded-lg">
-                        <i class="fa-solid fa-leaf text-xl"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Eco<span class="text-primary">Monitor</span></span>
+    <!-- SIDEBAR -->
+    <aside class="w-full md:w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 h-auto md:h-full z-30 relative">
+        <div class="p-6 border-b border-slate-100 bg-white">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 gradient-brand rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30">
+                    <i class="ph-fill ph-waves text-2xl text-white"></i>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button onclick="openGuideModal()" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
-                        <i class="fa-solid fa-circle-info mr-1"></i> Guide
-                    </button>
-                    <button onclick="loadDataFromGoogleSheets()" id="btn-sync" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
-                        <i class="fa-solid fa-sync mr-1" id="icon-sync"></i> <span id="text-sync">Sinkronisasi Data</span>
-                    </button>
-                    <div class="h-8 w-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center">
-                        <i class="fa-regular fa-user text-slate-500"></i>
-                    </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight leading-none text-slate-800">PesisirKita</h1>
+                    <p class="text-[10px] font-bold text-teal-600 uppercase tracking-widest mt-1">Command Center</p>
                 </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Konten Utama -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
-        
-        <!-- Header & Tab -->
-        <div class="mb-8 border-b border-slate-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Dashboard Area Konservasi</h1>
-                    <p class="text-sm text-slate-500 mt-1">Hutan Mangrove Graha Indah, Balikpapan</p>
-                </div>
-                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 text-sm font-medium text-slate-600 flex items-center">
-                    <span id="status-dot" class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>
-                    <span id="status-text">Menunggu data...</span>
-                </div>
-            </div>
-
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <button onclick="switchTab('report')" id="tab-report" class="tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
-                    <i class="fa-solid fa-clipboard-list mr-2"></i>Laporan Lapangan
+        <div class="p-5 flex-1 overflow-y-auto hidden md:flex md:flex-col">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-3">Navigasi</p>
+            <nav class="space-y-1.5">
+                <button onclick="switchView('global')" id="nav-global" class="nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all">
+                    <i class="ph-bold ph-globe-hemisphere-west text-xl"></i>
+                    <span class="flex-1">Peta Persebaran</span>
+                    <i class="ph-bold ph-caret-right text-sm opacity-50"></i>
                 </button>
-                <button onclick="switchTab('hackathon')" id="tab-hackathon" class="tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200">
-                    <i class="fa-solid fa-lightbulb mr-2"></i>Ide Tim (Hackathon)
+                <button onclick="switchView('log')" id="nav-log" class="nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all">
+                    <i class="ph-bold ph-list-magnifying-glass text-xl"></i>
+                    <span class="flex-1">Log Titik Pantau</span>
+                    <i class="ph-bold ph-caret-right text-sm opacity-50"></i>
                 </button>
             </nav>
-        </div>
 
-        <!-- ================= TAB: REPORT ================= -->
-        <div id="view-report" class="space-y-6 block">
-            
-            <!-- Kartu KPI -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Total Sampah Terkumpul</p>
-                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-sampah">0 <span class="text-base font-medium text-slate-500">kg</span></h3>
+            <div class="mt-6">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-3">Status Terkini</p>
+                <div class="space-y-2">
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100/50 p-3 rounded-xl border border-teal-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-teal-700">Total Titik (Kode)</p>
+                            <i class="ph-fill ph-map-pin text-teal-500"></i>
                         </div>
-                        <div class="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center text-red-500">
-                            <i class="fa-solid fa-trash-can text-xl"></i>
-                        </div>
+                        <h4 class="text-2xl font-black text-teal-900 mt-1" id="mini-stat-lokasi">0</h4>
                     </div>
-                </div>
-                
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Total Bibit Ditanam</p>
-                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-bibit">0 <span class="text-base font-medium text-slate-500">pohon</span></h3>
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-3 rounded-xl border border-emerald-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-emerald-700">Kondisi Aman</p>
+                            <i class="ph-fill ph-check-circle text-emerald-500"></i>
                         </div>
-                        <div class="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
-                            <i class="fa-solid fa-seedling text-xl"></i>
-                        </div>
+                        <h4 class="text-2xl font-black text-emerald-900 mt-1" id="mini-stat-aman">0</h4>
                     </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Jumlah Aktivitas</p>
-                            <h3 class="text-3xl font-bold text-slate-800" id="kpi-aktivitas">0</h3>
+                    <div class="bg-gradient-to-br from-red-50 to-red-100/50 p-3 rounded-xl border border-red-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-red-700">Waspada / Kritis</p>
+                            <i class="ph-fill ph-warning-circle text-red-500"></i>
                         </div>
-                        <div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-                            <i class="fa-solid fa-person-digging text-xl"></i>
-                        </div>
+                        <h4 class="text-2xl font-black text-red-900 mt-1" id="mini-stat-rusak">0</h4>
                     </div>
                 </div>
             </div>
 
-            <!-- Peta & Aktivitas -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Peta -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden flex flex-col">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                        <h3 class="font-semibold text-slate-800">Peta Sebaran Aktivitas</h3>
-                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Live</span>
+            <div class="mt-auto pt-6">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sinkronisasi</p>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></div>
                     </div>
-                    <div id="map" class="w-full h-96 bg-slate-100 relative"></div>
-                </div>
-
-                <!-- Feed Aktivitas -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                        <h3 class="font-semibold text-slate-800">Aktivitas Terkini</h3>
-                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-1 rounded-md">Maks 30</span>
-                    </div>
-                    <div class="p-6 overflow-y-auto max-h-96" id="activity-feed"></div>
-                </div>
-            </div>
-
-            <!-- Tabel Data -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mt-6">
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 class="font-semibold text-slate-800">Detail Laporan Lapangan</h3>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div class="flex items-center gap-2">
-                            <label for="filter-tipe" class="text-slate-500"><i class="fa-solid fa-filter"></i></label>
-                            <select id="filter-tipe" onchange="applyTableFilter()" class="border border-slate-300 rounded-md px-3 py-1.5 text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-                                <option value="All">Semua Jenis</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center gap-2 border-l border-slate-300 pl-3">
-                            <label for="rows-per-page" class="text-slate-500 text-xs hidden sm:block">Tampilkan</label>
-                            <select id="rows-per-page" onchange="changeRowsPerPage()" class="border border-slate-300 rounded-md px-3 py-1.5 text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-                                <option value="20">20 Baris</option>
-                                <option value="50">50 Baris</option>
-                                <option value="10000">Semua</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto min-h-[300px]">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Pelapor / Tim</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Jenis & Lokasi</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Hasil</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Catatan</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-slate-200" id="table-body"></tbody>
-                    </table>
-                </div>
-
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="text-sm text-slate-500" id="table-info">Menampilkan 0 hingga 0 dari 0 data</div>
-                    <div class="flex gap-2">
-                        <button id="btn-prev" onclick="prevTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
-                            <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
-                        </button>
-                        <button id="btn-next" onclick="nextTablePage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
-                            Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i>
-                        </button>
-                    </div>
+                    <p class="text-xs font-bold text-slate-700 mb-1" id="sync-status">Live & Terhubung</p>
+                    <p class="text-[10px] text-slate-500 mb-3" id="sync-time">Last sync: --</p>
+                    <button onclick="fetchData()" class="w-full btn-primary text-white text-xs font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-arrows-clockwise"></i> Segarkan Data
+                    </button>
                 </div>
             </div>
         </div>
+    </aside>
 
-        <!-- ================= TAB: HACKATHON ================= -->
-        <div id="view-hackathon" class="space-y-6 hidden">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-800">Ide & Inovasi Tim</h2>
-                    <p class="text-sm text-slate-500">Kumpulan solusi dari peserta Hackathon.</p>
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- Header Mobile -->
+        <div class="md:hidden bg-white border-b border-slate-200 flex z-20 shadow-sm overflow-x-auto shrink-0">
+            <button onclick="switchView('global')" id="nav-global-mobile" class="flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center">Peta</button>
+            <button onclick="switchView('log')" id="nav-log-mobile" class="flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center">Log Titik</button>
+            <button onclick="fetchData()" class="px-4 border-l border-slate-200 text-teal-600 bg-teal-50 shrink-0"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button>
+        </div>
+
+        <!-- Loading screen -->
+        <div id="loading-screen" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
+            <div class="relative mb-6">
+                <div class="w-16 h-16 gradient-brand rounded-2xl flex items-center justify-center shadow-xl shadow-teal-500/30">
+                    <i class="ph-fill ph-waves text-3xl text-white"></i>
+                </div>
+                <div class="absolute -inset-3 border-4 border-teal-200 border-t-teal-600 rounded-3xl animate-spin"></div>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800">Menarik Data PesisirKita...</h2>
+            <p class="text-xs text-slate-500 mt-1">Menganalisa garis waktu (timeline) pelaporan historis</p>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 1: RINGKASAN GLOBAL                       -->
+        <!-- ============================================== -->
+        <section id="view-global" class="view-section active flex-1 flex-col overflow-hidden bg-slate-50">
+
+            <div class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 shrink-0">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-1">
+                            <i class="ph-bold ph-house"></i>
+                            <span>Dashboard</span>
+                            <i class="ph-bold ph-caret-right text-[10px]"></i>
+                            <span class="text-teal-600 font-bold">Peta Persebaran</span>
+                        </div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Peta Wilayah & Status</h1>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></div>
+                            <span class="text-xs font-bold text-emerald-700">Real-time Data Terintegrasi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-6">
+
+                <!-- METRIC CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-5">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-10 h-10 gradient-brand rounded-xl flex items-center justify-center shadow-md shadow-teal-500/30 mb-3">
+                                <i class="ph-fill ph-map-pin text-xl text-white"></i>
+                            </div>
+                            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Titik Kode</p>
+                            <h3 class="text-3xl font-black text-slate-800 mt-1" id="stat-titik">0</h3>
+                            <p class="text-xs text-slate-400 mt-1">lokasi terpantau</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-10 h-10 gradient-emerald rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/30 mb-3">
+                                <i class="ph-fill ph-shield-check text-xl text-white"></i>
+                            </div>
+                            <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Kondisi Aman</p>
+                            <h3 class="text-3xl font-black text-emerald-700 mt-1" id="stat-aman">0</h3>
+                            <p class="text-xs text-slate-400 mt-1">titik aman terkini</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-10 h-10 gradient-red rounded-xl flex items-center justify-center shadow-md shadow-red-500/30 mb-3">
+                                <i class="ph-fill ph-warning-octagon text-xl text-white"></i>
+                            </div>
+                            <p class="text-[11px] font-bold text-red-500 uppercase tracking-wider">Status Waspada</p>
+                            <h3 class="text-3xl font-black text-red-600 mt-1" id="stat-kritis">0</h3>
+                            <p class="text-xs text-slate-400 mt-1">butuh perhatian segera</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/30 mb-3">
+                                <i class="ph-fill ph-database text-xl text-white"></i>
+                            </div>
+                            <p class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Total Jejak Log</p>
+                            <h3 class="text-3xl font-black text-indigo-700 mt-1" id="stat-logs">0</h3>
+                            <p class="text-xs text-slate-400 mt-1">riwayat historis terkumpul</p>
+                        </div>
+                    </div>
                 </div>
 
-                <button onclick="openVoteModal()" class="bg-success hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-md flex items-center">
-                    <i class="fa-solid fa-check-double mr-2"></i>Kirim Penilaian
+                <!-- 2 Column Section: Map + Side Stats -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-5">
+
+                    <!-- MAP -->
+                    <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] xl:h-[620px]">
+                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between bg-gradient-to-r from-slate-50 to-white shrink-0">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-map-trifold text-teal-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800">Visualisasi Geografis</h3>
+                                    <p class="text-xs text-slate-500">Peta interaktif persebaran kode pelaporan</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <select id="filter-kabupaten-global" onchange="filterDataGlobal()" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="ALL">🗺️ Semua Kabupaten</option>
+                                </select>
+                                <select id="filter-kode-global" onchange="filterDataGlobal()" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="ALL">📍 Semua Kode</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="global-map" class="w-full flex-1 relative z-0"></div>
+                    </div>
+
+                    <!-- Side Panel -->
+                    <div class="space-y-4 md:space-y-5">
+
+                        <!-- Distribution -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-9 h-9 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-chart-pie-slice text-purple-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">Distribusi Status</h3>
+                                    <p class="text-xs text-slate-500">Berdasarkan kondisi log terbaru</p>
+                                </div>
+                            </div>
+                            <div id="distribution-bars" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[300px] xl:max-h-[350px]">
+                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex items-center gap-3 shrink-0">
+                                <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-pulse text-teal-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">Aktivitas Terkini</h3>
+                                </div>
+                            </div>
+                            <div id="recent-activity" class="divide-y divide-slate-100 flex-1 overflow-y-auto"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: LOG TIMELINE                           -->
+        <!-- ============================================== -->
+        <section id="view-log" class="view-section flex-1 flex-col overflow-hidden bg-slate-50">
+
+            <div class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 shrink-0">
+                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-1">
+                    <i class="ph-bold ph-house"></i>
+                    <span>Dashboard</span>
+                    <i class="ph-bold ph-caret-right text-[10px]"></i>
+                    <span class="text-teal-600 font-bold">Log Titik Pantau</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Timeline Analisis Data</h1>
+                <p class="text-xs text-slate-500 mt-1">Pilih kode lokasi di tabel untuk melihat jejak historis perubahannya.</p>
+            </div>
+
+            <div class="flex-1 overflow-hidden p-4 md:p-5">
+                <div class="flex flex-col lg:flex-row gap-4 md:gap-5 h-full min-h-0">
+
+                    <!-- KOLOM KIRI: List Titik -->
+                    <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden min-w-0">
+
+                        <!-- Filter Bar -->
+                        <!-- FIX: Tambah filter-kode yang sebelumnya ada di JS tapi tidak ada di HTML -->
+                        <div class="p-4 md:p-5 border-b border-slate-200 bg-white shrink-0">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-2.5">
+                                <div class="relative sm:col-span-2 lg:col-span-1">
+                                    <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" id="filter-text" oninput="renderTable()" placeholder="Cari kode/catatan..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white transition">
+                                </div>
+                                <select id="filter-kabupaten" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">🗺️ Semua Kabupaten</option>
+                                </select>
+                                <!-- FIX: filter-kode yang direferensikan di JS sekarang ada di HTML -->
+                                <select id="filter-kode" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">📍 Semua Kode</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <select id="filter-kondisi" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">⚙️ Semua Status</option>
+                                    <option value="Aman">✅ Aman / Terkendali</option>
+                                    <option value="Waspada">⚠️ Waspada / Kritis</option>
+                                </select>
+                                <select id="filter-tipe" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">📂 Semua Jenis Laporan</option>
+                                    <option value="cleanup">Pembersihan</option>
+                                    <option value="planting">Penanaman</option>
+                                    <option value="observation">Observasi</option>
+                                    <option value="early_warning">Early Warning</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Table Area -->
+                        <div class="flex-1 overflow-auto bg-pattern p-4 md:p-5">
+                            <div class="grid grid-cols-1 gap-2.5" id="data-table-body"></div>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN: TIMELINE -->
+                    <div class="w-full lg:w-[460px] shrink-0 hidden lg:flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <div class="p-6 gradient-slate text-white relative shrink-0 overflow-hidden">
+                            <i class="ph-fill ph-clock-counter-clockwise absolute -right-6 -bottom-6 text-9xl opacity-10"></i>
+                            <div class="relative">
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/15 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 backdrop-blur border border-white/10">
+                                    <i class="ph-bold ph-map-pin-line"></i> Analisis Historis Titik
+                                </div>
+                                <h2 class="text-2xl font-black leading-tight mb-1" id="tl-kode-nama">Pilih Titik</h2>
+                                <p class="text-xs text-slate-300 flex items-center gap-1" id="tl-lokasi-nama">
+                                    Klik kartu di daftar untuk memuat jejak waktu
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-gradient-to-br from-slate-50 to-white border-b border-slate-200 text-center shrink-0" id="tl-trend-box">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status Tren</p>
+                            <h3 class="text-base font-bold text-slate-400 mt-1">Belum Ada Data</h3>
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto bg-white" id="tl-history-list">
+                            <div class="text-center p-12 text-slate-400">
+                                <div class="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
+                                    <i class="ph-fill ph-hand-pointing text-3xl text-slate-300"></i>
+                                </div>
+                                <p class="text-sm font-bold text-slate-500">Pilih Kode Lokasi</p>
+                                <p class="text-xs text-slate-400 mt-1">Klik salah satu kartu di daftar sebelah kiri</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Mobile Modal Timeline -->
+            <div id="modal-timeline-mobile" class="fixed inset-0 bg-slate-900/80 z-[200] hidden flex-col justify-end items-center p-0 backdrop-blur-sm transition-opacity lg:hidden">
+                <div class="bg-white rounded-t-3xl w-full max-h-[90vh] flex flex-col shadow-2xl h-full">
+                    <div class="p-5 gradient-slate text-white rounded-t-3xl flex justify-between items-center sticky top-0 z-10">
+                        <div class="flex-1 min-w-0 pr-3">
+                            <h3 class="font-bold text-lg leading-tight truncate" id="tl-kode-nama-mobile">Nama Kode</h3>
+                            <p class="text-[10px] text-slate-300 uppercase tracking-widest mt-1 truncate" id="tl-lokasi-nama-mobile">Lokasi</p>
+                        </div>
+                        <button onclick="closeTimelineMobile()" class="bg-white/20 hover:bg-white/30 p-2 rounded-full text-white transition shrink-0"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-slate-50 to-white border-b border-slate-200 text-center shrink-0" id="tl-trend-box-mobile"></div>
+                    <div class="p-5 flex-1 overflow-y-auto bg-white" id="tl-history-list-mobile"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Image Viewer Modal -->
+        <div id="image-modal" class="fixed inset-0 z-[300] hidden flex-col justify-center items-center bg-slate-900/90 backdrop-blur-sm p-4 transition-opacity">
+            <div class="relative max-w-4xl w-full flex flex-col items-center">
+                <button onclick="closeImageModal()" class="absolute -top-12 right-0 md:-right-10 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full text-white flex items-center justify-center backdrop-blur transition">
+                    <i class="ph-bold ph-x text-xl"></i>
                 </button>
-
+                <img id="modal-image-content" src="" alt="Bukti Foto" class="max-w-full max-h-[80vh] rounded-xl shadow-2xl object-contain fade-in">
+                <div class="mt-4 text-center bg-slate-800/50 backdrop-blur px-4 py-2 rounded-lg">
+                    <a id="modal-image-link" href="#" target="_blank" class="text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                        <i class="ph-bold ph-arrow-square-out"></i> Buka Link Asli di Tab Baru
+                    </a>
+                </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6" id="hackathon-grid"></div>
         </div>
 
     </main>
 
-    <!-- Footer dengan Easter Egg Trigger -->
-    <footer class="mt-auto py-6 border-t border-slate-200 bg-slate-50 text-center">
-        <p class="text-sm text-slate-500 font-medium">
-            EcoMonitor &copy; 2026 - Dashboard Area Konservasi Mangrove. 
-            <span onclick="openEasterEgg()" class="cursor-pointer hover:text-blue-500 transition-colors ml-1 text-lg" title="Ada apa dengan ikan ini?">🐟</span>
-        </p>
-    </footer>
-
-    <!-- ================== MODAL EASTER EGG (GAME) ================== -->
-    <div id="easter-egg-container" class="fixed inset-0 z-[200] hidden overflow-hidden">
-        <!-- Tombol Keluar -->
-        <button onclick="closeEasterEgg()" class="absolute top-6 right-6 z-[210] bg-white/10 hover:bg-red-500 text-white border border-white/30 px-4 py-2 rounded-lg font-bold backdrop-blur-md transition-all flex items-center gap-2 shadow-lg">
-            <i class="fa-solid fa-xmark"></i> Keluar Game
-        </button>
-
-        <!-- UI Game -->
-        <div class="game-ui-overlay">
-            <h1 class="text-2xl font-bold text-blue-400">Pancingan Karma v1.1</h1>
-            <p class="text-sm opacity-80">Klik/Tap pada area air untuk menjatuhkan kail.</p>
-            <div class="mt-4 space-y-1 bg-black/40 p-3 rounded-lg backdrop-blur-sm border border-white/10">
-                <div class="text-yellow-400 text-xl font-bold">SKOR: <span id="game-total-score">0</span></div>
-                <div class="text-green-400 font-medium">Ikan Terselamatkan: <span id="game-fish-count">0</span></div>
-                <div class="text-red-400 font-medium">"Warisan" Manusia: <span id="game-trash-count">0</span></div>
-                <div class="text-gray-400 text-xs mt-2 italic">Status: <span id="game-ego-level" class="text-white font-bold">Mulai Sadar</span></div>
-            </div>
-        </div>
-
-        <div id="game-message-box" class="game-message-box"></div>
-
-        <!-- Canvas -->
-        <canvas id="gameCanvas" class="block w-full h-full"></canvas>
-    </div>
-
-    <!-- ================== MODAL GEOJSON & SATELLITE ================== -->
-    <div id="geojson-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeGeoJsonModal()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-3xl overflow-hidden flex flex-col">
-            <!-- HEADER MODAL MAP -->
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-satellite text-blue-500"></i> <span id="geojson-modal-title">Peta Sebaran Area</span>
-                </h3>
-                <div class="flex items-center gap-3">
-                    <!-- Tombol Export GeoJSON -->
-                    <button id="btn-export-geojson" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Export ESRI</span> GeoJSON
-                    </button>
-                    <!-- Tombol Tutup Modal -->
-                    <button onclick="closeGeoJsonModal()" class="text-slate-400 hover:text-slate-600 transition-colors ml-2"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>
-            </div>
-            <!-- KONTEN MAP -->
-            <div class="p-0">
-                <div id="mini-map" class="w-full h-[400px] bg-slate-800 relative z-10"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================== MODAL GUIDE (DIPERBAIKI) ================== -->
-    <div id="guide-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeGuideModal()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-lg overflow-hidden flex flex-col">
-            
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-primary mr-2"></i>Panduan Penggunaan</h3>
-                <button onclick="closeGuideModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            
-            <div class="p-6 text-slate-600 text-sm leading-relaxed flex-grow">
-                <p class="mb-3">Selamat datang di Dashboard Area Konservasi.</p>
-                <p class="mb-3">Dashboard ini menampilkan data laporan lapangan dan ide inovasi yang terhubung langsung dengan Google Sheets secara *real-time*.</p>
-                <ul class="list-disc pl-5 space-y-2 mb-3">
-                    <li>Gunakan tab <b>Laporan Lapangan</b> untuk melihat sebaran aktivitas pelestarian.</li>
-                    <li>Klik pin pada peta untuk melihat detail kegiatan. Jika terdapat ikon Area, Anda dapat mengklik tombol <b>Lihat Peta Sebaran</b> di dalam popup.</li>
-                    <li>Peta sebaran akan memunculkan gambar satelit dan poligon yang bisa didownload dalam format <b>GeoJSON</b> untuk QGIS/ESRI.</li>
-                </ul>
-            </div>
-            
-            <!-- INI BAGIAN FOOTER MENU MENUJU INFO.HTML YANG DIKEMBALIKAN -->
-            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-                <button onclick="window.location.href='info.html'" class="bg-primary hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center">
-                    Buka info.html <i class="fa-solid fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-            
-        </div>
-    </div>
-
-
-    <!-- ================== MODAL DETAIL IDE HACKATHON ================== -->
-    <div id="ide-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeIdeDetail()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-800 text-white">
-                <h3 class="font-bold flex items-center gap-2" id="detail-title"><i class="fa-solid fa-lightbulb text-yellow-400"></i> Detail Ide</h3>
-                <button onclick="closeIdeDetail()" class="text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto space-y-5 text-slate-700 text-sm">
-                <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pengusul</span>
-                    <p id="detail-author" class="font-bold text-lg text-slate-900"></p>
-                </div>
-                <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Solusi Utama</span>
-                    <p id="detail-solusi" class="bg-blue-50 p-4 rounded-lg border border-blue-100 mt-1"></p>
-                </div>
-                <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Masalah yang Diatasi</span>
-                    <p id="detail-masalah" class="bg-red-50 p-4 rounded-lg border border-red-100 mt-1"></p>
-                </div>
-                <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mengapa Ini Signifikan?</span>
-                    <p id="detail-signifikan" class="bg-emerald-50 p-4 rounded-lg border border-emerald-100 mt-1"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================== MODAL VOTING & PASSWORD ================== -->
-    <div id="vote-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeVoteModal()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-11/12 max-w-sm overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-500 text-white">
-                <h3 class="font-bold"><i class="fa-solid fa-lock mr-2"></i> Konfirmasi Penilaian</h3>
-                <button onclick="closeVoteModal()" class="text-emerald-100 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="p-6">
-                <p class="text-sm text-slate-600 mb-4">Anda memilih <span id="vote-count" class="font-bold text-emerald-600 text-lg">0</span> ide. Masukkan nama Anda dan password sistem untuk mengirim data ke server.</p>
-                
-                <input type="text" id="vote-name" placeholder="Nama Penilai (Misal: Pak Budi)" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm mb-3 focus:outline-none focus:border-emerald-500">
-                <input type="password" id="vote-password" placeholder="Masukkan Password" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 mb-4">
-                
-                <p id="vote-error" class="text-red-500 text-xs hidden mb-3 font-medium"></p>
-
-                <button id="btn-submit-vote" onclick="submitVote()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg transition shadow-sm">
-                    Kirim ke Server
-                </button>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ========================================================================= -->
-    <!-- SCRIPT UTAMA: LOAD DATA, MAP DASHBOARD, TABEL, FILTER                     -->
-    <!-- ========================================================================= -->
     <script>
-        const urlReportCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?gid=0&single=true&output=csv";
-        const urlHackathonCsv = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRKgYtUVLkdVVnnUGOg3xn6CROE5EZ4cSpXY-jjbTkAeYg3-jdno14NVjzMfDwKZIHWroES5aBgKf3k/pub?gid=1516464451&single=true&output=csv";
-
-        let dataReport = [];
-        let dataHackathon = [];
-        let map;
-        let markers = []; 
-        let miniMap = null;
-        let miniGeoJsonLayer = null;
-
-        let currentTablePage = 1;
-        let tableRowsPerPage = 20;
-        let currentTableFilter = 'All';
-        let filteredTableData = [];
-
-        async function loadDataFromGoogleSheets() {
-            setLoadingState(true);
-
-            const fetchCSV = (url) => {
-                return new Promise((resolve, reject) => {
-                    Papa.parse(url, {
-                        download: true,
-                        header: true,
-                        skipEmptyLines: true,
-                        complete: function(results) { resolve(results.data); },
-                        error: function(error) { reject(error); }
-                    });
-                });
-            };
-
-            try {
-                const reportResults = await fetchCSV(urlReportCsv);
-                dataReport = reportResults.map(row => ({
-                    tipe: row['tipe'] || 'Tanpa Kategori',
-                    nama: row['nama'] && row['nama'].trim() !== '' ? row['nama'] : '-',
-                    organisasi: row['organisasi'] && row['organisasi'].trim() !== '' ? row['organisasi'] : '-',
-                    lat: parseFloat(row['lat']) || 0,
-                    long: parseFloat(row['long']) || 0,
-                    geojson: row['geojson'] || '',
-                    sampahKg: parseFloat(row['sampah kg']) || 0,
-                    bibit: parseInt(row['bibit']) || 0,
-                    jenis: row['jenis'] || '',
-                    catatan: escapeHTML(row['catatan'] || '')
-                })).filter(item => item.lat !== 0 && item.long !== 0); 
-
-                if(urlHackathonCsv !== "") {
-                    const hackResults = await fetchCSV(urlHackathonCsv);
-                    dataHackathon = hackResults.map(row => ({
-                        nama: row['nama'] || '-',
-                        organisasi: row['organisasi'] || '-',
-                        solusi: escapeHTML(row['solusi utama'] || row['solusi'] || ''),
-                        masalah: escapeHTML(row['mengatasi masalah'] || row['masalah'] || ''),
-                        signifikan: escapeHTML(row['mengapa signifikan'] || row['signifikan'] || '')
-                    })).filter(item => item.solusi !== '');
-                }
-
-                populateFilterOptions();
-                renderDashboard();
-                updateMapMarkers();
-                setLoadingState(false);
-
-            } catch (error) {
-                console.error("Gagal mengambil data:", error);
-                document.getElementById('status-text').innerText = "Gagal memuat data (Cek koneksi/CORS)";
-                document.getElementById('status-dot').className = "h-2 w-2 rounded-full bg-red-500 mr-2";
-                setLoadingState(false, true);
-            }
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
-        }
-
-        function initMap() {
-            map = L.map('map').setView([-1.2175, 116.8375], 15);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-        }
-
-        function updateMapMarkers() {
-            if (!map) return;
-            
-            markers.forEach(m => map.removeLayer(m));
-            markers = [];
-
-            dataReport.forEach((item, index) => {
-                let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
-                let isPenanaman = item.tipe.toLowerCase().includes('penanaman');
-                let iconColor = isPembersihan ? 'red' : isPenanaman ? 'green' : 'blue';
-                
-                const customIcon = L.divIcon({
-                    className: "custom-pin",
-                    iconAnchor: [0, 24],
-                    popupAnchor: [0, -36],
-                    html: `<span style="background-color: ${iconColor}; width: 1.5rem; height: 1.5rem; display: block; left: -0.75rem; top: -0.75rem; position: relative; border-radius: 3rem 3rem 0; transform: rotate(45deg); border: 2px solid #FFFFFF; box-shadow: 0 4px 6px rgba(0,0,0,0.3)"></span>`
-                });
-
-                let popupContent = `<div class="font-sans min-w-[160px]">`;
-                popupContent += `<b class="text-[14px] text-slate-800">${item.tipe}</b><br>`;
-                
-                if (item.nama !== '-' || item.organisasi !== '-') {
-                    popupContent += `<span class="text-xs text-slate-500 block mb-2"><i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})</span>`;
-                }
-                
-                if(item.sampahKg > 0) popupContent += `<div class="text-sm">🗑️ Sampah: <b>${item.sampahKg} kg</b></div>`;
-                if(item.bibit > 0) popupContent += `<div class="text-sm">🌱 Bibit: <b>${item.bibit} (${item.jenis})</b></div>`;
-                
-                if(item.geojson && item.geojson.trim() !== "") {
-                    popupContent += `<button onclick="openGeoJsonModal(${index})" class="mt-3 w-full bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 text-xs font-medium py-1.5 px-2 rounded border border-blue-200 transition-colors cursor-pointer text-center block"><i class="fa-solid fa-satellite mr-1"></i> Lihat Peta Sebaran</button>`;
-                }
-                popupContent += `</div>`;
-                
-                let marker = L.marker([item.lat, item.long], {icon: customIcon}).addTo(map).bindPopup(popupContent);
-                markers.push(marker);
-            });
-
-            if (markers.length > 0) {
-                var group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
-            }
-        }
-
-        function renderDashboard() {
-            let totalSampah = 0;
-            let totalBibit = 0;
-            
-            const activityFeed = document.getElementById('activity-feed');
-            activityFeed.innerHTML = '';
-
-            dataReport.forEach((item) => {
-                totalSampah += item.sampahKg;
-                totalBibit += item.bibit;
-            });
-
-            document.getElementById('kpi-sampah').innerHTML = `${totalSampah} <span class="text-base font-medium text-slate-500">kg</span>`;
-            document.getElementById('kpi-bibit').innerHTML = `${totalBibit} <span class="text-base font-medium text-slate-500">pohon</span>`;
-            document.getElementById('kpi-aktivitas').innerText = dataReport.length;
-
-            const feedData = dataReport.slice(0, 30);
-            feedData.forEach((item, index) => {
-                let iconClass = 'fa-clipboard';
-                let iconBg = 'bg-slate-100 text-slate-500';
-                if(item.tipe.toLowerCase().includes('pembersihan')) { iconClass = 'fa-trash-can'; iconBg = 'bg-red-100 text-red-500'; }
-                if(item.tipe.toLowerCase().includes('penanaman')) { iconClass = 'fa-seedling'; iconBg = 'bg-emerald-100 text-emerald-500'; }
-
-                activityFeed.innerHTML += `
-                    <div class="flex gap-4 mb-6 last:mb-0 relative">
-                        ${index !== feedData.length - 1 ? '<div class="absolute top-8 bottom-[-24px] left-[19px] w-[2px] bg-slate-100 z-0"></div>' : ''}
-                        <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center z-10 ${iconBg}">
-                            <i class="fa-solid ${iconClass}"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-semibold text-slate-800">${item.tipe}</h4>
-                            <p class="text-xs text-slate-500 mb-1">
-                                <i class="fa-regular fa-user mr-1"></i> ${item.nama} (${item.organisasi})
-                            </p>
-                            <p class="text-sm text-slate-600 cut-text">${item.catatan}</p>
-                        </div>
-                    </div>
-                `;
-            });
-
-            renderTableData();
-
-
-const hackGrid = document.getElementById('hackathon-grid');
-            hackGrid.innerHTML = ''; 
-            dataHackathon.forEach((idea, idx) => {
-                hackGrid.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all flex flex-col">
-                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-4 py-3 flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <!-- Checkbox untuk Vote -->
-                                <input type="checkbox" id="vote-${idx}" value="${idx}" class="vote-checkbox w-5 h-5 text-emerald-500 rounded border-gray-300 focus:ring-emerald-500 cursor-pointer">
-                                <label for="vote-${idx}" class="font-bold text-white cursor-pointer"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> Ide Tim #${idx + 1}</label>
-                            </div>
-                        </div>
-                        <div class="p-5 flex-grow flex flex-col gap-4">
-                            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                                <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
-                                    <i class="fa-regular fa-user"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800">${idea.nama}</p>
-                                    <p class="text-xs text-slate-500">${idea.organisasi}</p>
-                                </div>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Solusi Utama</h4>
-                                <p class="text-sm text-slate-700 bg-blue-50/50 p-3 rounded border border-blue-100 line-clamp-3">${idea.solusi}</p>
-                            </div>
-                            <!-- Tombol Lihat Detail Full -->
-                            <button onclick="openIdeDetail(${idx})" class="w-full text-center text-sm font-medium text-primary hover:text-blue-800 hover:bg-blue-50 py-2 rounded-lg transition border border-transparent hover:border-blue-100">
-                                Baca Detail Lengkap <i class="fa-solid fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function populateFilterOptions() {
-            const filterSelect = document.getElementById('filter-tipe');
-            const uniqueTypes = [...new Set(dataReport.map(item => item.tipe))];
-            
-            let optionsHtml = '<option value="All">Semua Jenis</option>';
-            uniqueTypes.forEach(type => {
-                optionsHtml += `<option value="${type}">${type}</option>`;
-            });
-            filterSelect.innerHTML = optionsHtml;
-        }
-
-        function applyTableFilter() {
-            currentTableFilter = document.getElementById('filter-tipe').value;
-            currentTablePage = 1;
-            renderTableData();
-        }
-
-        function changeRowsPerPage() {
-            tableRowsPerPage = parseInt(document.getElementById('rows-per-page').value);
-            currentTablePage = 1;
-            renderTableData();
-        }
-
-        function prevTablePage() {
-            if (currentTablePage > 1) {
-                currentTablePage--;
-                renderTableData();
-            }
-        }
-
-        function nextTablePage() {
-            const totalPages = Math.ceil(filteredTableData.length / tableRowsPerPage);
-            if (currentTablePage < totalPages) {
-                currentTablePage++;
-                renderTableData();
-            }
-        }
-
-        function renderTableData() {
-            const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
-
-            if (currentTableFilter === 'All') {
-                filteredTableData = dataReport;
-            } else {
-                filteredTableData = dataReport.filter(item => item.tipe === currentTableFilter);
-            }
-
-            const totalItems = filteredTableData.length;
-            const totalPages = Math.ceil(totalItems / tableRowsPerPage);
-            const startIndex = (currentTablePage - 1) * tableRowsPerPage;
-            const endIndex = Math.min(startIndex + tableRowsPerPage, totalItems);
-            const dataToRender = filteredTableData.slice(startIndex, endIndex);
-
-            if (dataToRender.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500">Tidak ada data untuk ditampilkan.</td></tr>`;
-            }
-
-            dataToRender.forEach(item => {
-                let resultText = '-';
-                if(item.sampahKg > 0) resultText = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-medium">${item.sampahKg} kg Sampah</span>`;
-                if(item.bibit > 0) resultText = `<span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded text-xs font-medium">${item.bibit} Bibit</span>`;
-
-                const originalIndex = dataReport.indexOf(item);
-                let geojsonBadge = item.geojson ? `<button onclick="openGeoJsonModal(${originalIndex})" class="mt-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-medium px-1.5 py-0.5 rounded border border-blue-100 transition-colors"><i class="fa-solid fa-satellite"></i> Lihat Area</button>` : '';
-
-                tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-slate-900">${item.nama}</div>
-                            <div class="text-xs text-slate-500">${item.organisasi}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-slate-900">${item.tipe}</span><br>
-                            <span class="text-xs text-slate-500">${item.lat}, ${item.long}</span><br>
-                            ${geojsonBadge}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            ${resultText}
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">
-                            <p class="truncate w-48 lg:w-64" title="${item.catatan}">${item.catatan}</p>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const infoText = totalItems === 0 ? 0 : startIndex + 1;
-            document.getElementById('table-info').innerText = `Menampilkan ${infoText} hingga ${endIndex} dari ${totalItems} data`;
-            document.getElementById('btn-prev').disabled = currentTablePage === 1;
-            document.getElementById('btn-next').disabled = currentTablePage === totalPages || totalPages === 0;
-        }
-
-        function switchTab(tabId) {
-            document.getElementById('tab-report').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
-            document.getElementById('tab-hackathon').className = 'tab-inactive whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
-            
-            document.getElementById('view-report').classList.add('hidden');
-            document.getElementById('view-hackathon').classList.add('hidden');
-
-            document.getElementById('tab-' + tabId).className = 'tab-active whitespace-nowrap py-4 px-1 font-medium text-sm transition-all duration-200';
-            document.getElementById('view-' + tabId).classList.remove('hidden');
-
-            if(tabId === 'report' && map) {
-                setTimeout(() => { map.invalidateSize(); }, 100);
-            }
-        }
-
-        function setLoadingState(isLoading, isError = false) {
-            const icon = document.getElementById('icon-sync');
-            const text = document.getElementById('text-sync');
-            const statusText = document.getElementById('status-text');
-            const statusDot = document.getElementById('status-dot');
-
-            if (isLoading) {
-                icon.classList.add('fa-spin');
-                text.innerText = 'Menyinkronkan...';
-                statusText.innerText = 'Mengambil data terbaru...';
-                statusDot.className = "h-2 w-2 rounded-full bg-yellow-400 mr-2 animate-pulse";
-            } else if (isError) {
-                icon.classList.remove('fa-spin');
-                text.innerText = 'Gagal Sinkronisasi';
-            } else {
-                icon.classList.remove('fa-spin');
-                text.innerText = 'Sinkronisasi Data';
-                
-                const now = new Date();
-                statusText.innerText = `Terakhir update: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                statusDot.className = "h-2 w-2 rounded-full bg-success mr-2";
-            }
-        }
-
-        function openGuideModal() { document.getElementById('guide-modal').classList.remove('hidden'); }
-        function closeGuideModal() { document.getElementById('guide-modal').classList.add('hidden'); }
-
-        // =========================================================================
-        // SCRIPT MAP MODAL: SATELLITE & GEOJSON EXPORT LOGIC
-        // =========================================================================
-        let activeGeoJsonItem = null;
-
-        function openGeoJsonModal(index) {
-            const item = dataReport[index];
-            if (!item || !item.geojson) return;
-            
-            activeGeoJsonItem = item;
-            
-            document.getElementById('geojson-modal').classList.remove('hidden');
-            document.getElementById('geojson-modal-title').innerText = `Area: ${item.tipe}`;
-
-            // Inisialisasi Peta Esri World Imagery (Satelit)
-            if (!miniMap) {
-                miniMap = L.map('mini-map').setView([item.lat, item.long], 16);
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-                }).addTo(miniMap);
-            }
-
-            document.getElementById('btn-export-geojson').onclick = function() {
-                exportToGeoJSON(activeGeoJsonItem);
-            };
-
-            // Timeout untuk mengatasi Bug render Leaflet di element display:none
-            setTimeout(() => {
-                miniMap.invalidateSize();
-
-                if (miniGeoJsonLayer) {
-                    miniMap.removeLayer(miniGeoJsonLayer);
-                }
-
-                try {
-                    let coords = JSON.parse(item.geojson);
-                    let geomType = "Polygon";
-                    if (coords.length > 0 && typeof coords[0][0] === 'number') {
-                        geomType = "LineString";
-                    }
-
-                    let geoFeature = {
-                        "type": "Feature",
-                        "properties": {
-                            "nama": item.nama,
-                            "tipe": item.tipe
-                        },
-                        "geometry": {
-                            "type": geomType,
-                            "coordinates": coords
-                        }
-                    };
-                    
-                    let isPembersihan = item.tipe.toLowerCase().includes('pembersihan');
-                    let hexColor = isPembersihan ? '#ef4444' : '#10b981';
-
-                    miniGeoJsonLayer = L.geoJSON(geoFeature, {
-                        style: {
-                            color: hexColor,
-                            weight: 3,
-                            opacity: 1,
-                            fillColor: hexColor,
-                            fillOpacity: 0.5
-                        }
-                    }).addTo(miniMap);
-
-                    miniMap.fitBounds(miniGeoJsonLayer.getBounds(), { padding: [30, 30], maxZoom: 18 });
-
-                } catch (e) {
-                    console.error("Gagal membaca koordinat GeoJSON:", e);
-                    alert("Format kordinat area tidak valid.");
-                }
-            }, 250);
-        }
-
-        function closeGeoJsonModal() {
-            document.getElementById('geojson-modal').classList.add('hidden');
-        }
-
-        function exportToGeoJSON(item) {
-            try {
-                let coords = JSON.parse(item.geojson);
-                let geomType = "Polygon";
-                if (coords.length > 0 && typeof coords[0][0] === 'number') { geomType = "LineString"; }
-
-                let geoJsonData = {
-                    "type": "FeatureCollection",
-                    "name": "Export_EcoMonitor",
-                    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-                    "features": [
-                        {
-                            "type": "Feature",
-                            "properties": {
-                                "Pelapor": item.nama,
-                                "Organisasi": item.organisasi,
-                                "Aktivitas": item.tipe,
-                                "Hasil_Kg_Sampah": item.sampahKg,
-                                "Hasil_Bibit_Pohon": item.bibit,
-                                "Catatan_Lapangan": item.catatan,
-                                "Titik_Tengah_Lat": item.lat,
-                                "Titik_Tengah_Long": item.long
-                            },
-                            "geometry": {
-                                "type": geomType,
-                                "coordinates": coords
-                            }
-                        }
-                    ]
-                };
-
-                const dataStr = JSON.stringify(geoJsonData, null, 2);
-                const blob = new Blob([dataStr], { type: "application/geo+json" });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                let safeName = item.tipe.replace(/[^a-zA-Z0-9]/g, '_');
-                a.download = `Area_${safeName}_${item.nama.substring(0,5)}.geojson`;
-                
-                document.body.appendChild(a);
-                a.click();
-                
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-            } catch(e) {
-                console.error("Export Error: ", e);
-                alert("Gagal melakukan Export data geojson.");
-            }
-        }
-
-        // Jalankan Inisiasi Awal
-        document.addEventListener('DOMContentLoaded', () => {
-            initMap();
-            loadDataFromGoogleSheets();
-        });
-
-
-        // =========================================================================
-        // SCRIPT EASTER EGG: PANCINGAN KARMA (FULL VERSION 100%)
-        // =========================================================================
-        let isGameActive = false;
-        let animationFrameId;
-
-        const gameCanvas = document.getElementById('gameCanvas');
-        const gameCtx = gameCanvas.getContext('2d');
-        const gameMsgBox = document.getElementById('game-message-box');
-        
-        let gWidth, gHeight;
-        let gameFishCount = 0;
-        let gameTrashCount = 0;
-        let gameTotalScore = 0;
-
-        const gameInsults = [
-            "Selamat! Kamu menyelamatkan botol plastik ini dari kepunahan.",
-            "Wah, sepatu bot! Tinggal pancing sebelahnya, terus buka toko loak deh.",
-            "Kantong kresek! Dikira penyu doyan makan ginian? (SPOILER: Enggak!)",
-            "Ban mobil?! Kapan-kapan sekalian buang truknya aja ke laut.",
-            "Kaleng kosong, sekosong pikiran orang yang membuangnya sembarangan.",
-            "Sedotan plastik! Senjata rahasia manusia untuk menyiksa kura-kura laut.",
-            "Wow! Laut kita pelan-pelan resmi berubah jadi Tempat Pembuangan Akhir (TPA).",
-            "Satu lagi sampah! Bumi pasti menangis terharu melihat 'kebaikanmu'.",
-            "Luar biasa! Jejak sampah ini akan bertahan sampai kamu punya cicit."
-        ];
-
-        const gamePraises = [
-            "Lho?! MASIH ADA IKAN?! Kirain udah punah semua gara-gara sampah.",
-            "Wah, ikan langka! Beruntung banget dia belum keselek tutup botol.",
-            "Tolong cepat evakuasi ikan ini sebelum dia belajar makan plastik kresek."
-        ];
-
-        const gameEgoTitles = [
-            "Mulai Sadar", 
-            "Agak Bebal", 
-            "Rajin Nyampah", 
-            "Musuh Alam", 
-            "Pewaris Bencana", 
-            "Raja TPA (Tempat Pembuangan Akhir)"
-        ];
-
-        const hook = {
-            x: 0,
-            y: 100,
-            targetY: 100,
-            status: 'idle', // idle, dropping, pulling
-            speed: 8,
-            attached: null
+        // URL CSV — sama spreadsheet, output csv agar bisa diparse PapaParse
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFWyVTdXcRAvYcy5pDTzkdrByfqVRDZYCF41LYE2T4lZOgBGroJ059BEia9q6sahSYVFLw9MK3brmy/pub?output=csv";
+
+        const NAV_ACTIVE   = "nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all gradient-brand text-white shadow-lg shadow-teal-500/30";
+        const NAV_INACTIVE = "nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:bg-teal-50 hover:text-teal-600";
+
+        let groupedData    = {};
+        let flatLatestData = [];
+        let activeKodeId   = null;
+        let map            = null;
+        let mapLayer       = null;
+
+        const typeConfig = {
+            'cleanup'      : { label: 'Pembersihan',         icon: 'ph-trash',           color: 'orange'  },
+            'planting'     : { label: 'Penanaman',           icon: 'ph-plant',            color: 'emerald' },
+            'observation'  : { label: 'Observasi',           icon: 'ph-binoculars',       color: 'blue'    },
+            'early_warning': { label: 'Early Warning',       icon: 'ph-warning-octagon',  color: 'red'     },
+            'patroli'      : { label: 'Patroli / Observasi', icon: 'ph-binoculars',       color: 'blue'    }
         };
 
-        const entities = [];
-        const gameTypes = [
-            { char: '🐟', type: 'fish', points: 100 },
-            { char: '🐠', type: 'fish', points: 150 },
-            { char: '🐡', type: 'fish', points: 200 },
-            { char: '🍾', type: 'trash', points: 0 },
-            { char: '🥫', type: 'trash', points: 0 },
-            { char: '🛍️', type: 'trash', points: 0 },
-            { char: '👞', type: 'trash', points: 0 },
-            { char: '🥤', type: 'trash', points: 0 }
-        ];
-
-        function resizeGame() {
-            if (!isGameActive) return;
-            gWidth = window.innerWidth;
-            gHeight = window.innerHeight;
-            gameCanvas.width = gWidth;
-            gameCanvas.height = gHeight;
-            if(hook.x === 0) hook.x = gWidth / 2;
+        // ─── Media Helper ──────────────────────────────────────────────────────
+        function getMediaPreviewData(url) {
+            let previewUrl = url;
+            let isYouTube  = false;
+            const ytMatch  = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+            if (ytMatch && ytMatch[1]) {
+                previewUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+                isYouTube  = true;
+                return { previewUrl, isYouTube, linkAsli: url };
+            }
+            if (url.includes('drive.google.com/file/d/')) {
+                const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (driveMatch && driveMatch[1]) {
+                    previewUrl = `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800`;
+                }
+            }
+            return { previewUrl, isYouTube, linkAsli: url };
         }
 
-        function spawnEntity() {
-            const isTrash = Math.random() > 0.3; // 70% peluang sampah
-            const availableTypes = gameTypes.filter(t => isTrash ? t.type === 'trash' : t.type === 'fish');
-            const config = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-            
-            entities.push({
-                x: Math.random() < 0.5 ? -50 : gWidth + 50,
-                y: 250 + Math.random() * (gHeight - 350),
-                speed: (1 + Math.random() * 2) * (Math.random() < 0.5 ? 1 : -1),
-                config: config,
-                size: 40
+        function showImageModal(originalUrl, previewUrl) {
+            const modal = document.getElementById('image-modal');
+            document.getElementById('modal-image-content').src = previewUrl || originalUrl;
+            document.getElementById('modal-image-link').href   = originalUrl;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('modal-image-content').src = "";
+        }
+
+        // ─── Init ──────────────────────────────────────────────────────────────
+        window.onload = () => {
+            document.getElementById('nav-global').className = NAV_ACTIVE;
+            document.getElementById('nav-log').className    = NAV_INACTIVE;
+            fetchData();
+        };
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            document.getElementById('nav-global').className        = NAV_INACTIVE;
+            document.getElementById('nav-log').className           = NAV_INACTIVE;
+            document.getElementById('nav-global-mobile').className = "flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center";
+            document.getElementById('nav-log-mobile').className    = "flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center";
+
+            if (viewId === 'global') {
+                document.getElementById('nav-global').className        = NAV_ACTIVE;
+                document.getElementById('nav-global-mobile').className = "flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center";
+                setTimeout(() => { if (!map) initMap(); else map.invalidateSize(); filterDataGlobal(); }, 100);
+            } else if (viewId === 'log') {
+                document.getElementById('nav-log').className        = NAV_ACTIVE;
+                document.getElementById('nav-log-mobile').className = "flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center";
+                renderTable();
+            }
+        }
+
+        // ─── Fetch & Parse ─────────────────────────────────────────────────────
+        function fetchData() {
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.add('flex');
+
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processCSVData(results.data);
+                    const now = new Date();
+                    document.getElementById('sync-time').innerText = `Last sync: ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+                },
+                error: function() {
+                    alert("Gagal mengambil data dari Google Sheets. Pastikan URL sudah di-publish ke web.");
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('loading-screen').classList.remove('flex');
+                }
             });
         }
 
-        function createScorePopup(x, y, text, color = '#4ade80') {
-            const popup = document.createElement('div');
-            popup.className = 'score-popup';
-            popup.style.left = x + 'px';
-            popup.style.top = y + 'px';
-            popup.style.color = color;
-            popup.innerText = text;
-            document.getElementById('easter-egg-container').appendChild(popup);
-            setTimeout(() => popup.remove(), 1000);
-        }
+        function processCSVData(rows) {
+            groupedData    = {};
+            flatLatestData = [];
+            const uniqueKabupaten = new Set();
+            const uniqueKode      = new Set();
 
-        function showGameMessage(text) {
-            gameMsgBox.innerText = text;
-            gameMsgBox.classList.add('show-msg');
-            setTimeout(() => gameMsgBox.classList.remove('show-msg'), 4000);
-        }
+            rows.forEach(row => {
+                // ── Baca kolom header (persis seperti di Google Sheets) ──────────
+                const kode    = (row['Kode pelaporan']  || row['Kode Pelaporan']  || '').trim() || "UNKNOWN";
+                const kabKota = (row['Kabupaten/ Kota'] || row['Kabupaten/Kota']  || row['Kabupaten / Kota'] || '').trim() || "Tidak Diketahui";
+                const pelapor = (row['Nama pelapor']    || row['Nama Pelapor']    || '').trim() || "Anonim";
 
-        gameCanvas.addEventListener('mousedown', (e) => {
-            if (isGameActive && hook.status === 'idle') {
-                hook.x = e.clientX;
-                hook.status = 'dropping';
-                hook.targetY = gHeight - 50;
-            }
-        });
+                // ── Gabungkan 3 payload (maks 45k char per kolom di Sheets) ─────
+                const payload1 = row['Data Payload (JSON)']    || row['Data Payload(JSON)']    || "";
+                const payload2 = row['Data Payload II (JSON)'] || row['Data Payload II(JSON)'] || "";
+                const payload3 = row['Data Payload III (JSON)']|| row['Data Payload III(JSON)']|| "";
+                const jsonStr  = (payload1 + payload2 + payload3).trim();
 
-        gameCanvas.addEventListener('touchstart', (e) => {
-            if (isGameActive && hook.status === 'idle') {
-                hook.x = e.touches[0].clientX;
-                hook.status = 'dropping';
-                hook.targetY = gHeight - 50;
-            }
-        });
+                if (!jsonStr || !jsonStr.startsWith("{")) return; // Skip baris kosong
 
-        window.addEventListener('resize', resizeGame);
-
-        function updateGame() {
-            // Hook logic
-            if (hook.status === 'dropping') {
-                hook.y += hook.speed;
-                if (hook.y >= hook.targetY) hook.status = 'pulling';
-            } else if (hook.status === 'pulling') {
-                hook.y -= hook.speed;
-                if (hook.y <= 120) {
-                    if (hook.attached) {
-                        const entity = hook.attached;
-                        if (entity.config.type === 'trash') {
-                            gameTrashCount++;
-                            document.getElementById('game-trash-count').innerText = gameTrashCount;
-                            
-                            // Update Ego Level
-                            let egoIdx = Math.min(Math.floor(gameTrashCount / 3), gameEgoTitles.length - 1);
-                            document.getElementById('game-ego-level').innerText = gameEgoTitles[egoIdx];
-                            
-                            // Penalty Score
-                            gameTotalScore = Math.max(0, gameTotalScore - 50);
-                            
-                            createScorePopup(hook.x, 150, '-50 Moral', '#ef4444');
-                            showGameMessage(gameInsults[Math.floor(Math.random() * gameInsults.length)]);
-                        } else {
-                            const points = entity.config.points;
-                            gameTotalScore += points;
-                            gameFishCount++;
-                            
-                            document.getElementById('game-fish-count').innerText = gameFishCount;
-                            createScorePopup(hook.x, 150, '+' + points, '#4ade80');
-                            showGameMessage(gamePraises[Math.floor(Math.random() * gamePraises.length)]);
-                        }
-                        document.getElementById('game-total-score').innerText = gameTotalScore;
-                        hook.attached = null;
-                    }
-                    hook.status = 'idle';
-                    hook.y = 100;
+                let parsedData;
+                try {
+                    parsedData = JSON.parse(jsonStr);
+                } catch (e) {
+                    console.warn("Gagal parse JSON untuk kode:", kode, e);
+                    return;
                 }
-            }
 
-            // Entities logic
-            entities.forEach((ent, index) => {
-                if (hook.attached === ent) {
-                    ent.x = hook.x;
-                    ent.y = hook.y + 20;
-                } else {
-                    ent.x += ent.speed;
-                    
-                    // Collision with hook
-                    if ((hook.status === 'dropping' || hook.status === 'pulling') && !hook.attached) {
-                        const dist = Math.hypot(hook.x - ent.x, (hook.y + 20) - ent.y);
-                        if (dist < 30) {
-                            hook.attached = ent;
-                            hook.status = 'pulling';
-                        }
+                const reportsArr = parsedData.reports;
+                if (!reportsArr || !Array.isArray(reportsArr)) return;
+
+                reportsArr.forEach(item => {
+                    // ── FIX #2: Status early_warning sesuai struktur input app ──
+                    // Input app menyimpan urgensi di item.urgensi (root),
+                    // bukan di item.metadataAnomali.urgensi
+                    let status = "Aman";
+                    if (item.type === 'early_warning') {
+                        status = item.urgensi
+                            || (item.metadataAnomali && item.metadataAnomali.urgensi)
+                            || "Waspada";
                     }
 
-                    // Remove out of bounds
-                    if (ent.x > gWidth + 100 || ent.x < -100) {
-                        entities.splice(index, 1);
-                        spawnEntity();
+                    const r = {
+                        kode    : kode,
+                        kabupaten: kabKota,
+                        pelapor : pelapor,
+                        timestamp: item.timestamp || new Date().toISOString(),
+                        type    : item.type  || 'observation',
+                        status  : status,
+                        notes   : item.notes || '',
+                        photo   : item.photo || '',
+                        lat     : parseFloat(item.lat) || 0,
+                        lng     : parseFloat(item.lng) || 0,
+                        metadata: item.metadataAnomali || null,
+                        amount  : item.amount || '',
+                        bibit   : item.bibit  || '',
+                        jenis   : item.jenis  || '',
+                        areaHa  : item.areaHa || '',
+                        urgensi : item.urgensi || '',
+                        kategoriAnomali: item.kategoriAnomali || ''
+                    };
+
+                    if (!groupedData[kode]) {
+                        groupedData[kode] = { kode, kabupaten: kabKota, history: [] };
+                    }
+                    groupedData[kode].history.push(r);
+                });
+            });
+
+            // ── Flatten & sort per kode ────────────────────────────────────────
+            for (let k in groupedData) {
+                groupedData[k].history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                const latest = groupedData[k].history[groupedData[k].history.length - 1];
+                uniqueKabupaten.add(groupedData[k].kabupaten);
+                uniqueKode.add(k);
+
+                flatLatestData.push({
+                    kode          : k,
+                    kabupaten     : groupedData[k].kabupaten,
+                    latestTimestamp: latest.timestamp,
+                    status        : latest.status,
+                    type          : latest.type,
+                    notes         : latest.notes,
+                    lat           : latest.lat,
+                    lng           : latest.lng,
+                    historyCount  : groupedData[k].history.length
+                });
+            }
+
+            // ── Isi dropdown filter Kabupaten ──────────────────────────────────
+            let optKab = '<option value="ALL">🗺️ Semua Kabupaten</option>';
+            Array.from(uniqueKabupaten).sort().forEach(kab => {
+                optKab += `<option value="${kab}">${kab}</option>`;
+            });
+            document.getElementById('filter-kabupaten-global').innerHTML = optKab;
+
+            // FIX: Null-safe — filter-kabupaten & filter-kode kini ada di HTML
+            const elKabTabel = document.getElementById('filter-kabupaten');
+            if (elKabTabel) elKabTabel.innerHTML = optKab;
+
+            // ── Isi dropdown filter Kode ───────────────────────────────────────
+            let optKode = '<option value="ALL">📍 Semua Kode</option>';
+            Array.from(uniqueKode).sort().forEach(k => {
+                optKode += `<option value="${k}">${k}</option>`;
+            });
+            document.getElementById('filter-kode-global').innerHTML = optKode;
+
+            // FIX: Null-safe — filter-kode kini ada di HTML
+            const elKodeTabel = document.getElementById('filter-kode');
+            if (elKodeTabel) elKodeTabel.innerHTML = optKode;
+
+            // ── Render tampilan aktif ──────────────────────────────────────────
+            if (document.getElementById('view-global').classList.contains('active')) {
+                if (!map) initMap(); else map.invalidateSize();
+                filterDataGlobal();
+            } else {
+                renderTable();
+            }
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+            }, 400);
+        }
+
+        // ─── VIEW 1: MAP ───────────────────────────────────────────────────────
+        function initMap() {
+            map = L.map('global-map', { zoomControl: true }).setView([-6.200, 108.000], 6);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19, attribution: 'Tiles &copy; Esri'
+            }).addTo(map);
+            mapLayer = new L.FeatureGroup().addTo(map);
+
+            const legend = L.control({ position: 'bottomright' });
+            legend.onAdd = function() {
+                const div = L.DomUtil.create('div', 'map-legend');
+                div.innerHTML = `
+                    <div class="font-bold text-slate-700 mb-2 text-xs">Status Titik</div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full" style="background:#10b981"></span><span class="font-medium text-slate-600">Aman</span></div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full" style="background:#f59e0b"></span><span class="font-medium text-slate-600">Waspada</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#ef4444"></span><span class="font-medium text-slate-600">Kritis / Bahaya</span></div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+        }
+
+        function filterDataGlobal() {
+            const selectedKab  = document.getElementById('filter-kabupaten-global').value;
+            const selectedKode = document.getElementById('filter-kode-global').value;
+            mapLayer.clearLayers();
+
+            let tTitik = 0, tAman = 0, tWaspada = 0, tKritis = 0, tLog = 0;
+
+            flatLatestData.forEach(obj => {
+                if (selectedKab  !== 'ALL' && obj.kabupaten !== selectedKab)  return;
+                if (selectedKode !== 'ALL' && obj.kode      !== selectedKode) return;
+                tTitik++;
+                tLog += obj.historyCount;
+
+                let mapColor = '#10b981';
+                const st = (obj.status || '').toLowerCase();
+
+                if (st.includes('kritis') || st.includes('bahaya')) { mapColor = '#ef4444'; tKritis++; }
+                else if (st.includes('waspada') || st.includes('perhatian')) { mapColor = '#f59e0b'; tWaspada++; }
+                else { tAman++; }
+
+                if (obj.lat && obj.lng) {
+                    const marker = L.circleMarker([obj.lat, obj.lng], {
+                        radius: 9, fillColor: mapColor, color: '#fff', weight: 2, fillOpacity: 0.95
+                    });
+                    marker.bindPopup(`
+                        <div style="min-width:160px">
+                            <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Kode: ${obj.kode}</div>
+                            <div style="font-weight:800;color:#1e293b;font-size:14px;margin-bottom:6px">${obj.kabupaten}</div>
+                            <div style="display:inline-block;padding:3px 8px;background:${mapColor}20;color:${mapColor};border-radius:4px;font-size:11px;font-weight:700">${obj.status.toUpperCase()}</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:6px">${obj.historyCount} log tersimpan</div>
+                        </div>
+                    `);
+                    mapLayer.addLayer(marker);
+                }
+            });
+
+            document.getElementById('stat-titik').innerText = tTitik;
+            document.getElementById('stat-aman').innerText  = tAman;
+            document.getElementById('stat-kritis').innerText = tWaspada + tKritis;
+            document.getElementById('stat-logs').innerText  = tLog;
+            document.getElementById('mini-stat-lokasi').innerText = tTitik;
+            document.getElementById('mini-stat-aman').innerText   = tAman;
+            document.getElementById('mini-stat-rusak').innerText  = tWaspada + tKritis;
+
+            renderDistribution(tAman, tWaspada, tKritis);
+            renderRecentActivity();
+
+            if (mapLayer.getLayers().length > 0) {
+                map.fitBounds(L.featureGroup(mapLayer.getLayers()).getBounds(), { padding: [40, 40], maxZoom: 16 });
+            }
+        }
+
+        function renderDistribution(aman, waspada, kritis) {
+            const total = aman + waspada + kritis || 1;
+            const items = [
+                { label: 'Aman',    count: aman,    color: 'emerald', icon: 'ph-check-circle'    },
+                { label: 'Waspada', count: waspada, color: 'amber',   icon: 'ph-warning'          },
+                { label: 'Kritis',  count: kritis,  color: 'red',     icon: 'ph-warning-octagon'  }
+            ];
+            let html = '';
+            items.forEach(item => {
+                const pct = ((item.count / total) * 100).toFixed(1);
+                html += `
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <i class="ph-fill ${item.icon} text-${item.color}-500"></i>
+                            <span class="font-semibold text-slate-700">${item.label}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-slate-800">${item.count}</span>
+                            <span class="text-slate-400 text-[10px] font-medium w-10 text-right">${pct}%</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill bg-${item.color}-500" style="width:${pct}%"></div></div>
+                </div>`;
+            });
+            document.getElementById('distribution-bars').innerHTML = html;
+        }
+
+        function renderRecentActivity() {
+            let all = [];
+            for (let k in groupedData) groupedData[k].history.forEach(h => all.push(h));
+            all.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            let html = '';
+            all.slice(0, 10).forEach(r => {
+                const typeInfo = typeConfig[r.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (r.status || '').toLowerCase();
+                if (r.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian')) clr = 'amber';
+                }
+                const d = new Date(r.timestamp);
+                html += `
+                <div class="p-4 hover:bg-slate-50 transition flex items-center gap-3 border-l-4 border-transparent hover:border-${clr}-500">
+                    <div class="w-10 h-10 rounded-xl bg-${clr}-50 text-${clr}-600 flex items-center justify-center shrink-0">
+                        <i class="ph-fill ${typeInfo.icon} text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-slate-800 text-sm truncate">${r.kode}</p>
+                            <span class="text-[9px] bg-${clr}-100 text-${clr}-700 px-1.5 py-0.5 rounded font-bold">${(r.status || 'Aman').toUpperCase()}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate mt-0.5">${r.notes || 'Aktivitas terekam'}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <p class="text-xs font-bold text-slate-600">${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
+                        <p class="text-[10px] text-slate-400">${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('recent-activity').innerHTML = html
+                || `<p class="text-center p-5 text-sm text-slate-400">Belum ada aktivitas</p>`;
+        }
+
+        // ─── VIEW 2: LOG & TIMELINE ────────────────────────────────────────────
+        function renderTable() {
+            const textFilter = (document.getElementById('filter-text')?.value || '').toLowerCase();
+            const kabFilter  = document.getElementById('filter-kabupaten')?.value  || 'ALL';
+            // FIX: Null-safe — filter-kode sekarang ada di HTML, tapi tetap aman
+            const kodeFilter = document.getElementById('filter-kode')?.value || 'ALL';
+            const kondFilter = document.getElementById('filter-kondisi')?.value  || 'ALL';
+            const typeFilter = document.getElementById('filter-tipe')?.value     || 'ALL';
+            const container  = document.getElementById('data-table-body');
+
+            let filtered = flatLatestData.filter(obj => {
+                if (kabFilter  !== 'ALL' && obj.kabupaten !== kabFilter)  return false;
+                if (kodeFilter !== 'ALL' && obj.kode      !== kodeFilter) return false;
+                if (textFilter && !obj.kode.toLowerCase().includes(textFilter)
+                               && !(obj.notes || '').toLowerCase().includes(textFilter)) return false;
+                if (typeFilter !== 'ALL' && obj.type !== typeFilter) return false;
+                if (kondFilter !== 'ALL') {
+                    const st = (obj.status || '').toLowerCase();
+                    if (kondFilter === 'Aman'    && (st.includes('waspada') || st.includes('kritis') || st.includes('bahaya'))) return false;
+                    if (kondFilter === 'Waspada' && (!st.includes('waspada') && !st.includes('kritis') && !st.includes('bahaya'))) return false;
+                }
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                const stA = (a.status || '').toLowerCase(), stB = (b.status || '').toLowerCase();
+                const scoreA = (stA.includes('kritis') || stA.includes('bahaya')) ? 0 : (stA.includes('waspada') ? 1 : 2);
+                const scoreB = (stB.includes('kritis') || stB.includes('bahaya')) ? 0 : (stB.includes('waspada') ? 1 : 2);
+                if (scoreA !== scoreB) return scoreA - scoreB;
+                return new Date(b.latestTimestamp) - new Date(a.latestTimestamp);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                <div class="text-center p-12 bg-white rounded-2xl border border-slate-200">
+                    <i class="ph-bold ph-magnifying-glass text-3xl text-slate-300 mb-2 block"></i>
+                    <p class="text-slate-700 font-bold">Tidak ada log ditemukan</p>
+                    <p class="text-slate-400 text-xs mt-1">Coba ubah filter atau segarkan data</p>
+                </div>`;
+                return;
+            }
+
+            let htmlStr = '';
+            filtered.forEach(obj => {
+                const typeInfo = typeConfig[obj.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (obj.status || '').toLowerCase();
+                if (obj.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian')) clr = 'amber';
+                }
+                const dDate    = new Date(obj.latestTimestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                const isActive = activeKodeId === obj.kode;
+
+                htmlStr += `
+                <div onclick="openTimeline('${obj.kode}', this)" class="obj-card bg-white border-2 ${isActive ? 'border-teal-500 active' : 'border-slate-200'} rounded-xl p-4 hover:border-teal-300 cursor-pointer flex items-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-${clr}-50 text-${clr}-600 flex items-center justify-center shrink-0 border border-${clr}-100">
+                        <i class="ph-fill ${typeInfo.icon} text-2xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                            <h3 class="font-bold text-slate-800 truncate">${obj.kode}</h3>
+                            <span class="status-pill bg-${clr}-50 text-${clr}-700 border border-${clr}-200 shrink-0">${obj.status}</span>
+                            ${obj.historyCount > 1 ? `<span class="text-[9px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${obj.historyCount} Log</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-500 truncate mt-1">
+                            <i class="ph-bold ph-map-pin"></i> ${obj.kabupaten} · ${dDate}
+                        </p>
+                    </div>
+                    <div class="hidden md:flex w-9 h-9 bg-slate-50 group-hover:bg-teal-600 rounded-lg items-center justify-center shrink-0 transition-colors">
+                        <i class="ph-bold ph-caret-right text-slate-400 group-hover:text-white"></i>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = htmlStr;
+        }
+
+        function openTimeline(kode, cardEl) {
+            activeKodeId = kode;
+            document.querySelectorAll('.obj-card').forEach(c => {
+                c.classList.remove('active', 'border-teal-500');
+                c.classList.add('border-slate-200');
+            });
+            if (cardEl) {
+                cardEl.classList.add('active', 'border-teal-500');
+                cardEl.classList.remove('border-slate-200');
+            }
+
+            const rData = groupedData[kode];
+            if (!rData) return;
+
+            document.getElementById('tl-kode-nama').innerText       = rData.kode;
+            document.getElementById('tl-lokasi-nama').innerHTML      = `<i class="ph-bold ph-map-pin"></i> ${rData.kabupaten}`;
+            document.getElementById('tl-kode-nama-mobile').innerText = rData.kode;
+            document.getElementById('tl-lokasi-nama-mobile').innerText = rData.kabupaten;
+
+            const historyDesc = [...rData.history].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // ── Trend Box ──────────────────────────────────────────────────────
+            let trendHTML = '';
+            if (historyDesc.length === 1) {
+                trendHTML = `
+                <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-50 text-teal-700 rounded-xl font-bold border border-teal-200">
+                    <i class="ph-fill ph-info text-xl"></i> Data Observasi Awal
+                </div>`;
+            } else {
+                const latest = historyDesc[0];
+                const prev   = historyDesc[1];
+                const lS = getStatusScore(latest.status);
+                const pS = getStatusScore(prev.status);
+                let msg = "Kondisi Stagnan", clr = "slate", icon = "ph-minus";
+                if (lS > pS) { msg = "Status Memburuk";  clr = "red";     icon = "ph-trend-up"; }
+                else if (lS < pS) { msg = "Kondisi Membaik"; clr = "emerald"; icon = "ph-trend-down"; }
+                else { if (lS > 0) { msg = "Masih Anomali"; clr = "amber"; icon = "ph-warning"; }
+                       else { msg = "Tetap Terkendali"; clr = "emerald"; icon = "ph-check-circle"; } }
+                trendHTML = `
+                <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-${clr}-50 text-${clr}-700 rounded-xl font-black border border-${clr}-200 shadow-sm">
+                    <i class="ph-bold ${icon} text-xl"></i> ${msg.toUpperCase()}
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2">Komparasi: <strong>${prev.type}</strong> → <strong>${latest.type}</strong></p>`;
+            }
+            document.getElementById('tl-trend-box').innerHTML        = trendHTML;
+            document.getElementById('tl-trend-box-mobile').innerHTML = trendHTML;
+
+            // ── History Render ─────────────────────────────────────────────────
+            let tlHTML = '<div class="p-5">';
+            historyDesc.forEach((r, idx) => {
+                const isLatest = idx === 0;
+                const typeInfo = typeConfig[r.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (r.status || '').toLowerCase();
+                if (r.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian')) clr = 'amber';
+                }
+                const dDate = new Date(r.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                const dTime = new Date(r.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                // Multi-media thumbnails
+                let mediaHtml = '';
+                if (r.photo) {
+                    const urls = r.photo.split(',').map(u => u.trim()).filter(u => u);
+                    if (urls.length > 0) {
+                        mediaHtml += `<div class="flex flex-wrap gap-2 mt-3">`;
+                        urls.forEach(url => {
+                            const mediaInfo = getMediaPreviewData(url);
+                            const ytBadge   = mediaInfo.isYouTube
+                                ? `<div class="absolute bottom-1 right-1 bg-red-600 text-white rounded px-1 text-[8px] font-bold shadow">YT</div>` : '';
+                            mediaHtml += `
+                            <div onclick="showImageModal('${mediaInfo.linkAsli.replace(/'/g, "\\'")}','${mediaInfo.previewUrl.replace(/'/g, "\\'")}')"
+                                 class="relative w-16 h-16 border border-slate-200 rounded-lg overflow-hidden cursor-pointer hover:border-teal-400 group">
+                                <img src="${mediaInfo.previewUrl}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                    <i class="ph-fill ph-magnifying-glass-plus text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow"></i>
+                                </div>
+                                ${ytBadge}
+                            </div>`;
+                        });
+                        mediaHtml += `</div>`;
                     }
                 }
+
+                // Extra badge
+                let extraBadge = '';
+                if (r.type === 'cleanup' && r.amount) extraBadge = `<span class="bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.amount} Kg</span>`;
+                if (r.type === 'planting' && r.bibit) extraBadge  = `<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.bibit} Bibit · ${r.jenis || ''}</span>`;
+                if (r.type === 'early_warning')        extraBadge  = `<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.kategoriAnomali || ''}</span>`;
+
+                tlHTML += `
+                <div class="timeline-item relative pl-12 pb-6 fade-in">
+                    <div class="timeline-line"></div>
+                    <div class="absolute left-0 top-0 w-10 h-10 rounded-full border-4 border-white ${isLatest ? 'gradient-brand shadow-lg shadow-teal-500/40 scale-110 z-10' : 'bg-slate-300 z-0'} flex items-center justify-center text-white">
+                        <i class="ph-bold ${typeInfo.icon} text-base"></i>
+                    </div>
+                    <div class="bg-white border ${isLatest ? 'border-teal-200 shadow-md ring-1 ring-teal-100' : 'border-slate-200'} p-4 rounded-2xl">
+                        ${isLatest ? '<div class="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-100 text-teal-700 text-[9px] font-black uppercase rounded mb-2">Terbaru</div>' : ''}
+                        <div class="flex justify-between items-start mb-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <p class="text-sm font-black text-slate-800">${dDate}</p>
+                                <p class="text-[10px] text-slate-400 font-medium mt-0.5"><i class="ph-bold ph-clock"></i> ${dTime} · ${r.pelapor}</p>
+                            </div>
+                            <span class="status-pill bg-${clr}-50 text-${clr}-700 border border-${clr}-200 shrink-0">${r.status}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-xs font-bold text-slate-700"><i class="ph-fill ${typeInfo.icon} text-${typeInfo.color}-500"></i> ${typeInfo.label}</span>
+                            ${extraBadge}
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed italic whitespace-pre-wrap">"${r.notes || 'Tidak ada keterangan tambahan.'}"</p>
+                        ${mediaHtml}
+                    </div>
+                </div>`;
             });
+            tlHTML += '</div>';
 
-            if (entities.length < 15) spawnEntity();
-        }
+            document.getElementById('tl-history-list').innerHTML        = tlHTML;
+            document.getElementById('tl-history-list-mobile').innerHTML = tlHTML;
 
-        function drawGame() {
-            // Sky & Water Gradient
-            const grad = gameCtx.createLinearGradient(0, 0, 0, gHeight);
-            grad.addColorStop(0, '#38bdf8'); // Sky
-            grad.addColorStop(0.15, '#0ea5e9'); // Surface
-            grad.addColorStop(0.2, '#1d4ed8'); // Shallow
-            grad.addColorStop(1, '#1e3a8a'); // Deep
-            gameCtx.fillStyle = grad;
-            gameCtx.fillRect(0, 0, gWidth, gHeight);
-
-            // Murky Water Effect (Polusi bertambah seiring sampah yang ditangkap)
-            const pollutionLevel = Math.min(gameTrashCount * 0.05, 0.85); // Maksimal 85% keruh
-            gameCtx.fillStyle = `rgba(75, 83, 32, ${pollutionLevel})`; // Warna hijau kotor/limbah
-            gameCtx.fillRect(0, gHeight * 0.15, gWidth, gHeight * 0.85);
-
-            gameCtx.fillStyle = '#ffffff';
-
-            // Boat
-            gameCtx.font = '60px Arial';
-            gameCtx.fillText('🚣', hook.x - 45, 110);
-
-            // Hook Line
-            gameCtx.beginPath();
-            gameCtx.moveTo(hook.x, 100);
-            gameCtx.lineTo(hook.x, hook.y);
-            gameCtx.strokeStyle = '#cbd5e1';
-            gameCtx.lineWidth = 2;
-            gameCtx.setLineDash([5, 3]);
-            gameCtx.stroke();
-            gameCtx.setLineDash([]);
-
-            // Hook
-            gameCtx.font = '30px Arial';
-            gameCtx.fillText('🪝', hook.x - 15, hook.y + 20);
-
-            // Entities
-            entities.forEach(ent => {
-                gameCtx.save();
-                gameCtx.font = ent.size + 'px Arial';
-                // Flip if moving left
-                if (ent.speed < 0) {
-                    gameCtx.translate(ent.x, ent.y);
-                    gameCtx.scale(-1, 1);
-                    gameCtx.fillText(ent.config.char, -ent.size/2, ent.size/2);
-                } else {
-                    gameCtx.fillText(ent.config.char, ent.x - ent.size/2, ent.y + ent.size/2);
-                }
-                gameCtx.restore();
-            });
-
-            // Water surface ripples
-            gameCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-            for(let i=0; i<5; i++) {
-                gameCtx.fillRect(0, 0.15 * gHeight + (i*5), gWidth, 1);
+            if (window.innerWidth < 1024) {
+                document.getElementById('modal-timeline-mobile').classList.remove('hidden');
+                document.getElementById('modal-timeline-mobile').classList.add('flex');
             }
         }
 
-        function gameLoop() {
-            if(!isGameActive) return;
-            updateGame();
-            drawGame();
-            animationFrameId = requestAnimationFrame(gameLoop);
+        function getStatusScore(status) {
+            const s = (status || '').toLowerCase();
+            if (s.includes('kritis') || s.includes('bahaya')) return 2;
+            if (s.includes('waspada') || s.includes('perhatian')) return 1;
+            return 0;
         }
 
-        function openEasterEgg() {
-            document.getElementById('easter-egg-container').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
-            isGameActive = true;
-            resizeGame();
-            
-            if(entities.length === 0) {
-                for (let i = 0; i < 12; i++) spawnEntity();
-            }
-            
-            gameLoop();
+        function closeTimelineMobile() {
+            document.getElementById('modal-timeline-mobile').classList.add('hidden');
+            document.getElementById('modal-timeline-mobile').classList.remove('flex');
         }
-
-        function closeEasterEgg() {
-            document.getElementById('easter-egg-container').classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Buka kunci scroll
-            isGameActive = false;
-            cancelAnimationFrame(animationFrameId); // Hentikan memori canvas
-        }
-
-        // =========================================================================
-        // SCRIPT HACKATHON: BACA FULL IDE & SISTEM VOTING
-        // =========================================================================
-        
-        // --- 1. Fungsi Buka Modal Detail Full ---
-        function openIdeDetail(idx) {
-            const idea = dataHackathon[idx];
-            document.getElementById('detail-title').innerHTML = `<i class="fa-solid fa-lightbulb text-yellow-400"></i> Ide Tim #${idx + 1}`;
-            document.getElementById('detail-author').innerText = `${idea.nama} (${idea.organisasi})`;
-            document.getElementById('detail-solusi').innerText = idea.solusi || 'Tidak ada deskripsi';
-            document.getElementById('detail-masalah').innerText = idea.masalah || 'Tidak ada deskripsi';
-            document.getElementById('detail-signifikan').innerText = idea.signifikan || 'Tidak ada deskripsi';
-            
-            document.getElementById('ide-modal').classList.remove('hidden');
-        }
-
-        function closeIdeDetail() {
-            document.getElementById('ide-modal').classList.add('hidden');
-        }
-
-        // --- 2. Fungsi Buka Modal Voting ---
-        function openVoteModal() {
-            // Cek berapa checkbox yang dicentang
-            const checkboxes = document.querySelectorAll('.vote-checkbox:checked');
-            if (checkboxes.length === 0) {
-                alert("Pilih minimal 1 ide dengan mencentang kotak di pojok kiri atas Card Ide sebelum mengirim penilaian.");
-                return;
-            }
-            
-            document.getElementById('vote-count').innerText = checkboxes.length;
-            document.getElementById('vote-error').classList.add('hidden');
-            document.getElementById('vote-password').value = '';
-            document.getElementById('vote-name').value = '';
-            document.getElementById('vote-modal').classList.remove('hidden');
-        }
-
-        function closeVoteModal() {
-            document.getElementById('vote-modal').classList.add('hidden');
-        }
-
-        // --- 3. Fungsi Kirim Data Voting ke Google Apps Script ---
-        async function submitVote() {
-            const passwordInput = document.getElementById('vote-password').value;
-            const namaInput = document.getElementById('vote-name').value;
-            const errorMsg = document.getElementById('vote-error');
-            const btnSubmit = document.getElementById('btn-submit-vote');
-
-            if (!namaInput) {
-                errorMsg.innerText = "Nama penilai tidak boleh kosong.";
-                errorMsg.classList.remove('hidden');
-                return;
-            }
-
-            if (!passwordInput) {
-                errorMsg.innerText = "Password tidak boleh kosong.";
-                errorMsg.classList.remove('hidden');
-                return;
-            }
-
-            // Kumpulkan ide yang dipilih
-            const checkboxes = document.querySelectorAll('.vote-checkbox:checked');
-            let selectedIdeasString =[];
-            checkboxes.forEach(cb => {
-                let idx = cb.value;
-                selectedIdeasString.push(`Ide #${parseInt(idx)+1} (${dataHackathon[idx].nama})`);
-            });
-
-            // Ubah tombol jadi loading
-            const originalBtnText = btnSubmit.innerHTML;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
-            btnSubmit.disabled = true;
-
-            // Siapkan FormData
-            const formData = new FormData();
-            formData.append('action', 'vote'); // Action penting agar GAS tahu ini proses voting
-            formData.append('password', passwordInput);
-            formData.append('nama_penilai', namaInput);
-            formData.append('ide_terpilih', selectedIdeasString.join(", "));
-
-            // KITA PAKAI URL WEB APP (GAS) ANDA YANG AKTIF:
-            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec";
-
-            try {
-                const response = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (result.result === 'success') {
-                    // Sukses! Tutup modal & hilangkan centang
-                    alert("Berhasil! Penilaian Anda telah tersimpan di server.");
-                    closeVoteModal();
-                    checkboxes.forEach(cb => cb.checked = false);
-                } else {
-                    // Password salah
-                    errorMsg.innerText = result.message || "Gagal memverifikasi password.";
-                    errorMsg.classList.remove('hidden');
-                }
-            } catch (error) {
-                errorMsg.innerText = "Terjadi kesalahan sistem. Cek koneksi Anda.";
-                errorMsg.classList.remove('hidden');
-            }
-
-            // Kembalikan status tombol
-            btnSubmit.innerHTML = originalBtnText;
-            btnSubmit.disabled = false;
-        }
-
     </script>
 </body>
 </html>
