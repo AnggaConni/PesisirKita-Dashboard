@@ -683,19 +683,21 @@
                             </div>
 
                             <!-- Foto Input -->
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors relative">
-                                <div id="photo-preview-container" class="hidden relative">
-                                    <img id="photo-preview" src="" alt="Preview" class="rounded-lg max-h-40 mx-auto object-contain" />
-                                    <button type="button" onclick="removePhoto()" class="absolute top-2 right-2 bg-red-500 text-white h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold shadow">X</button>
-                                </div>
-                                <div id="photo-input-container">
-                                    <input type="file" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden" id="camera-input" />
-                                    <label for="camera-input" class="cursor-pointer flex flex-col items-center justify-center gap-2">
-                                        <div class="bg-teal-100 p-3 rounded-full text-teal-600"><i class="ph-fill ph-camera text-2xl"></i></div>
-                                        <span class="text-sm font-bold text-gray-600">Ambil Foto Bukti Laporan</span>
-                                    </label>
-                                </div>
+                        <div class="border border-gray-200 rounded-xl p-4 transition-colors relative bg-gray-50">
+                            <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Link Foto Bukti <span class="text-[9px] text-teal-600 lowercase bg-teal-50 px-1 rounded">(gdrive / direct link)</span></label>
+                            <div class="flex gap-2 mb-2">
+                                <input type="url" id="form-photo-url" placeholder="Paste link foto di sini..." class="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                                <button type="button" onclick="checkPhotoLink()" class="bg-teal-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 whitespace-nowrap shadow-sm active:scale-95 transition-transform">
+                                    Cek
+                                </button>
                             </div>
+                            <p class="text-[10px] text-gray-400 mb-2">*Pastikan link Google Drive diatur ke "Anyone with the link can view"</p>
+                            
+                            <div id="photo-preview-container" class="hidden relative mt-3 border-t border-gray-200 pt-3">
+                                <img id="photo-preview" src="" alt="Preview" class="rounded-lg max-h-40 mx-auto object-contain shadow-sm border border-gray-100" />
+                                <button type="button" onclick="removePhoto()" class="absolute top-4 right-2 bg-red-500 text-white h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold shadow hover:bg-red-600">X</button>
+                            </div>
+                        </div>
 
                             <button type="submit" class="w-full bg-teal-600 text-white p-4 rounded-xl font-bold text-lg shadow-md hover:bg-teal-700 active:scale-95 transition-transform flex justify-center items-center gap-2 mt-4">
                                 <i class="ph-bold ph-floppy-disk"></i> Simpan Laporan
@@ -845,9 +847,13 @@
                     <button onclick="closeSyncModal(); openProfileModal();" class="text-teal-600 hover:text-teal-800 text-xs font-bold underline"><i class="ph-bold ph-pencil-simple"></i> Ubah</button>
                 </div>
 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Password Petugas</label>
-                <input type="password" id="sync-password" placeholder="Masukkan Password" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-4 bg-gray-50 focus:bg-white">
+
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Kabupaten / Kota</label>
+                <input type="text" id="sync-kabupaten" placeholder="Misal: Jakarta Utara" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-3 bg-gray-50 focus:bg-white">
                 
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Kode Pelaporan</label>
+                <input type="text" id="sync-kode" placeholder="Misal: PK-001" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-4 bg-gray-50 focus:bg-white">
+
                 <p id="sync-error" class="text-red-500 text-xs hidden mb-3 font-medium bg-red-50 p-2 rounded-lg border border-red-100"></p>
 
                 <button id="btn-submit-sync" onclick="submitDataToServer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
@@ -922,7 +928,7 @@
             listSampahUrai = []; 
         }
         
-        let currentPhotoBase64 = null;
+        let currentPhotoUrl = null;
         let currentGeoJSONLapangan = null;
         let editingReportId = null;
         let editingIdeaId = null;
@@ -1245,25 +1251,64 @@ const kamusData =[
             document.getElementById('load-json-input').click();
         }
 
-        function handleLoadJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.reports && Array.isArray(data.reports)) {
-                        reports = data.reports; ideas = data.ideas || [];
-                        localStorage.setItem('pesisir_reports', JSON.stringify(reports));
-                        localStorage.setItem('pesisir_ideas', JSON.stringify(ideas));
-                        updateDashboard(); switchTab('dashboard');
-                        alert("Data game (JSON) berhasil dimuat!");
-                    } else { alert("Format JSON tidak dikenali."); }
-                } catch (err) { alert("Gagal membaca file JSON."); }
-            };
-            reader.readAsText(file);
-            event.target.value = ''; // Reset file input
+function handleLoadJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.reports && Array.isArray(data.reports)) {
+                
+                // --- LOGIKA PILIHAN LOAD: ADD ATAU REPLACE ---
+                const isMerge = confirm("Data berhasil dibaca!\n\nKlik [OK] jika ingin MENGGABUNGKAN (Add) data baru ini dengan data di HP.\n\nKlik [Batal/Cancel] jika ingin melihat opsi TIMPA (Replace).");
+                
+                if (isMerge) {
+                    // 1. MODE ADD (GABUNGKAN DATA)
+                    // Menggunakan Set untuk mengecek ID, mencegah duplikasi jika file yang sama di-load 2x
+                    const existingReportIds = new Set(reports.map(r => r.id));
+                    const newReports = data.reports.filter(r => !existingReportIds.has(r.id));
+                    reports = [...reports, ...newReports]; // Gabungkan array
+                    
+                    const existingIdeaIds = new Set(ideas.map(i => i.id));
+                    const incomingIdeas = data.ideas || [];
+                    const newIdeas = incomingIdeas.filter(i => !existingIdeaIds.has(i.id));
+                    ideas = [...ideas, ...newIdeas]; // Gabungkan array
+
+                    alert(`✅ Berhasil! Ditambahkan ${newReports.length} Laporan dan ${newIdeas.length} Ide baru ke dalam sistem.`);
+                } else {
+                    // 2. MODE REPLACE (TIMPA DATA)
+                    const isReplace = confirm("⚠️ PERHATIAN!\n\nKamu memilih untuk MENIMPA data. Semua data lokal di HP ini akan DIHAPUS dan diganti dengan data dari file JSON.\n\nYakin ingin melanjutkan?");
+                    
+                    if (!isReplace) {
+                        event.target.value = ''; // Reset input file
+                        return; // Batal total, keluar dari fungsi
+                    }
+                    
+                    reports = data.reports; 
+                    ideas = data.ideas || [];
+                    alert("✅ Data lama berhasil ditimpa seluruhnya dengan data baru!");
+                }
+                
+                // --- SIMPAN & RENDER ULANG ---
+                localStorage.setItem('pesisir_reports', JSON.stringify(reports));
+                localStorage.setItem('pesisir_ideas', JSON.stringify(ideas));
+                
+                updateDashboard(); 
+                switchTab('dashboard');
+                
+            } else { 
+                alert("❌ Format JSON tidak dikenali. Pastikan file berasal dari aplikasi PesisirKita."); 
+            }
+        } catch (err) { 
+            alert("❌ Gagal membaca file JSON. File mungkin rusak."); 
         }
+    };
+    
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input agar bisa load file yang sama lagi jika perlu
+}
 
 function loadSampleData() {
             // Polygon Kawasan Mangrove Graha Indah Balikpapan
@@ -1602,70 +1647,44 @@ function hitungKarbon() {
         }
 
         // --- KODE BARU (FITUR KOMPRESI CANVAS) ---
-        function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function checkPhotoLink() {
+            let url = document.getElementById('form-photo-url').value.trim();
+            if(!url) return alert("Silakan paste link gambar terlebih dahulu.");
 
-            // 1. Validasi: Pastikan yang diupload benar-benar file gambar
-            if (!file.type.startsWith('image/')) {
-                alert('Mohon upload file gambar yang valid.');
-                return;
+            const imgEl = document.getElementById('photo-preview');
+            const previewBox = document.getElementById('photo-preview-container');
+
+            // MAGIC TRICK: Otomatis convert link Google Drive "View" menjadi link "Direct Image"
+            if(url.includes('drive.google.com/file/d/')) {
+                const match = url.match(/\/d\/(.+?)\//) || url.match(/\/d\/(.+?)$/);
+                if(match && match[1]) {
+                    url = `https://drive.google.com/uc?export=view&id=${match[1]}`;
+                }
             }
 
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                // 2. Buat objek Gambar virtual untuk membaca resolusi aslinya
-                const img = new Image();
-                img.onload = function () {
-                    // 3. Batasan Resolusi (Max 800x800 pixel)
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    let width = img.width;
-                    let height = img.height;
+            // Set loading state UI
+            imgEl.src = "";
+            previewBox.classList.remove('hidden');
+            imgEl.alt = "Memuat gambar...";
 
-                    // 4. Hitung proporsi (aspek rasio) agar foto tidak gepeng
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height = Math.round((height *= MAX_WIDTH / width));
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width = Math.round((width *= MAX_HEIGHT / height));
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    // 5. Buat elemen Canvas sementara di memori (tidak tampil di layar)
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-
-                    // 6. Gambar foto yang sudah di-resize ke dalam Canvas
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // 7. KOMPRESI MAGIS: Ekspor canvas ke Base64 dengan format JPEG dan Kualitas 60% (0.6)
-                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-
-                    // 8. Tampilkan hasilnya ke UI PesisirKita
-                    document.getElementById('photo-preview').src = currentPhotoBase64;
-                    document.getElementById('photo-preview-container').classList.remove('hidden');
-                    document.getElementById('photo-input-container').classList.add('hidden');
-                };
-                
-                // Picu pemuatan gambar virtual
-                img.src = e.target.result;
+            imgEl.onload = function() {
+                imgEl.alt = "Preview";
+                currentPhotoUrl = url; // Simpan URL yang sudah fix/diconvert
             };
-            
-            // Mulai baca file dari input kamera/galeri
-            reader.readAsDataURL(file);
+
+            imgEl.onerror = function() {
+                imgEl.alt = "❌ Gagal memuat gambar. Pastikan akses Google Drive di-set ke 'Anyone with the link can view' atau link benar.";
+                currentPhotoUrl = url; // Tetap simpan meski gagal preview, sapa tau linknya benar tapi CORS diblokir browser
+            };
+
+            imgEl.src = url; // Tembak gambarnya ke UI
         }
 
         function removePhoto() {
-            currentPhotoBase64 = null; document.getElementById('camera-input').value = "";
+            currentPhotoUrl = null;
+            document.getElementById('form-photo-url').value = "";
             document.getElementById('photo-preview-container').classList.add('hidden');
-            document.getElementById('photo-input-container').classList.remove('hidden');
+            document.getElementById('photo-preview').src = "";
         }
 
         function saveReport(event) {
@@ -1709,7 +1728,7 @@ function hitungKarbon() {
                 lng: document.getElementById('form-lng').value,
                 areaHa: document.getElementById('form-area-ha').value, 
                 geojson: currentGeoJSONLapangan, 
-                photo: currentPhotoBase64
+                photo: currentPhotoUrl || document.getElementById('form-photo-url').value.trim()
             };
 
             // 2. TAMBAHKAN DATA SPESIFIK BERDASARKAN TIPE (Mencegah data tercampur)
@@ -2494,6 +2513,17 @@ function exportLaporanLengkap() {
                 document.getElementById('form-jenis').value = r.jenis || 'Rhizophora';
             }
 
+
+            // Restore Photo URL state
+            currentPhotoUrl = r.photo || null;
+            document.getElementById('form-photo-url').value = r.photo || '';
+            if (r.photo) {
+                document.getElementById('photo-preview').src = r.photo;
+                document.getElementById('photo-preview-container').classList.remove('hidden');
+            } else {
+                document.getElementById('photo-preview-container').classList.add('hidden');
+            }
+
                         // 👇 TAMBAHKAN KODE INI UNTUK RESTORE EARLY WARNING 👇
             if (r.type === 'early_warning') {
                 document.getElementById('form-kategori-anomali').value = r.kategoriAnomali || 'Geologis';
@@ -2788,101 +2818,121 @@ function exportLaporanLengkap() {
         }
         
         // --- FUNGSI SINKRONISASI ---
-        function openSyncModal(type) {
-            if (type === 'report' && reports.length === 0) return alert("Belum ada data lapangan yang bisa dikirim!");
-            if (type === 'idea' && ideas.length === 0) return alert("Belum ada ide tim yang bisa dikirim!");
 
-            // OTOMATIS MUNCULKAN POPUP JIKA DATA DIRI KOSONG
+        function openSyncModal(type) {
+            // Cek apakah profil sudah diisi
             if (!userProfile.nama || !userProfile.organisasi) {
-                alert("Silakan lengkapi Data Diri kamu terlebih dahulu sebelum melakukan sinkronisasi.");
+                alert("Mohon lengkapi Data Diri (Profil Tim) terlebih dahulu sebelum melakukan sinkronisasi.");
                 openProfileModal();
-                return; // Stop disini sampai dia isi data diri
+                return;
             }
 
-            document.getElementById('sync-type').value = type;
-            document.getElementById('sync-count').innerText = type === 'report' ? reports.length : ideas.length;
+            document.getElementById('sync-type').value = type;
+            const count = type === 'report' ? reports.length : ideas.length;
+            document.getElementById('sync-count').innerText = count;
             document.getElementById('sync-user-display').innerText = `${userProfile.nama} (${userProfile.organisasi})`;
-            document.getElementById('sync-error').classList.add('hidden');
-            document.getElementById('sync-password').value = '';
-            
-            document.getElementById('sync-modal').classList.remove('hidden');
-        }
+            
+            document.getElementById('sync-modal').classList.remove('hidden');
+        }
 
-        function closeSyncModal() {
-            document.getElementById('sync-modal').classList.add('hidden');
-        }
+        function closeSyncModal() {
+            document.getElementById('sync-modal').classList.add('hidden');
+        }
 
-        async function submitDataToServer() {
-            const syncType = document.getElementById('sync-type').value;
-            // Ambil dari variabel userProfile, bukan dari input text form
-            const nameInput = userProfile.nama;
-            const orgInput = userProfile.organisasi;
-            const passwordInput = document.getElementById('sync-password').value;
-            
-            const errorMsg = document.getElementById('sync-error');
-            const btnSubmit = document.getElementById('btn-submit-sync');
+        function submitDataToServer() {
+            // Ambil data dari input yang baru kita buat di HTML
+            const kabupaten = document.getElementById('sync-kabupaten').value.trim();
+            const kode = document.getElementById('sync-kode').value.trim();
+            
+            // Validasi: Wajib diisi
+            if (!kabupaten || !kode) {
+                const errEl = document.getElementById('sync-error');
+                errEl.innerText = "Kabupaten dan Kode Pelaporan wajib diisi!";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            
+            document.getElementById('sync-error').classList.add('hidden');
+            
+            // Ubah tampilan tombol agar terlihat sedang 'loading'
+            const btnSubmit = document.getElementById('btn-submit-sync');
+            const originalText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Mengirim...`;
+            btnSubmit.disabled = true;
 
-            if (!passwordInput) {
-                errorMsg.innerText = "Password Petugas wajib diisi!";
-                errorMsg.classList.remove('hidden'); 
-                return;
-            }
+            // PANGGIL FUNGSI KIRIM KE GOOGLE FORM
+            kirimKeGoogleForm(userProfile.nama, userProfile.organisasi, kabupaten, kode);
+            
+            // Kembalikan tombol seperti semula setelah 2 detik
+            setTimeout(() => {
+                btnSubmit.innerHTML = originalText;
+                btnSubmit.disabled = false;
+                closeSyncModal();
+            }, 2000);
+        }
 
-            // Ubah tombol jadi loading
-            const originalBtnText = btnSubmit.innerHTML;
-            btnSubmit.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Mengirim Data...';
-            btnSubmit.disabled = true;
 
-            // Siapkan Data Format Form Data untuk POST
-            const formData = new FormData();
-            formData.append('password', passwordInput);
-            formData.append('nama', nameInput);
-            formData.append('organisasi', orgInput);
+                function kirimKeGoogleForm(nama, organisasi, kabupaten, kode) {
+            // 1. Ambil seluruh data lokal (Reports & Ideas)
+            const allData = {
+                reports: reports, // Asumsi variabel reports dari localStorage Anda
+                ideas: ideas      // Asumsi variabel ideas dari localStorage Anda
+            };
+            
+            // Ubah ke format string JSON
+            const jsonString = JSON.stringify(allData);
 
-            if (syncType === 'report') {
-                formData.append('action', 'submit_report');
-                formData.append('data_laporan', JSON.stringify(reports));
-            } else if (syncType === 'idea') {
-                formData.append('action', 'submit_idea');
-                formData.append('data_ide', JSON.stringify(ideas));
-            }
+            // 2. Logika Splitting (Pemisahan) JSON
+            // Limit aman diset di 45.000 karakter per payload untuk menghindari limit 50k Sheets
+            const MAX_CHUNK = 45000; 
+            const payload1 = jsonString.substring(0, MAX_CHUNK);
+            const payload2 = jsonString.substring(MAX_CHUNK, MAX_CHUNK * 2);
+            const payload3 = jsonString.substring(MAX_CHUNK * 2, MAX_CHUNK * 3);
 
-            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec";
+            if (jsonString.length > MAX_CHUNK * 3) {
+                console.warn("Peringatan: Data sangat besar, mungkin terpotong di Payload 3!");
+            }
 
-            try {
-                const response = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-                const result = await response.json();
+            // 3. Siapkan Data Form (Mapping dengan Entry ID Google Form Anda)
+            const formData = new URLSearchParams();
+            formData.append('entry.123233163', nama);
+            formData.append('entry.2052232250', organisasi);
+            formData.append('entry.169445120', kabupaten);
+            formData.append('entry.881817325', kode);
+            formData.append('entry.524932299', payload1 || "{}"); // Default {} jika kosong
+            formData.append('entry.1118429947', payload2 || "");
+            formData.append('entry.1064683855', payload3 || "");
 
-                if (result.result === 'success') {
-                    alert("✅ Berhasil! " + result.message);
-                    closeSyncModal();
-                    
-                    // Bersihkan memori HP yang sudah sukses terkirim agar tidak dobel
-                    if(confirm("Data sukses dikirim. Ingin menghapus data di perangkat (HP) ini agar memori lega?")) {
-                        if(syncType === 'report') {
-                            reports =[]; 
-                            localStorage.removeItem('pesisir_reports');
-                            renderReports();
-                        } else {
-                            ideas =[];
-                            localStorage.removeItem('pesisir_ideas');
-                            renderIdeas();
-                        }
-                        updateDashboard(); // Update angka di menu Home/Dashboard
-                    }
-                } else {
-                    errorMsg.innerText = result.message || "Gagal mengirim data. Pastikan password benar.";
-                    errorMsg.classList.remove('hidden');
-                }
-            } catch (error) {
-                errorMsg.innerText = "Terjadi kesalahan sistem. Cek koneksi internet Anda.";
-                errorMsg.classList.remove('hidden');
-            }
+            // 4. URL Endpoint Google Forms
+            // PERHATIKAN: Ubah '/viewform' menjadi '/formResponse'
+            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd-yTEDpWJtDvs9LgmvHgndm-jqIIF0JZa9refJal1VewMghA/formResponse';
 
-            // Kembalikan status tombol
-            btnSubmit.innerHTML = originalBtnText;
-            btnSubmit.disabled = false;
-        }
+            // 5. Eksekusi Pengiriman (Mode 'no-cors' sangat krusial di sini)
+            // Tampilkan indikator loading jika perlu
+            
+            fetch(formUrl, {
+                method: 'POST',
+                mode: 'no-cors', // Penting agar tidak diblokir oleh sistem keamanan browser
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            })
+            .then(() => {
+                // Karena no-cors, kita tidak mendapat status 200, tapi jika masuk ke 'then' berarti request terkirim
+                alert("✅ Data sinkronisasi berhasil dikirim ke server pusat!");
+                
+                // Opsional: Reset data lokal setelah berhasil kirim
+                // reports = []; ideas = [];
+                // localStorage.setItem('pesisir_reports', JSON.stringify([]));
+                // localStorage.setItem('pesisir_ideas', JSON.stringify([]));
+                // updateDashboard();
+            })
+            .catch((error) => {
+                console.error('Error saat mengirim ke GForm:', error);
+                alert("❌ Gagal mengirim data. Pastikan koneksi internet stabil.");
+            });
+        }
 
     </script>
 
