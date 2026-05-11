@@ -683,21 +683,19 @@
                             </div>
 
                             <!-- Foto Input -->
-                        <div class="border border-gray-200 rounded-xl p-4 transition-colors relative bg-gray-50">
-                            <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Link Foto Bukti <span class="text-[9px] text-teal-600 lowercase bg-teal-50 px-1 rounded">(gdrive / direct link)</span></label>
-                            <div class="flex gap-2 mb-2">
-                                <input type="url" id="form-photo-url" placeholder="Paste link foto di sini..." class="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 text-sm">
-                                <button type="button" onclick="checkPhotoLink()" class="bg-teal-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 whitespace-nowrap shadow-sm active:scale-95 transition-transform">
-                                    Cek
-                                </button>
+                            <div class="border border-gray-200 rounded-xl p-4 transition-colors relative bg-gray-50">
+                                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Link Bukti Visual <span class="text-[9px] text-teal-600 lowercase bg-teal-50 px-1 rounded">(gdrive / direct / youtube)</span></label>
+                                <div class="flex gap-2 mb-2">
+                                    <input type="url" id="form-media-url" placeholder="Paste link foto atau video YouTube..." class="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                                    <button type="button" onclick="addMediaLink()" class="bg-teal-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 whitespace-nowrap shadow-sm active:scale-95 transition-transform">
+                                        Tambah
+                                    </button>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mb-2">*Bisa tambah lebih dari 1 link. Mendukung link YouTube (otomatis jadi thumbnail).</p>
+                                
+                                <div id="media-preview-container" class="hidden flex flex-wrap gap-3 mt-3 border-t border-gray-200 pt-3">
+                                    </div>
                             </div>
-                            <p class="text-[10px] text-gray-400 mb-2">*Pastikan link Google Drive diatur ke "Anyone with the link can view"</p>
-                            
-                            <div id="photo-preview-container" class="hidden relative mt-3 border-t border-gray-200 pt-3">
-                                <img id="photo-preview" src="" alt="Preview" class="rounded-lg max-h-40 mx-auto object-contain shadow-sm border border-gray-100" />
-                                <button type="button" onclick="removePhoto()" class="absolute top-4 right-2 bg-red-500 text-white h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold shadow hover:bg-red-600">X</button>
-                            </div>
-                        </div>
 
                             <button type="submit" class="w-full bg-teal-600 text-white p-4 rounded-xl font-bold text-lg shadow-md hover:bg-teal-700 active:scale-95 transition-transform flex justify-center items-center gap-2 mt-4">
                                 <i class="ph-bold ph-floppy-disk"></i> Simpan Laporan
@@ -928,7 +926,7 @@
             listSampahUrai = []; 
         }
         
-        let currentPhotoUrl = null;
+        let currentMediaUrls = [];
         let currentGeoJSONLapangan = null;
         let editingReportId = null;
         let editingIdeaId = null;
@@ -1367,6 +1365,31 @@ function loadSampleData() {
                         geojson: null, 
                         photo: null 
                     }
+                    , // Jangan lupa koma sebelum menambahkan data baru
+                    { 
+                        id: Date.now() - 3000, 
+                        timestamp: new Date(Date.now() - 259200000).toISOString(), // Simulasi kejadian 3 hari lalu
+                        type: 'early_warning', 
+                        amount: '', 
+                        notes: '🚨 Peringatan Dini Banjir Rob Pantura!\nTerjadi kenaikan muka air laut yang tidak wajar di kawasan pesisir utara. Air laut mulai menggenangi akses jalan utama dan merendam area pemukiman warga pesisir. Air naik secara perlahan sejak dini hari tanpa didahului hujan ekstrem. Ini merupakan titik genangan baru yang sebelumnya jarang terdampak separah ini. Tanggul pembatas juga mulai menunjukkan indikasi rembesan.', 
+                        lat: '-6.1023', // Koordinat simulasi sekitar pesisir Pantura Jakarta/Jabar
+                        lng: '106.9032', 
+                        areaHa: '0', 
+                        geojson: null, 
+                        
+                        // INI HASIL MULTI-MEDIA NYA (Link digabung koma & spasi)
+                        photo: 'https://drive.google.com/file/d/1EyJJYK4aq7GORVcYNTtn424NwmC7-bLh/view?usp=sharing, https://youtu.be/b--__eI67ak?si=k480GYWEuIpU43R4', 
+                        
+                        // METADATA SPESIFIK EARLY WARNING
+                        kategoriAnomali: 'Hidrologis',
+                        urgensi: 'Kritis',
+                        metadataAnomali: {
+                            cepat: 'Perlahan (Jam)',
+                            tinggi: '45',
+                            hujan: false,
+                            berulang: true
+                        }
+                    }
                 ];
             
             // 2. Data Ide Hackathon
@@ -1647,44 +1670,100 @@ function hitungKarbon() {
         }
 
         // --- KODE BARU (FITUR KOMPRESI CANVAS) ---
-        function checkPhotoLink() {
-            let url = document.getElementById('form-photo-url').value.trim();
-            if(!url) return alert("Silakan paste link gambar terlebih dahulu.");
 
-            const imgEl = document.getElementById('photo-preview');
-            const previewBox = document.getElementById('photo-preview-container');
+        // 1. Fungsi Parser URL (Gdrive & YouTube)
+        function getPreviewData(url) {
+            let previewUrl = url;
+            let isYouTube = false;
 
-            // MAGIC TRICK: Otomatis convert link Google Drive "View" menjadi link "Direct Image"
-            if(url.includes('drive.google.com/file/d/')) {
-                const match = url.match(/\/d\/(.+?)\//) || url.match(/\/d\/(.+?)$/);
-                if(match && match[1]) {
-                    url = `https://drive.google.com/uc?export=view&id=${match[1]}`;
-                }
+            // Regex untuk mendeteksi ID Video YouTube
+            const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+            if (ytMatch && ytMatch[1]) {
+                previewUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+                isYouTube = true;
+                return { previewUrl, isYouTube, originalUrl: url };
             }
 
-            // Set loading state UI
-            imgEl.src = "";
-            previewBox.classList.remove('hidden');
-            imgEl.alt = "Memuat gambar...";
-
-            imgEl.onload = function() {
-                imgEl.alt = "Preview";
-                currentPhotoUrl = url; // Simpan URL yang sudah fix/diconvert
-            };
-
-            imgEl.onerror = function() {
-                imgEl.alt = "❌ Gagal memuat gambar. Pastikan akses Google Drive di-set ke 'Anyone with the link can view' atau link benar.";
-                currentPhotoUrl = url; // Tetap simpan meski gagal preview, sapa tau linknya benar tapi CORS diblokir browser
-            };
-
-            imgEl.src = url; // Tembak gambarnya ke UI
+            // Regex untuk mendeteksi Google Drive (PATCHED)
+            if(url.includes('drive.google.com/file/d/')) {
+                // Regex yang lebih presisi untuk mengekstrak ID unik (contoh: 1EyJJYK4aq7GORVcYNTtn424NwmC7-bLh)
+                const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if(driveMatch && driveMatch[1]) {
+                    // Menggunakan endpoint 'thumbnail' yang bebas CORS dengan resolusi w800 (width 800px)
+                    previewUrl = `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800`;
+                }
+            }
+            
+            return { previewUrl, isYouTube, originalUrl: url };
         }
 
-        function removePhoto() {
-            currentPhotoUrl = null;
-            document.getElementById('form-photo-url').value = "";
-            document.getElementById('photo-preview-container').classList.add('hidden');
-            document.getElementById('photo-preview').src = "";
+        // 2. Fungsi Tambah Media ke Array
+        function addMediaLink() {
+            const inputEl = document.getElementById('form-media-url');
+            let url = inputEl.value.trim();
+            if(!url) return alert("Silakan paste link terlebih dahulu.");
+
+            const mediaData = getPreviewData(url);
+
+            // Validasi visual menggunakan Image object
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                currentMediaUrls.push(url); // Simpan URL aslinya ke database
+                inputEl.value = ""; 
+                renderMediaPreviews(); // Render ulang UI
+            };
+            tempImg.onerror = function() {
+                // Bypass error khusus YouTube (kadang ada video yg thumbnail HQ-nya di-disable)
+                if(mediaData.isYouTube) {
+                    currentMediaUrls.push(url);
+                    inputEl.value = "";
+                    renderMediaPreviews();
+                } else {
+                    alert("❌ Gagal memuat gambar. Pastikan link bisa diakses publik / bukan link private.");
+                }
+            };
+            tempImg.src = mediaData.previewUrl; // Trigger load
+        }
+
+        // 3. Fungsi Render UI & Hapus Media
+        function renderMediaPreviews() {
+            const container = document.getElementById('media-preview-container');
+            container.innerHTML = ""; 
+
+            if (currentMediaUrls.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            currentMediaUrls.forEach((url, index) => {
+                const mediaData = getPreviewData(url);
+                
+                // Bikin Kotak Preview
+                const box = document.createElement('div');
+                box.className = "relative w-24 h-24 border border-gray-300 rounded-xl overflow-hidden shadow-sm group";
+                
+                // Tambahkan Label/Badge jika itu YouTube
+                let ytOverlay = "";
+                if(mediaData.isYouTube) {
+                    ytOverlay = `<div class="absolute bottom-1 right-1 bg-red-600 text-white rounded px-1.5 py-0.5 text-[9px] font-bold shadow">YT</div>`;
+                }
+
+                // Tombol Hapus
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.innerHTML = "✕";
+                btn.className = "absolute top-1 right-1 bg-white/90 text-red-600 h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shadow hover:bg-red-500 hover:text-white transition-colors z-10";
+                btn.onclick = () => {
+                    currentMediaUrls.splice(index, 1); // Hapus dari array
+                    renderMediaPreviews(); // Render ulang
+                };
+
+                box.innerHTML = `<img src="${mediaData.previewUrl}" class="w-full h-full object-cover">` + ytOverlay;
+                box.appendChild(btn);
+                container.appendChild(box);
+            });
         }
 
         function saveReport(event) {
@@ -1728,7 +1807,7 @@ function hitungKarbon() {
                 lng: document.getElementById('form-lng').value,
                 areaHa: document.getElementById('form-area-ha').value, 
                 geojson: currentGeoJSONLapangan, 
-                photo: currentPhotoUrl || document.getElementById('form-photo-url').value.trim()
+                photo: currentMediaUrls.length > 0 ? currentMediaUrls.join(', ') : "",
             };
 
             // 2. TAMBAHKAN DATA SPESIFIK BERDASARKAN TIPE (Mencegah data tercampur)
@@ -1785,6 +1864,8 @@ function hitungKarbon() {
             document.getElementById('form-area-status').className = 'text-xs text-blue-600 font-medium';
             currentGeoJSONLapangan = null; if(drawnItemsLapangan) drawnItemsLapangan.clearLayers();
             document.getElementById('map-lapangan-wrapper').className = 'hidden'; // Hide map completely when reset
+            currentMediaUrls = [];
+            renderMediaPreviews(); // Ini otomatis akan menyembunyikan container jika array kosong
 
             // Cukup satu blok ini saja untuk mereset input penanaman
             if(document.getElementById('form-bibit')) document.getElementById('form-bibit').value = '';
@@ -2514,17 +2595,16 @@ function exportLaporanLengkap() {
             }
 
 
-            // Restore Photo URL state
-            currentPhotoUrl = r.photo || null;
-            document.getElementById('form-photo-url').value = r.photo || '';
+            // Restore Multi-Media state
             if (r.photo) {
-                document.getElementById('photo-preview').src = r.photo;
-                document.getElementById('photo-preview-container').classList.remove('hidden');
+                // Pecah kembali string dari Sheets menjadi array berdasarkan koma
+                currentMediaUrls = r.photo.split(',').map(item => item.trim()).filter(item => item !== "");
             } else {
-                document.getElementById('photo-preview-container').classList.add('hidden');
+                currentMediaUrls = [];
             }
+            renderMediaPreviews(); // Panggil fungsi render agar gambar langsung muncul
 
-                        // 👇 TAMBAHKAN KODE INI UNTUK RESTORE EARLY WARNING 👇
+             // 👇 TAMBAHKAN KODE INI UNTUK RESTORE EARLY WARNING 👇
             if (r.type === 'early_warning') {
                 document.getElementById('form-kategori-anomali').value = r.kategoriAnomali || 'Geologis';
                 
