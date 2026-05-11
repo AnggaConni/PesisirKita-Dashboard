@@ -80,10 +80,17 @@
 
         <!-- SIDEBAR / BOTTOM NAV (Hybrid) -->
         <nav class="fixed md:relative bottom-0 w-full md:w-64 bg-white border-t md:border-t-0 md:border-r border-gray-200 z-50 flex md:flex-col justify-around md:justify-start pb-safe md:pb-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:shadow-none order-2 md:order-1 transition-all">
-            <div class="hidden md:flex items-center gap-3 px-6 py-6 border-b border-gray-100">
-                <i class="ph-fill ph-tree-evergreen text-3xl text-teal-600"></i>
-                <h1 class="text-2xl font-black text-teal-800 tracking-tight">PesisirKita</h1>
-            </div>
+            
+            <div class="hidden md:flex items-center justify-between px-6 py-6 border-b border-gray-100 w-full">
+                <div class="flex items-center gap-3">
+                    <i class="ph-fill ph-tree-evergreen text-3xl text-teal-600"></i>
+                    <h1 class="text-2xl font-black text-teal-800 tracking-tight">PesisirKita</h1>
+                </div>
+                <button onclick="openProfileModal()" class="text-gray-400 hover:text-teal-600 transition" title="Pengaturan Data Diri">
+                    <i class="ph-bold ph-gear text-2xl"></i>
+                </button>
+            </div>
+
             <div class="flex md:flex-col w-full px-2 md:px-4 py-2 md:py-6 gap-1 md:gap-2">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-teal-600 bg-teal-50 transition-colors">
                     <i class="ph-fill ph-house text-2xl md:text-xl md:mr-3"></i>
@@ -115,9 +122,17 @@
                     <i class="ph-fill ph-tree-evergreen text-2xl text-teal-300"></i>
                     <h1 class="text-xl font-bold">PesisirKita</h1>
                 </div>
-                <div class="flex items-center gap-1 bg-teal-800 px-3 py-1 rounded-full text-sm font-semibold">
-                    <i class="ph-fill ph-medal text-yellow-400"></i> <span id="header-points">350</span> Poin
+
+
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1 bg-teal-800 px-3 py-1 rounded-full text-sm font-semibold">
+                        <i class="ph-fill ph-medal text-yellow-400"></i> <span id="header-points">350</span> Poin
+                    </div>
+                    <button onclick="openProfileModal()" class="text-teal-100 hover:text-white transition">
+                        <i class="ph-bold ph-gear text-2xl"></i>
+                    </button>
                 </div>
+
             </header>
 
             <!-- pb-36 ditambahkan agar konten terbawah tidak tertutup menu mobile -->
@@ -223,7 +238,7 @@
                 </div>
                 <button onclick="exportLaporanLengkap()" class="w-full bg-yellow-400 text-teal-900 hover:bg-yellow-300 px-6 py-4 rounded-2xl font-bold shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2 border border-yellow-500">
                     <i class="ph-bold ph-printer text-xl"></i>
-                    Cetak Laporan PDF Tim ke Guru
+                    Cetak Laporan PDF
                 </button>
 
                     <!-- Layout 2 Kolom untuk Riwayat Data -->
@@ -705,13 +720,16 @@
                 </div>
                 
                 <input type="hidden" id="sync-type" value="">
+
                 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Nama Pelapor / Tim</label>
-                <input type="text" id="sync-name" placeholder="Misal: Budi Santoso" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-blue-500 bg-gray-50 focus:bg-white">
-                
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Asal Sekolah / Organisasi</label>
-                <input type="text" id="sync-org" placeholder="Misal: SMA Negeri 1" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-blue-500 bg-gray-50 focus:bg-white">
-                
+                <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 mb-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Mengirim Sebagai:</p>
+                        <p id="sync-user-display" class="text-sm font-bold text-gray-800">-</p>
+                    </div>
+                    <button onclick="closeSyncModal(); openProfileModal();" class="text-teal-600 hover:text-teal-800 text-xs font-bold underline"><i class="ph-bold ph-pencil-simple"></i> Ubah</button>
+                </div>
+
                 <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Password Petugas</label>
                 <input type="password" id="sync-password" placeholder="Masukkan Password" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-4 bg-gray-50 focus:bg-white">
                 
@@ -724,10 +742,34 @@
         </div>
     </div>
 
+    <div id="profile-modal" class="fixed inset-0 z-[110] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeProfileModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-11/12 max-w-sm overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-teal-600 text-white">
+                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-user"></i> Pengaturan Data Diri</h3>
+                <button onclick="closeProfileModal()" class="text-teal-200 hover:text-white transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-500 mb-4">Data ini otomatis dilampirkan setiap kali kamu sinkronisasi ke server.</p>
+                
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Nama Pelapor / Tim</label>
+                <input type="text" id="profile-name" placeholder="Misal: Budi Santoso" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
+                
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Asal Sekolah / Organisasi</label>
+                <input type="text" id="profile-org" placeholder="Misal: SMA Negeri 1" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-5 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
+                
+                <button onclick="saveProfile()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+                    <i class="ph-bold ph-floppy-disk"></i> Simpan Data Diri
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         // --- 1. STATE & DATA INITIALIZATION ---
         let reports = JSON.parse(localStorage.getItem('pesisir_reports')) || [];
+        let userProfile = JSON.parse(localStorage.getItem('pesisir_profile')) || { nama: '', organisasi: '' };
         let ideas = JSON.parse(localStorage.getItem('pesisir_ideas')) || [];
         let listSampahUrai = JSON.parse(localStorage.getItem('pesisir_sampah')) ||[];
         
@@ -2401,97 +2443,134 @@ function exportLaporanLengkap() {
 
 
         // =========================================================================
-        // SCRIPT SINKRONISASI KE GOOGLE SHEETS
-        // =========================================================================
-        
-        function openSyncModal(type) {
-            if (type === 'report' && reports.length === 0) return alert("Belum ada data lapangan yang bisa dikirim!");
-            if (type === 'idea' && ideas.length === 0) return alert("Belum ada ide tim yang bisa dikirim!");
+        // SCRIPT PENGATURAN DATA DIRI & SINKRONISASI
+        // =========================================================================
 
-            document.getElementById('sync-type').value = type;
-            document.getElementById('sync-count').innerText = type === 'report' ? reports.length : ideas.length;
-            document.getElementById('sync-error').classList.add('hidden');
-            document.getElementById('sync-password').value = '';
+        // --- FUNGSI DATA DIRI ---
+        function openProfileModal() {
+            document.getElementById('profile-name').value = userProfile.nama || '';
+            document.getElementById('profile-org').value = userProfile.organisasi || '';
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function saveProfile() {
+            const nama = document.getElementById('profile-name').value.trim();
+            const org = document.getElementById('profile-org').value.trim();
             
-            document.getElementById('sync-modal').classList.remove('hidden');
-        }
-
-        function closeSyncModal() {
-            document.getElementById('sync-modal').classList.add('hidden');
-        }
-
-        async function submitDataToServer() {
-            const syncType = document.getElementById('sync-type').value;
-            const nameInput = document.getElementById('sync-name').value;
-            const orgInput = document.getElementById('sync-org').value;
-            const passwordInput = document.getElementById('sync-password').value;
+            if(!nama || !org) return alert("Nama dan Asal Sekolah/Organisasi wajib diisi!");
             
-            const errorMsg = document.getElementById('sync-error');
-            const btnSubmit = document.getElementById('btn-submit-sync');
-
-            if (!nameInput || !orgInput || !passwordInput) {
-                errorMsg.innerText = "Nama, Organisasi, dan Password wajib diisi!";
-                errorMsg.classList.remove('hidden'); 
-                return;
+            userProfile = { nama, organisasi: org };
+            localStorage.setItem('pesisir_profile', JSON.stringify(userProfile));
+            closeProfileModal();
+            
+            // Cek jika habis simpan data diri mau lanjut kirim form
+            if (!document.getElementById('sync-modal').classList.contains('hidden')) {
+                document.getElementById('sync-user-display').innerText = `${userProfile.nama} (${userProfile.organisasi})`;
+            } else {
+                alert("✅ Data Diri berhasil disimpan!");
             }
-
-            // Ubah tombol jadi loading
-            const originalBtnText = btnSubmit.innerHTML;
-            btnSubmit.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Mengirim Data...';
-            btnSubmit.disabled = true;
-
-            // Siapkan Data Format Form Data untuk POST
-            const formData = new FormData();
-            formData.append('password', passwordInput);
-            formData.append('nama', nameInput);
-            formData.append('organisasi', orgInput);
-
-            if (syncType === 'report') {
-                formData.append('action', 'submit_report');
-                formData.append('data_laporan', JSON.stringify(reports));
-            } else if (syncType === 'idea') {
-                formData.append('action', 'submit_idea');
-                formData.append('data_ide', JSON.stringify(ideas));
-            }
-
-            // URL GAS Anda
-            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec";
-
-            try {
-                const response = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (result.result === 'success') {
-                    alert("✅ Berhasil! " + result.message);
-                    closeSyncModal();
-                    
-                    // Bersihkan memori HP yang sudah sukses terkirim agar tidak dobel
-                    if(confirm("Data sukses dikirim. Ingin menghapus data di perangkat (HP) ini agar memori lega?")) {
-                        if(syncType === 'report') {
-                            reports =[]; 
-                            localStorage.removeItem('pesisir_reports');
-                            renderReports();
-                        } else {
-                            ideas =[];
-                            localStorage.removeItem('pesisir_ideas');
-                            renderIdeas();
-                        }
-                        updateDashboard(); // Update angka di menu Home/Dashboard
-                    }
-                } else {
-                    // Password salah atau error dari server
-                    errorMsg.innerText = result.message || "Gagal mengirim data. Pastikan password benar.";
-                    errorMsg.classList.remove('hidden');
-                }
-            } catch (error) {
-                errorMsg.innerText = "Terjadi kesalahan sistem. Cek koneksi internet Anda.";
-                errorMsg.classList.remove('hidden');
-            }
-
-            // Kembalikan status tombol
-            btnSubmit.innerHTML = originalBtnText;
-            btnSubmit.disabled = false;
         }
+        
+        // --- FUNGSI SINKRONISASI ---
+        function openSyncModal(type) {
+            if (type === 'report' && reports.length === 0) return alert("Belum ada data lapangan yang bisa dikirim!");
+            if (type === 'idea' && ideas.length === 0) return alert("Belum ada ide tim yang bisa dikirim!");
+
+            // OTOMATIS MUNCULKAN POPUP JIKA DATA DIRI KOSONG
+            if (!userProfile.nama || !userProfile.organisasi) {
+                alert("Silakan lengkapi Data Diri kamu terlebih dahulu sebelum melakukan sinkronisasi.");
+                openProfileModal();
+                return; // Stop disini sampai dia isi data diri
+            }
+
+            document.getElementById('sync-type').value = type;
+            document.getElementById('sync-count').innerText = type === 'report' ? reports.length : ideas.length;
+            document.getElementById('sync-user-display').innerText = `${userProfile.nama} (${userProfile.organisasi})`;
+            document.getElementById('sync-error').classList.add('hidden');
+            document.getElementById('sync-password').value = '';
+            
+            document.getElementById('sync-modal').classList.remove('hidden');
+        }
+
+        function closeSyncModal() {
+            document.getElementById('sync-modal').classList.add('hidden');
+        }
+
+        async function submitDataToServer() {
+            const syncType = document.getElementById('sync-type').value;
+            // Ambil dari variabel userProfile, bukan dari input text form
+            const nameInput = userProfile.nama;
+            const orgInput = userProfile.organisasi;
+            const passwordInput = document.getElementById('sync-password').value;
+            
+            const errorMsg = document.getElementById('sync-error');
+            const btnSubmit = document.getElementById('btn-submit-sync');
+
+            if (!passwordInput) {
+                errorMsg.innerText = "Password Petugas wajib diisi!";
+                errorMsg.classList.remove('hidden'); 
+                return;
+            }
+
+            // Ubah tombol jadi loading
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Mengirim Data...';
+            btnSubmit.disabled = true;
+
+            // Siapkan Data Format Form Data untuk POST
+            const formData = new FormData();
+            formData.append('password', passwordInput);
+            formData.append('nama', nameInput);
+            formData.append('organisasi', orgInput);
+
+            if (syncType === 'report') {
+                formData.append('action', 'submit_report');
+                formData.append('data_laporan', JSON.stringify(reports));
+            } else if (syncType === 'idea') {
+                formData.append('action', 'submit_idea');
+                formData.append('data_ide', JSON.stringify(ideas));
+            }
+
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec";
+
+            try {
+                const response = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.result === 'success') {
+                    alert("✅ Berhasil! " + result.message);
+                    closeSyncModal();
+                    
+                    // Bersihkan memori HP yang sudah sukses terkirim agar tidak dobel
+                    if(confirm("Data sukses dikirim. Ingin menghapus data di perangkat (HP) ini agar memori lega?")) {
+                        if(syncType === 'report') {
+                            reports =[]; 
+                            localStorage.removeItem('pesisir_reports');
+                            renderReports();
+                        } else {
+                            ideas =[];
+                            localStorage.removeItem('pesisir_ideas');
+                            renderIdeas();
+                        }
+                        updateDashboard(); // Update angka di menu Home/Dashboard
+                    }
+                } else {
+                    errorMsg.innerText = result.message || "Gagal mengirim data. Pastikan password benar.";
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorMsg.innerText = "Terjadi kesalahan sistem. Cek koneksi internet Anda.";
+                errorMsg.classList.remove('hidden');
+            }
+
+            // Kembalikan status tombol
+            btnSubmit.innerHTML = originalBtnText;
+            btnSubmit.disabled = false;
+        }
 
     </script>
 
