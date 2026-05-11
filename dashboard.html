@@ -403,6 +403,7 @@
                                     <option value="planting">Penanaman</option>
                                     <option value="observation">Observasi</option>
                                     <option value="early_warning">Early Warning</option>
+                                    <option value="idea">💡 Ide / Solusi</option>
                                 </select>
                             </div>
                         </div>
@@ -519,7 +520,8 @@
             'planting'     : { label: 'Penanaman',           icon: 'ph-plant',            color: 'emerald' },
             'observation'  : { label: 'Observasi',           icon: 'ph-binoculars',       color: 'blue'    },
             'early_warning': { label: 'Early Warning',       icon: 'ph-warning-octagon',  color: 'red'     },
-            'patroli'      : { label: 'Patroli / Observasi', icon: 'ph-binoculars',       color: 'blue'    }
+            'patroli'      : { label: 'Patroli / Observasi', icon: 'ph-binoculars',       color: 'blue'    },
+            'idea'         : { label: 'Ide & Solusi',        icon: 'ph-lightbulb',        color: 'purple'  }
         };
 
         // ─── Media Helper ──────────────────────────────────────────────────────
@@ -634,71 +636,97 @@
                     return;
                 }
 
+                // Ambil data Reports dan Ideas dari JSON
                 const reportsArr = parsedData.reports;
-                if (!reportsArr || !Array.isArray(reportsArr)) return;
+                const ideasArr   = parsedData.ideas;
 
-                reportsArr.forEach(item => {
-                    // ── FIX #2: Status early_warning sesuai struktur input app ──
-                    // Input app menyimpan urgensi di item.urgensi (root),
-                    // bukan di item.metadataAnomali.urgensi
-                    let status = "Aman";
-                    if (item.type === 'early_warning') {
-                        status = item.urgensi
-                            || (item.metadataAnomali && item.metadataAnomali.urgensi)
-                            || "Waspada";
-                    }
-
-const r = {
-                        kode    : kode,
-                        kabupaten: kabKota,
-                        pelapor : pelapor,
-                        timestamp: item.timestamp || new Date().toISOString(),
-                        type    : item.type  || 'observation',
-                        status  : status,
-                        notes   : item.notes || '',
-                        photo   : item.photo || '',
-                        lat     : parseFloat(item.lat) || 0,
-                        lng     : parseFloat(item.lng) || 0,
-                        metadata: item.metadataAnomali || null,
-                        amount  : item.amount || '',
-                        bibit   : item.bibit  || '',
-                        jenis   : item.jenis  || '',
-                        areaHa  : item.areaHa || '',
-                        urgensi : item.urgensi || '',
-                        kategoriAnomali: item.kategoriAnomali || '',
-                        geojson : item.geojson || null
-                    };
-
-                    // --- KODE BARU UNTUK MENCEGAH DUPLIKASI ---
-                    // Mengambil HANYA tanggalnya saja (YYYY-MM-DD), mengabaikan jam yang berubah-ubah
-                    const dateOnly = r.timestamp.split('T')[0];
-                    
-                    // Kunci unik: Kode + Tanggal + Tipe Laporan + 30 huruf pertama catatan
-                    const uniqueKey = `${kode}_${dateOnly}_${r.type}_${r.notes.substring(0, 30)}`;
-
-                    // Cek apakah data ini sudah pernah dimasukkan sebelumnya
-
-                    if (!processedKeys.has(uniqueKey)) {
-                        processedKeys.add(uniqueKey); // Tandai sebagai sudah diproses
-
-                        // --- KODE BARU: Pisahkan berdasarkan Kode + Tipe Laporan ---
-                        const groupKey = `${kode}_${r.type}`; 
-
-                        if (!groupedData[groupKey]) {
-                            groupedData[groupKey] = { 
-                                groupKey: groupKey,
-                                kode: kode, 
-                                type: r.type, 
-                                kabupaten: kabKota, 
-                                history: [] 
-                            };
+                // --- 1. PROSES DATA REPORTS ---
+                if (reportsArr && Array.isArray(reportsArr)) {
+                    reportsArr.forEach(item => {
+                        let status = "Aman";
+                        if (item.type === 'early_warning') {
+                            status = item.urgensi
+                                || (item.metadataAnomali && item.metadataAnomali.urgensi)
+                                || "Waspada";
                         }
-                        groupedData[groupKey].history.push(r);
-                        // -----------------------------------------------------------
-                    }
-                    // ------------------------------------------
-                });
-            });
+
+                        const r = {
+                            kode    : kode,
+                            kabupaten: kabKota,
+                            pelapor : pelapor,
+                            timestamp: item.timestamp || new Date().toISOString(),
+                            type    : item.type  || 'observation',
+                            status  : status,
+                            notes   : item.notes || '',
+                            photo   : item.photo || '',
+                            lat     : parseFloat(item.lat) || 0,
+                            lng     : parseFloat(item.lng) || 0,
+                            metadata: item.metadataAnomali || null,
+                            amount  : item.amount || '',
+                            bibit   : item.bibit  || '',
+                            jenis   : item.jenis  || '',
+                            areaHa  : item.areaHa || '',
+                            urgensi : item.urgensi || '',
+                            kategoriAnomali: item.kategoriAnomali || '',
+                            geojson : item.geojson || null
+                        };
+
+                        const dateOnly = r.timestamp.split('T')[0];
+                        const uniqueKey = `${kode}_${dateOnly}_${r.type}_${r.notes.substring(0, 30)}`;
+
+                        if (!processedKeys.has(uniqueKey)) {
+                            processedKeys.add(uniqueKey); 
+
+                            const groupKey = `${kode}_${r.type}`; 
+                            if (!groupedData[groupKey]) {
+                                groupedData[groupKey] = { 
+                                    groupKey: groupKey, kode: kode, type: r.type, kabupaten: kabKota, history:[] 
+                                };
+                            }
+                            groupedData[groupKey].history.push(r);
+                        }
+                    });
+                }
+
+                // --- 2. PROSES DATA IDEAS / HACKATHON ---
+                if (ideasArr && Array.isArray(ideasArr)) {
+                    ideasArr.forEach(idea => {
+                        // Konversi epoch ID menjadi Timestamp ISO
+                        const ideaTime = new Date(idea.id).toISOString();
+                        
+                        const r = {
+                            kode    : kode,
+                            kabupaten: kabKota,
+                            pelapor : pelapor,
+                            timestamp: ideaTime,
+                            type    : 'idea', 
+                            status  : 'Gagasan',
+                            notes   : `💡 MASALAH:\n${idea.masalah}\n\n🔍 ALASAN:\n${idea.alasan}\n\n✅ SOLUSI:\n${idea.solusi}`,
+                            photo   : '',
+                            lat     : 0, 
+                            lng     : 0,
+                            metadata: null,
+                            amount  : '', bibit : '', jenis : '', areaHa : '', urgensi : '', kategoriAnomali: '', geojson : null
+                        };
+
+                        const dateOnly = r.timestamp.split('T')[0];
+                        const uniqueKey = `${kode}_${dateOnly}_idea_${idea.id}`;
+
+                        if (!processedKeys.has(uniqueKey)) {
+                            processedKeys.add(uniqueKey);
+
+                            const groupKey = `${kode}_idea`; 
+                            if (!groupedData[groupKey]) {
+                                groupedData[groupKey] = { 
+                                    groupKey: groupKey, kode: kode, type: r.type, kabupaten: kabKota, history: [] 
+                                };
+                            }
+                            groupedData[groupKey].history.push(r);
+                        }
+                    });
+                }
+
+            }); // <-- INI ADALAH PENUTUP DARI rows.forEach(row => {
 
 
             // ── Flatten & sort per kode dan tipe ───────────────────────────────
@@ -804,14 +832,24 @@ const r = {
                     const marker = L.circleMarker([obj.lat, obj.lng], {
                         radius: 9, fillColor: mapColor, color: '#fff', weight: 2, fillOpacity: 0.95
                     });
+
+
                     marker.bindPopup(`
                         <div style="min-width:160px">
                             <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Kode: ${obj.kode}</div>
                             <div style="font-weight:800;color:#1e293b;font-size:14px;margin-bottom:6px">${obj.kabupaten}</div>
                             <div style="display:inline-block;padding:3px 8px;background:${mapColor}20;color:${mapColor};border-radius:4px;font-size:11px;font-weight:700">${obj.status.toUpperCase()}</div>
                             <div style="font-size:10px;color:#94a3b8;margin-top:6px">${obj.historyCount} log tersimpan</div>
+                            
+                            <!-- KODE BARU: Tombol Deep Link -->
+                            <div class="mt-3 pt-3 border-t border-slate-100">
+                                <button onclick="goToDetail('${obj.kode}')" class="w-full bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white transition-all py-2 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+                                    Lihat Jejak Historis <i class="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     `);
+
                     mapLayer.addLayer(marker);
                 }
             });
@@ -1178,6 +1216,38 @@ const r = {
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
+        }
+
+        // ─── FUNGSI DEEP LINKING DARI PETA KE TIMELINE ─────────────────────────
+        function goToDetail(kode) {
+            // 1. Pindah ke halaman Log Titik Pantau secara otomatis
+            switchView('log');
+            
+            // 2. Setel filter Dropdown ke Kode yang di-klik dari Peta
+            const filterKodeEl = document.getElementById('filter-kode');
+            if (filterKodeEl) {
+                filterKodeEl.value = kode;
+            }
+            
+            // 3. Reset filter lain agar data tidak tersembunyi/bentrok
+            document.getElementById('filter-kabupaten').value = 'ALL';
+            document.getElementById('filter-kondisi').value = 'ALL';
+            document.getElementById('filter-tipe').value = 'ALL';
+            if (document.getElementById('filter-text')) {
+                document.getElementById('filter-text').value = '';
+            }
+
+            // 4. Render ulang tabel di sebelah kiri berdasarkan filter baru
+            renderTable();
+            
+            // 5. Beri jeda sepersekian detik, lalu 'klik otomatis' kartu log pertama 
+            // agar Timeline di sebelah kanan langsung terbuka!
+            setTimeout(() => {
+                const firstCard = document.querySelector('#data-table-body .obj-card');
+                if (firstCard) {
+                    firstCard.click();
+                }
+            }, 100);
         }
 
 
