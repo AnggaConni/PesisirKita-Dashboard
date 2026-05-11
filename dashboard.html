@@ -479,6 +479,26 @@
             </div>
         </div>
 
+        <div id="geojson-modal" class="fixed inset-0 z-[350] hidden flex-col justify-center items-center bg-slate-900/90 backdrop-blur-sm p-4 transition-opacity">
+    <div class="relative max-w-5xl w-full h-[80vh] bg-white rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+        <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <div>
+                <h3 class="font-bold text-slate-800" id="geojson-modal-title">Area Pemetaan Detail</h3>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest" id="geojson-modal-subtitle">Visualisasi Satelit Poligon</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportGeoJSON()" class="px-3 py-2 bg-teal-100 text-teal-700 rounded-lg text-xs font-bold hover:bg-teal-200 transition flex items-center gap-2">
+                    <i class="ph-bold ph-download-simple"></i> Export GeoJSON
+                </button>
+                <button onclick="closeGeojsonModal()" class="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-full text-slate-600 flex items-center justify-center transition">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="geojson-map-canvas" class="flex-1 w-full h-full bg-slate-100"></div>
+    </div>
+</div>
+
     </main>
 
     <script>
@@ -645,7 +665,8 @@ const r = {
                         jenis   : item.jenis  || '',
                         areaHa  : item.areaHa || '',
                         urgensi : item.urgensi || '',
-                        kategoriAnomali: item.kategoriAnomali || ''
+                        kategoriAnomali: item.kategoriAnomali || '',
+                        geojson : item.geojson || null
                     };
 
                     // --- KODE BARU UNTUK MENCEGAH DUPLIKASI ---
@@ -1048,6 +1069,18 @@ const r = {
                 if (r.type === 'planting' && r.bibit) extraBadge  = `<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.bibit} Bibit · ${r.jenis || ''}</span>`;
                 if (r.type === 'early_warning')        extraBadge  = `<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.kategoriAnomali || ''}</span>`;
 
+                // Cek apakah ada data GeoJSON
+                let geojsonBtn = '';
+                if (r.geojson && r.geojson.geometry) {
+                    const geoData = JSON.stringify(r.geojson).replace(/'/g, "\\'");
+                    geojsonBtn = `
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <button onclick='openGeojsonModal(${geoData}, "${r.kode}")' class="inline-flex items-center gap-2 px-3 py-2 bg-slate-800 text-white rounded-lg text-[11px] font-bold hover:bg-slate-900 transition-all shadow-md">
+                            <i class="ph-bold ph-polyhedron"></i> Lihat Area Pemetaan
+                        </button>
+                    </div>`;
+                }
+
                 tlHTML += `
                 <div class="timeline-item relative pl-12 pb-6 fade-in">
                     <div class="timeline-line"></div>
@@ -1069,6 +1102,7 @@ const r = {
                         </div>
                         <p class="text-sm text-slate-700 leading-relaxed italic whitespace-pre-wrap">"${r.notes || 'Tidak ada keterangan tambahan.'}"</p>
                         ${mediaHtml}
+                        ${geojsonBtn}
                     </div>
                 </div>`;
             });
@@ -1094,6 +1128,59 @@ const r = {
             document.getElementById('modal-timeline-mobile').classList.add('hidden');
             document.getElementById('modal-timeline-mobile').classList.remove('flex');
         }
+
+
+        let modalMap = null;
+        let geojsonLayer = null;
+        let currentGeojsonData = null;
+
+        function openGeojsonModal(data, kode) {
+            currentGeojsonData = data;
+            const modal = document.getElementById('geojson-modal');
+            document.getElementById('geojson-modal-title').innerText = `Area Detail: ${kode}`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Inisialisasi Peta Modal (Hanya sekali)
+            if (!modalMap) {
+                modalMap = L.map('geojson-map-canvas').setView([0, 0], 2);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19, attribution: 'Esri'
+                }).addTo(modalMap);
+            }
+
+            // Bersihkan layer sebelumnya jika ada
+            if (geojsonLayer) modalMap.removeLayer(geojsonLayer);
+
+            // Tambahkan Poligon Baru
+            geojsonLayer = L.geoJSON(data, {
+                style: { color: "#14b8a6", weight: 3, opacity: 0.8, fillOpacity: 0.35 }
+            }).addTo(modalMap);
+
+            // Zoom ke area poligon
+            setTimeout(() => {
+                modalMap.invalidateSize();
+                modalMap.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+            }, 200);
+        }
+
+        function closeGeojsonModal() {
+            document.getElementById('geojson-modal').classList.add('hidden');
+            document.getElementById('geojson-modal').classList.remove('flex');
+        }
+
+        function exportGeoJSON() {
+            if (!currentGeojsonData) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentGeojsonData));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `PesisirKita_Export_${new Date().getTime()}.geojson`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+
     </script>
 </body>
 </html>
