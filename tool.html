@@ -1235,14 +1235,32 @@ const kamusData =[
             document.getElementById('modal-peta').classList.remove('flex');
         }
 
-        // --- LOGIC SAVE / LOAD GAME (JSON) ---
+// --- LOGIC SAVE / LOAD GAME (JSON) ---
         function exportDataJSON() {
             const data = { reports: reports, ideas: ideas, savedAt: new Date().toISOString() };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            
+            // --- KODE BARU: Penamaan File Dinamis ---
+            // 1. Ambil nama profil. Jika kosong, gunakan "Anonim". Hapus spasi dan ganti dengan underscore (_).
+            let namaTim = userProfile.nama ? userProfile.nama.trim().replace(/\s+/g, '_') : "Anonim";
+            
+            // 2. Buat format tanggal, misal: 11Mei2026
+            const dateObj = new Date();
+            const tgl = dateObj.getDate();
+            const bulanArr =["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+            const bulan = bulanArr[dateObj.getMonth()];
+            const tahun = dateObj.getFullYear();
+            
+            // 3. Rangkai nama file
+            const fileName = `PK_${namaTim}_${tgl}${bulan}${tahun}.json`;
+            // ----------------------------------------
+
             const dlNode = document.createElement('a');
             dlNode.setAttribute("href", dataStr);
-            dlNode.setAttribute("download", "pesisir_savegame.json");
-            document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
+            dlNode.setAttribute("download", fileName);
+            document.body.appendChild(dlNode); 
+            dlNode.click(); 
+            dlNode.remove();
         }
 
         function triggerLoadJSON() {
