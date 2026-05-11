@@ -590,6 +590,7 @@
             flatLatestData = [];
             const uniqueKabupaten = new Set();
             const uniqueKode      = new Set();
+            const processedKeys   = new Set();
 
             rows.forEach(row => {
                 // ── Baca kolom header (persis seperti di Google Sheets) ──────────
@@ -627,7 +628,7 @@
                             || "Waspada";
                     }
 
-                    const r = {
+const r = {
                         kode    : kode,
                         kabupaten: kabKota,
                         pelapor : pelapor,
@@ -647,22 +648,48 @@
                         kategoriAnomali: item.kategoriAnomali || ''
                     };
 
-                    if (!groupedData[kode]) {
-                        groupedData[kode] = { kode, kabupaten: kabKota, history: [] };
+                    // --- KODE BARU UNTUK MENCEGAH DUPLIKASI ---
+                    // Mengambil HANYA tanggalnya saja (YYYY-MM-DD), mengabaikan jam yang berubah-ubah
+                    const dateOnly = r.timestamp.split('T')[0];
+                    
+                    // Kunci unik: Kode + Tanggal + Tipe Laporan + 30 huruf pertama catatan
+                    const uniqueKey = `${kode}_${dateOnly}_${r.type}_${r.notes.substring(0, 30)}`;
+
+                    // Cek apakah data ini sudah pernah dimasukkan sebelumnya
+
+                    if (!processedKeys.has(uniqueKey)) {
+                        processedKeys.add(uniqueKey); // Tandai sebagai sudah diproses
+
+                        // --- KODE BARU: Pisahkan berdasarkan Kode + Tipe Laporan ---
+                        const groupKey = `${kode}_${r.type}`; 
+
+                        if (!groupedData[groupKey]) {
+                            groupedData[groupKey] = { 
+                                groupKey: groupKey,
+                                kode: kode, 
+                                type: r.type, 
+                                kabupaten: kabKota, 
+                                history: [] 
+                            };
+                        }
+                        groupedData[groupKey].history.push(r);
+                        // -----------------------------------------------------------
                     }
-                    groupedData[kode].history.push(r);
+                    // ------------------------------------------
                 });
             });
 
-            // ── Flatten & sort per kode ────────────────────────────────────────
+
+            // ── Flatten & sort per kode dan tipe ───────────────────────────────
             for (let k in groupedData) {
                 groupedData[k].history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
                 const latest = groupedData[k].history[groupedData[k].history.length - 1];
                 uniqueKabupaten.add(groupedData[k].kabupaten);
-                uniqueKode.add(k);
+                uniqueKode.add(groupedData[k].kode); // Ambil kode aslinya
 
                 flatLatestData.push({
-                    kode          : k,
+                    groupKey      : k,                   // Tambahkan ID unik kartu
+                    kode          : groupedData[k].kode, // Tetap gunakan kode asli
                     kabupaten     : groupedData[k].kabupaten,
                     latestTimestamp: latest.timestamp,
                     status        : latest.status,
@@ -901,16 +928,18 @@
                     else if (st.includes('waspada') || st.includes('perhatian')) clr = 'amber';
                 }
                 const dDate    = new Date(obj.latestTimestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                const isActive = activeKodeId === obj.kode;
+
+                // --- KODE BARU: Gunakan groupKey dan tambahkan Label Tipe di Judul ---
+                const isActive = activeKodeId === obj.groupKey;
 
                 htmlStr += `
-                <div onclick="openTimeline('${obj.kode}', this)" class="obj-card bg-white border-2 ${isActive ? 'border-teal-500 active' : 'border-slate-200'} rounded-xl p-4 hover:border-teal-300 cursor-pointer flex items-center gap-3 group">
+                <div onclick="openTimeline('${obj.groupKey}', this)" class="obj-card bg-white border-2 ${isActive ? 'border-teal-500 active' : 'border-slate-200'} rounded-xl p-4 hover:border-teal-300 cursor-pointer flex items-center gap-3 group">
                     <div class="w-12 h-12 rounded-xl bg-${clr}-50 text-${clr}-600 flex items-center justify-center shrink-0 border border-${clr}-100">
                         <i class="ph-fill ${typeInfo.icon} text-2xl"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-0.5 flex-wrap">
-                            <h3 class="font-bold text-slate-800 truncate">${obj.kode}</h3>
+                            <h3 class="font-bold text-slate-800 truncate">${obj.kode} - ${typeInfo.label}</h3>
                             <span class="status-pill bg-${clr}-50 text-${clr}-700 border border-${clr}-200 shrink-0">${obj.status}</span>
                             ${obj.historyCount > 1 ? `<span class="text-[9px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${obj.historyCount} Log</span>` : ''}
                         </div>
@@ -922,12 +951,13 @@
                         <i class="ph-bold ph-caret-right text-slate-400 group-hover:text-white"></i>
                     </div>
                 </div>`;
+
             });
             container.innerHTML = htmlStr;
         }
 
-        function openTimeline(kode, cardEl) {
-            activeKodeId = kode;
+        function openTimeline(groupKey, cardEl) {
+            activeKodeId = groupKey;
             document.querySelectorAll('.obj-card').forEach(c => {
                 c.classList.remove('active', 'border-teal-500');
                 c.classList.add('border-slate-200');
@@ -937,12 +967,13 @@
                 cardEl.classList.remove('border-slate-200');
             }
 
-            const rData = groupedData[kode];
+            const rData = groupedData[groupKey];
             if (!rData) return;
 
-            document.getElementById('tl-kode-nama').innerText       = rData.kode;
+            const typeLabel = typeConfig[rData.type] ? typeConfig[rData.type].label : 'Laporan';
+            document.getElementById('tl-kode-nama').innerText       = `${rData.kode} - ${typeLabel}`;
             document.getElementById('tl-lokasi-nama').innerHTML      = `<i class="ph-bold ph-map-pin"></i> ${rData.kabupaten}`;
-            document.getElementById('tl-kode-nama-mobile').innerText = rData.kode;
+            document.getElementById('tl-kode-nama-mobile').innerText = `${rData.kode} - ${typeLabel}`;
             document.getElementById('tl-lokasi-nama-mobile').innerText = rData.kabupaten;
 
             const historyDesc = [...rData.history].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
