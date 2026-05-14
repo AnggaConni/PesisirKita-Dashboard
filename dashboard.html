@@ -242,50 +242,76 @@
 
             <div class="flex-1 overflow-y-auto p-4 md:p-6">
 
-                <!-- METRIC CARDS -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-5">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+<!-- METRIC CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-5">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-teal-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
                         <div class="relative">
-                            <div class="w-10 h-10 gradient-brand rounded-xl flex items-center justify-center shadow-md shadow-teal-500/30 mb-3">
-                                <i class="ph-fill ph-map-pin text-xl text-white"></i>
+                            <div class="w-9 h-9 gradient-brand rounded-xl flex items-center justify-center shadow-md shadow-teal-500/30 mb-2">
+                                <i class="ph-fill ph-map-pin text-lg text-white"></i>
                             </div>
-                            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Titik Kode</p>
-                            <h3 class="text-3xl font-black text-slate-800 mt-1" id="stat-titik">0</h3>
-                            <p class="text-xs text-slate-400 mt-1">lokasi terpantau</p>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Titik Pantau</p>
+                            <h3 class="text-2xl font-black text-slate-800 mt-0.5" id="stat-titik">0</h3>
+                            <p class="text-[10px] text-slate-400">lokasi terkumpul</p>
                         </div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
                         <div class="relative">
-                            <div class="w-10 h-10 gradient-emerald rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/30 mb-3">
-                                <i class="ph-fill ph-shield-check text-xl text-white"></i>
+                            <div class="w-9 h-9 gradient-emerald rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/30 mb-2">
+                                <i class="ph-fill ph-shield-check text-lg text-white"></i>
                             </div>
-                            <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Kondisi Aman</p>
-                            <h3 class="text-3xl font-black text-emerald-700 mt-1" id="stat-aman">0</h3>
-                            <p class="text-xs text-slate-400 mt-1">titik aman terkini</p>
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Kondisi Aman</p>
+                            <h3 class="text-2xl font-black text-emerald-700 mt-0.5" id="stat-aman">0</h3>
+                            <p class="text-[10px] text-slate-400">titik aman terkini</p>
                         </div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
                         <div class="relative">
-                            <div class="w-10 h-10 gradient-red rounded-xl flex items-center justify-center shadow-md shadow-red-500/30 mb-3">
-                                <i class="ph-fill ph-warning-octagon text-xl text-white"></i>
+                            <div class="w-9 h-9 gradient-red rounded-xl flex items-center justify-center shadow-md shadow-red-500/30 mb-2">
+                                <i class="ph-fill ph-warning-octagon text-lg text-white"></i>
                             </div>
-                            <p class="text-[11px] font-bold text-red-500 uppercase tracking-wider">Status Waspada</p>
-                            <h3 class="text-3xl font-black text-red-600 mt-1" id="stat-kritis">0</h3>
-                            <p class="text-xs text-slate-400 mt-1">butuh perhatian segera</p>
+                            <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider">Waspada/Kritis</p>
+                            <h3 class="text-2xl font-black text-red-600 mt-0.5" id="stat-kritis">0</h3>
+                            <p class="text-[10px] text-slate-400">butuh perhatian</p>
                         </div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
                         <div class="relative">
-                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/30 mb-3">
-                                <i class="ph-fill ph-database text-xl text-white"></i>
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/30 mb-2">
+                                <i class="ph-fill ph-database text-lg text-white"></i>
                             </div>
-                            <p class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Total Jejak Log</p>
-                            <h3 class="text-3xl font-black text-indigo-700 mt-1" id="stat-logs">0</h3>
-                            <p class="text-xs text-slate-400 mt-1">riwayat historis terkumpul</p>
+                            <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Total Data</p>
+                            <h3 class="text-2xl font-black text-indigo-700 mt-0.5" id="stat-logs">0</h3>
+                            <p class="text-[10px] text-slate-400">riwayat log terekam</p>
+                        </div>
+                    </div>
+                    
+                    <!-- KARTU BARU: KARBON -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-green-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30 mb-2">
+                                <i class="ph-fill ph-leaf text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-green-600 uppercase tracking-wider">Potensi Karbon</p>
+                            <h3 class="text-2xl font-black text-green-700 mt-0.5 whitespace-nowrap"><span id="stat-karbon">0</span> <span class="text-xs font-semibold text-slate-400 ml-0.5">Kg</span></h3>
+                            <p class="text-[10px] text-slate-400">CO₂ diserap/tahun</p>
+                        </div>
+                    </div>
+                    
+                    <!-- KARTU BARU: BIOMASSA -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/30 mb-2">
+                                <i class="ph-fill ph-fish text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Stok Biomassa</p>
+                            <h3 class="text-2xl font-black text-blue-700 mt-0.5 whitespace-nowrap"><span id="stat-biomassa">0</span> <span class="text-xs font-semibold text-slate-400 ml-0.5">Kg</span></h3>
+                            <p class="text-[10px] text-slate-400">estimasi ekstrapolasi</p>
                         </div>
                     </div>
                 </div>
@@ -397,14 +423,17 @@
                                     <option value="Aman">✅ Aman / Terkendali</option>
                                     <option value="Waspada">⚠️ Waspada / Kritis</option>
                                 </select>
+
                                 <select id="filter-tipe" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
                                     <option value="ALL">📂 Semua Jenis Laporan</option>
                                     <option value="cleanup">Pembersihan</option>
                                     <option value="planting">Penanaman</option>
                                     <option value="observation">Observasi</option>
                                     <option value="early_warning">Early Warning</option>
+                                    <option value="biomassa">🐟 Sensus Biomassa</option> <!-- Opsi Baru -->
                                     <option value="idea">💡 Ide / Solusi</option>
                                 </select>
+
                             </div>
                         </div>
 
@@ -515,13 +544,15 @@
         let map            = null;
         let mapLayer       = null;
 
+
         const typeConfig = {
             'cleanup'      : { label: 'Pembersihan',         icon: 'ph-trash',           color: 'orange'  },
             'planting'     : { label: 'Penanaman',           icon: 'ph-plant',            color: 'emerald' },
             'observation'  : { label: 'Observasi',           icon: 'ph-binoculars',       color: 'blue'    },
             'early_warning': { label: 'Early Warning',       icon: 'ph-warning-octagon',  color: 'red'     },
             'patroli'      : { label: 'Patroli / Observasi', icon: 'ph-binoculars',       color: 'blue'    },
-            'idea'         : { label: 'Ide & Solusi',        icon: 'ph-lightbulb',        color: 'purple'  }
+            'idea'         : { label: 'Ide & Solusi',        icon: 'ph-lightbulb',        color: 'purple'  },
+            'biomassa'     : { label: 'Sensus Biomassa',     icon: 'ph-scales',           color: 'indigo'  } // Opsi Baru
         };
 
         // ─── Media Helper ──────────────────────────────────────────────────────
@@ -668,6 +699,7 @@
                             areaHa  : item.areaHa || '',
                             urgensi : item.urgensi || '',
                             kategoriAnomali: item.kategoriAnomali || '',
+                            biomassData: item.biomassData || null, // <--- TAMBAH INI
                             geojson : item.geojson || null
                         };
 
@@ -746,7 +778,8 @@
                     notes         : latest.notes,
                     lat           : latest.lat,
                     lng           : latest.lng,
-                    historyCount  : groupedData[k].history.length
+                    historyCount  : groupedData[k].history.length,
+                    history       : groupedData[k].history
                 });
             }
 
@@ -814,12 +847,32 @@
             mapLayer.clearLayers();
 
             let tTitik = 0, tAman = 0, tWaspada = 0, tKritis = 0, tLog = 0;
+            let tKarbon = 0, tBiomassa = 0;
 
             flatLatestData.forEach(obj => {
                 if (selectedKab  !== 'ALL' && obj.kabupaten !== selectedKab)  return;
                 if (selectedKode !== 'ALL' && obj.kode      !== selectedKode) return;
                 tTitik++;
                 tLog += obj.historyCount;
+
+                                // --- KALKULASI KARBON & BIOMASSA (TERMASUK EKSTRAPOLASI GIS) ---
+                obj.history.forEach(h => {
+                    // Hitung Total Karbon (1 Pohon = 12 Kg CO2)
+                    if (h.type === 'planting' && h.bibit) tKarbon += (parseInt(h.bibit) * 12);
+                    
+                    // Hitung Total Biomassa Ekstrapolasi
+                    if (h.type === 'biomassa' && h.biomassData && h.biomassData.estimasiBerat) {
+                        let berat = parseFloat(h.biomassData.estimasiBerat);
+                        if (h.biomassData.metode === 'Belt Transect' && h.areaHa && parseFloat(h.areaHa) > 0) {
+                            const areaSampling = (parseFloat(h.biomassData.transekP) * parseFloat(h.biomassData.transekL)) / 10000;
+                            if (areaSampling > 0) {
+                                const kepadatan = berat / areaSampling;
+                                berat = kepadatan * parseFloat(h.areaHa); // Konversi ke Total Estimasi GIS
+                            }
+                        }
+                        tBiomassa += berat;
+                    }
+                });
 
                 let mapColor = '#10b981';
                 const st = (obj.status || '').toLowerCase();
@@ -853,6 +906,13 @@
                     mapLayer.addLayer(marker);
                 }
             });
+
+            // TAMPILKAN ANGKA KE LAYAR (Taruh sebelum L.featureGroup)
+            document.getElementById('stat-karbon').innerText = tKarbon.toLocaleString('id-ID');
+            
+            // Format Biomassa agar ramah baca (jika > 1000 kg, jadi misal "7.5K")
+            let textBio = tBiomassa > 1000 ? (tBiomassa / 1000).toFixed(1) + " Ribu" : tBiomassa.toFixed(1);
+            document.getElementById('stat-biomassa').innerText = textBio;
 
             document.getElementById('stat-titik').innerText = tTitik;
             document.getElementById('stat-aman').innerText  = tAman;
@@ -1104,9 +1164,27 @@
                 // Extra badge
                 let extraBadge = '';
                 if (r.type === 'cleanup' && r.amount) extraBadge = `<span class="bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.amount} Kg</span>`;
-                if (r.type === 'planting' && r.bibit) extraBadge  = `<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.bibit} Bibit · ${r.jenis || ''}</span>`;
-                if (r.type === 'early_warning')        extraBadge  = `<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.kategoriAnomali || ''}</span>`;
-
+                
+                // Badge Penanaman (Suntik Info CO2)
+                if (r.type === 'planting' && r.bibit) {
+                    const co2 = parseInt(r.bibit) * 12;
+                    extraBadge = `<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2"><i class="ph-bold ph-leaf"></i> ${r.bibit} Bibit (${co2} Kg CO₂)</span>`;
+                }
+                
+                if (r.type === 'early_warning') extraBadge = `<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.kategoriAnomali || ''}</span>`;
+                
+                // Badge Sensus Biomassa (Kepadatan & Famili)
+                if (r.type === 'biomassa' && r.biomassData) {
+                    const bio = r.biomassData;
+                    let kepadatanStr = "";
+                    if (bio.metode === 'Belt Transect') {
+                        const area = (parseFloat(bio.transekP) * parseFloat(bio.transekL)) / 10000;
+                        if (area > 0) kepadatanStr = ` · ${(parseFloat(bio.estimasiBerat)/area).toFixed(1)} Kg/Ha`;
+                    } else if (r.areaHa && parseFloat(r.areaHa) > 0) {
+                        kepadatanStr = ` · ${(parseFloat(bio.estimasiBerat)/parseFloat(r.areaHa)).toFixed(1)} Kg/Ha`;
+                    }
+                    extraBadge = `<span class="bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2"><i class="ph-bold ph-fish"></i> ${bio.estimasiBerat} Kg${kepadatanStr} · ${bio.spesies.split(' ')[0]}</span>`;
+                }
                 // Cek apakah ada data GeoJSON
                 let geojsonBtn = '';
                 if (r.geojson && r.geojson.geometry) {
@@ -1144,6 +1222,7 @@
                     </div>
                 </div>`;
             });
+
             tlHTML += '</div>';
 
             document.getElementById('tl-history-list').innerHTML        = tlHTML;
