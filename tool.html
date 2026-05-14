@@ -305,15 +305,34 @@
 
                 <!-- 2. KALKULATOR -->
                 <section id="view-kalkulator" class="view-section space-y-6">
-                    <!-- Toggle Kalkulator (3 Opsi) -->
-                    <div class="grid grid-cols-3 gap-1 bg-gray-200 p-1 rounded-xl mb-4 text-center">
-                        <button onclick="setCalcMode('karbon')" id="tab-karbon" class="py-2 px-1 md:py-3 text-[10px] md:text-sm font-semibold rounded-lg bg-white shadow-sm text-teal-700 transition-colors">Karbon Biru</button>
-                        <button onclick="setCalcMode('tanam')" id="tab-tanam" class="py-2 px-1 md:py-3 text-[10px] md:text-sm font-semibold rounded-lg text-gray-500 transition-colors">Perlu Tanam</button>
-                        <button onclick="setCalcMode('sampah')" id="tab-sampah" class="py-2 px-1 md:py-3 text-[10px] md:text-sm font-semibold rounded-lg text-gray-500 transition-colors">Urai Sampah</button>
+                    <!-- TAB TOGGLE KALKULATOR -->
+                    <div class="bg-slate-100/80 backdrop-blur-sm p-1.5 rounded-2xl grid grid-cols-2 gap-1.5 border border-slate-200 shadow-inner mb-6">
+                        
+                        <!-- Tab: Karbon Biru -->
+                        <button onclick="switchCalcTab('karbon')" id="btn-tab-karbon" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
+                            <i class="ph-bold ph-plant"></i> Karbon Biru
+                        </button>
+                        
+                        <!-- Tab: Perlu Tanam -->
+                        <button onclick="switchCalcTab('tanam')" id="btn-tab-tanam" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
+                            <i class="ph-bold ph-tree-palm"></i> Perlu Tanam
+                        </button>
+                        
+                        <!-- Tab: Urai Sampah -->
+                        <button onclick="switchCalcTab('sampah')" id="btn-tab-sampah" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
+                            <i class="ph-bold ph-trash"></i> Urai Sampah
+                        </button>
+                        
+                        <!-- Tab: Biomassa (Default Active State) -->
+                        <!-- Perhatikan class aktifnya: bg-white, text-indigo-600, shadow-sm -->
+                        <button onclick="switchCalcTab('biomassa')" id="btn-tab-biomassa" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-bold bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5 transition-all duration-200">
+                            <i class="ph-bold ph-fish"></i> Biomassa
+                        </button>
+
                     </div>
 
                     <!-- Mode Karbon -->
-                    <div id="calc-karbon" class="space-y-4">
+                    <div id="calc-karbon" class="hidden space-y-4">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <h3 class="font-bold text-gray-800 mb-2">Simulasi Serapan Karbon</h3>
                             <p class="text-sm text-gray-500 mb-6">Berapa banyak bibit mangrove yang kelompokmu tanam hari ini?</p>
@@ -467,6 +486,46 @@
                             </div>
                         </div>
                     </div>
+
+
+                <!-- Mode Biomassa Karang -->
+                <div id="calc-biomassa" class="space-y-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+                        <!-- Ornamen background halus di card putih -->
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl opacity-60"></div>
+                        
+                        <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2 relative z-10"><i class="ph-fill ph-scales text-indigo-500 text-xl"></i> Estimasi Biomassa Karang</h3>
+                        <p class="text-xs text-gray-500 mb-6 relative z-10">Hitung berat (modal energi) ekosistem menggunakan rumus empiris alometrik.</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-2 relative z-10">
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Rata Panjang (cm)</label>
+                                <input type="number" id="input-bio-panjang" value="25" oninput="hitungBiomassaKalkulator()" class="w-full bg-transparent border-b-2 border-indigo-200 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-center text-3xl pb-1" min="1">
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Jumlah Ikan</label>
+                                <input type="number" id="input-bio-jumlah" value="5" oninput="hitungBiomassaKalkulator()" class="w-full bg-transparent border-b-2 border-gray-300 focus:border-gray-500 outline-none font-bold text-gray-700 text-center text-3xl pb-1" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-indigo-600 to-blue-800 rounded-2xl p-6 text-white shadow-md text-center relative overflow-hidden">
+                        <!-- Ikon dibesarkan sedikit dan digeser agar tidak nabrak teks -->
+                        <i class="ph-fill ph-fish text-[120px] absolute -top-4 -right-4 opacity-10 transform -rotate-12"></i>
+                        
+                        <h4 class="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2 z-10 relative">Estimasi Total Biomassa</h4>
+                        <div class="text-6xl font-black my-4 z-10 relative drop-shadow-md"><span id="lbl-bio-hasil">1.17</span> <span class="text-2xl font-medium text-indigo-100">Kg</span></div>
+                        
+                        <div class="bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 mt-6 text-xs text-left z-10 relative shadow-inner">
+                            <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-widest mb-2 flex items-center gap-1 border-b border-indigo-500/50 pb-2"><i class="ph-bold ph-math-operations"></i> Arsitektur Rumus Alometrik</p>
+                            <div class="flex items-center justify-center gap-3 my-3">
+                                <span class="font-mono text-lg font-bold bg-white/10 px-3 py-1 rounded">W = aL<sup>b</sup></span>
+                            </div>
+                            <p class="text-indigo-100 mt-2 leading-relaxed text-[10px]">Menggunakan standar ikan kakatua (Parrotfish): Konstanta <strong class="text-white bg-indigo-500 px-1 rounded">a = 0.015</strong> dan eksponen <strong class="text-white bg-indigo-500 px-1 rounded">b = 3.0</strong>. W adalah berat dalam gram, lalu dikonversi ke Kg.</p>
+                        </div>
+                    </div>
+                </div>
+
                 </section>
 
                 <!-- 3. LAPANGAN (DATA KOLEKSI) -->
@@ -510,6 +569,7 @@
                                     <option value="cleanup">Pembersihan Sampah Pesisir</option>
                                     <option value="planting">Penanaman Mangrove</option> 
                                     <option value="observation">Observasi Ekosistem Rutin</option>
+                                    <option value="biomassa">Sensus Visual Biomassa (UVC)</option>
                                     <option value="early_warning" class="text-red-600 font-bold">🚨 Lapor Anomali / Early Warning</option>
                                 </select>
 
@@ -638,6 +698,80 @@
                             </div>
                         </div>
 
+
+<!-- KOTAK KHUSUS BIOMASSA (UVC) -->
+                        <div id="input-biomass-container" style="display: none;" class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 space-y-3">
+                            
+                            <!-- UPGRADE EKSTRAPOLASI GIS -->
+                            <div class="grid grid-cols-2 gap-3 mb-2 pb-3 border-b border-indigo-200/60">
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Metode Pengamatan</label>
+                                    <select id="form-bio-metode" onchange="toggleTransekInputs(); autoHitungBiomassaForm();" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium">
+                                        <option value="Belt Transect">Belt Transect (Ekstrapolasi)</option>
+                                        <option value="Roaming">Jelajah Bebas (GIS Area)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Kedalaman (Depth)</label>
+                                    <select id="form-bio-kedalaman" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium">
+                                        <option value="Dangkal (3-5m)">Dangkal (3 - 5 Meter)</option>
+                                        <option value="Sedang (8-10m)">Sedang (8 - 10 Meter)</option>
+                                        <option value="Dalam (>12m)">Dalam (> 12 Meter)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- KOTAK DIMENSI TRANSEK (Muncul Jika Pilih Belt Transect) -->
+                            <div id="transek-dimensions" class="grid grid-cols-2 gap-3 mb-2 pb-3 border-b border-indigo-200/60">
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Panjang Transek (m)</label>
+                                    <input type="number" id="form-bio-transek-p" value="50" oninput="autoHitungBiomassaForm()" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs text-center font-bold shadow-sm" />
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Lebar Transek (m)</label>
+                                    <input type="number" id="form-bio-transek-l" value="5" oninput="autoHitungBiomassaForm()" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs text-center font-bold shadow-sm" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] font-bold text-indigo-800 uppercase">Kategori Fungsional (Famili Utama)</label>
+                                <select id="form-bio-spesies" onchange="autoHitungBiomassaForm()" class="w-full mt-1 p-3 bg-white border border-indigo-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                    <optgroup label="1. Ikan Indikator (Kesehatan Karang)">
+                                        <option value="Indikator (Chaetodontidae)">Chaetodontidae (Kepe-kepe)</option>
+                                    </optgroup>
+                                    <optgroup label="2. Ikan Target (Tekanan Tangkap)">
+                                        <option value="Target (Serranidae)">Serranidae (Kerapu)</option>
+                                        <option value="Target (Lutjanidae)">Lutjanidae (Kakap)</option>
+                                        <option value="Target (Lethrinidae)">Lethrinidae (Lencam)</option>
+                                    </optgroup>
+                                    <optgroup label="3. Ikan Herbivora & Mayor">
+                                        <option value="Herbivora (Scaridae)">Scaridae (Kakatua)</option>
+                                        <option value="Herbivora (Acanthuridae)">Acanthuridae (Botana)</option>
+                                        <option value="Mayor (Caesionidae)">Caesionidae (Ekor Kuning)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-2 items-end">
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Rata Pnjg (cm)</label>
+                                    <input type="number" step="0.1" id="form-bio-panjang" oninput="autoHitungBiomassaForm()" placeholder="Misal: 30" class="w-full mt-1 p-2.5 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center text-indigo-700 shadow-sm" />
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Jumlah Ekor</label>
+                                    <input type="number" id="form-bio-jumlah" oninput="autoHitungBiomassaForm()" placeholder="Berapa?" class="w-full mt-1 p-2.5 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center text-gray-700 shadow-sm" />
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Total (Kg)</label>
+                                    <input type="number" step="0.01" id="form-bio-berat" placeholder="Otomatis" readonly class="w-full mt-1 p-2.5 bg-indigo-200/50 border border-indigo-300 rounded-lg outline-none text-sm font-black text-center text-indigo-900 cursor-not-allowed shadow-inner" />
+                                </div>
+                            </div>
+                            
+                            <div id="info-kepadatan-bio" class="hidden mt-2 p-3 bg-white/80 border border-indigo-200 rounded-lg text-xs text-indigo-800 shadow-sm transition-all"></div>
+                        </div>
+
+
+                        <!-- KOTAK KHUSUS SAMPAH -->
                             <div id="input-amount-container">
                                 <label class="text-xs font-bold text-gray-500 uppercase">Total Sampah Terkumpul (Kg)</label>
                                 <input type="number" id="form-amount" placeholder="Contoh: 15" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500" required />
@@ -1123,7 +1257,7 @@ const kamusData =[
             setTimeout(() => { if(mapTanam) mapTanam.invalidateSize(); }, 200);
         }
 
-// --- Logic Peta Lapangan (Fullscreen ke Inline) ---
+        // --- Logic Peta Lapangan (Fullscreen ke Inline) ---
         function initMapLapangan() {
             if (mapLapangan) { mapLapangan.invalidateSize(); mapLapangan.locate({setView: true, maxZoom: 18}); return; }
             drawnItemsLapangan = new L.FeatureGroup();
@@ -1134,6 +1268,9 @@ const kamusData =[
                 document.getElementById('form-area-ha').value = areaHectares;
                 document.getElementById('form-area-status').innerText = `${areaHectares} Hektar`;
                 document.getElementById('form-area-status').className = 'text-xs text-green-600 font-bold';
+                
+                // Trigger Kalkulator Biomassa
+                if (document.getElementById('form-type').value === 'biomassa') autoHitungBiomassaForm();
             });
 
             mapLapangan.on(L.Draw.Event.DRAWSTART, function (e) {
@@ -1142,9 +1279,10 @@ const kamusData =[
                 document.getElementById('form-area-ha').value = 0;
                 document.getElementById('form-area-status').innerText = '0 Hektar';
                 document.getElementById('form-area-status').className = 'text-xs text-blue-600 font-medium';
+                
+                if (document.getElementById('form-type').value === 'biomassa') autoHitungBiomassaForm();
             });
 
-            // TAMBAHAN: Update Hektar saat peta DIEDIT
             mapLapangan.on(L.Draw.Event.EDITED, function (e) {
                 const layers = drawnItemsLapangan.getLayers();
                 if (layers.length > 0) {
@@ -1153,15 +1291,18 @@ const kamusData =[
                     document.getElementById('form-area-ha').value = areaHectares;
                     document.getElementById('form-area-status').innerText = `${areaHectares} Hektar`;
                     document.getElementById('form-area-status').className = 'text-xs text-green-600 font-bold';
+                    
+                    if (document.getElementById('form-type').value === 'biomassa') autoHitungBiomassaForm();
                 }
             });
 
-            // TAMBAHAN: Reset Hektar saat peta DIHAPUS
             mapLapangan.on(L.Draw.Event.DELETED, function (e) {
                 currentGeoJSONLapangan = null;
                 document.getElementById('form-area-ha').value = 0;
                 document.getElementById('form-area-status').innerText = '0 Hektar';
                 document.getElementById('form-area-status').className = 'text-xs text-blue-600 font-medium';
+                
+                if (document.getElementById('form-type').value === 'biomassa') autoHitungBiomassaForm();
             });
         }
 
@@ -1338,6 +1479,20 @@ function loadSampleData() {
                 "geometry": { "type": "Polygon", "coordinates": [[[117.563152,-0.647257],[117.563496,-0.64701],[117.563592,-0.647697],[117.563528,-0.648394],[117.563367,-0.648662],[117.563034,-0.648694],[117.563292,-0.648973],[117.56297,-0.64981],[117.562433,-0.649424],[117.562047,-0.649574],[117.562112,-0.649252],[117.562702,-0.647944],[117.562873,-0.647493],[117.563152,-0.647257]]] }
             };
 
+
+            const sampleGeoJSONBio1 = {
+                "type": "Feature", "properties": {},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[110.414057,-5.846922],[110.41455,-5.84688],[110.414851,-5.846474],[110.415022,-5.8461],[110.415623,-5.846335],[110.41557,-5.847146],[110.415763,-5.847413],[110.416406,-5.847669],[110.416653,-5.847872],[110.416245,-5.848032],[110.416203,-5.848747],[110.417275,-5.849068],[110.417919,-5.849815],[110.417082,-5.850348],[110.416074,-5.850455],[110.415258,-5.850476],[110.4144,-5.850711],[110.413778,-5.850562],[110.413713,-5.850242],[110.41425,-5.849388],[110.414422,-5.848384],[110.414679,-5.848192],[110.414701,-5.848],[110.414314,-5.848011],[110.414057,-5.847936],[110.413896,-5.84768],[110.414186,-5.847627],[110.414186,-5.84736],[110.414014,-5.847157],[110.414057,-5.846922]]]
+                }
+            };
+
+            const sampleGeoJSONBio2 = {
+                "type": "Feature", "properties": {},
+                "geometry": { "type": "Polygon", "coordinates": [[[106.591,-5.711],[106.593,-5.711],[106.592,-5.713],[106.591,-5.711]]] }
+            };
+
             const now = Date.now();
             
             // 1. Data Laporan Lapangan
@@ -1406,6 +1561,50 @@ function loadSampleData() {
                             tinggi: '45',
                             hujan: false,
                             berulang: true
+                        }
+                    }, // Jangan lupa koma jika menaruhnya setelah objek laporan sebelumnya
+                    { 
+                        id: now - 4000, 
+                        timestamp: new Date(now - 345600000).toISOString(), 
+                        type: 'biomassa', 
+                        amount: '', 
+                        notes: 'Sensus UVC dilakukan di lereng karang (reef slope) Taman Nasional Karimunjawa dengan kemiringan 45 derajat. Rugosity (kekasaran) karang sangat tinggi, didominasi oleh karang bercabang (Acropora) dan karang masif (Porites). Arus sedang. Pencatatan difokuskan pada famili Scaridae (Kakatua) yang terlihat aktif memakan turf algae. Kondisi ekosistem sangat sehat dan terjaga.', 
+                        lat: '-5.8480', // Disesuaikan dengan centroid poligon
+                        lng: '110.4150', // Disesuaikan dengan centroid poligon
+                        areaHa: '12.075', 
+                        geojson: sampleGeoJSONBio1, 
+                        photo: null, 
+                        biomassData: {
+                            metode: 'Belt Transect',
+                            kedalaman: 'Dangkal (3-5m)',
+                            transekP: 50,
+                            transekL: 5,
+                            spesies: 'Herbivora (Scaridae)',
+                            panjang: 35,
+                            jumlah: 25,
+                            estimasiBerat: 16.08
+                        }
+                    },
+                    { 
+                        id: now - 5000, 
+                        timestamp: new Date(now - 432000000).toISOString(), 
+                        type: 'biomassa', 
+                        amount: '', 
+                        notes: 'Sensus UVC di perairan Kepulauan Seribu (area zona pemanfaatan). Kondisi tutupan karang hidup sangat rendah (< 20%), didominasi pecahan karang (rubble) akibat indikasi destructive fishing di masa lalu. Sangat jarang ditemukan ikan predator puncak. Kerapu (Serranidae) yang tercatat rata-rata berukuran kecil (juvenile) yang bersembunyi di sela-sela rubble. Mengindikasikan overfishing kronis.', 
+                        lat: '-5.7120', 
+                        lng: '106.5920', 
+                        areaHa: '1.20', // GIS Area
+                        geojson: sampleGeoJSONBio2, 
+                        photo: null, 
+                        biomassData: {
+                            metode: 'Belt Transect',
+                            kedalaman: 'Sedang (8-10m)',
+                            transekP: 50,
+                            transekL: 5,
+                            spesies: 'Target (Serranidae)',
+                            panjang: 18,
+                            jumlah: 4,
+                            estimasiBerat: 0.35
                         }
                     }
                 ];
@@ -1509,20 +1708,25 @@ function loadSampleData() {
         }
 
         // --- 4. KALKULATOR LOGIC ---
-        function setCalcMode(mode) {
-            ['karbon', 'tanam', 'sampah'].forEach(t => {
-                const btn = document.getElementById('tab-' + t); const view = document.getElementById('calc-' + t);
+        function switchCalcTab(mode) {
+            ['karbon', 'tanam', 'sampah', 'biomassa'].forEach(t => {
+                const btn = document.getElementById('btn-tab-' + t);
+                const view = document.getElementById('calc-' + t);
+
                 if (t === mode) {
-                    btn.className = "py-2 px-1 md:py-3 text-[10px] md:text-sm font-semibold rounded-lg bg-white shadow-sm text-teal-700 transition-colors";
+                    // Style untuk tab AKTIF
+                    btn.className = "calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-bold bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5 transition-all duration-200";
                     view.classList.remove('hidden');
                 } else {
-                    btn.className = "py-2 px-1 md:py-3 text-[10px] md:text-sm font-semibold rounded-lg text-gray-500 transition-colors";
+                    // Style untuk tab TIDAK AKTIF
+                    btn.className = "calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200";
                     view.classList.add('hidden');
                 }
             });
         }
 
-function hitungKarbon() {
+
+        function hitungKarbon() {
             const jml = parseInt(document.getElementById('input-pohon').value) || 0;
             const co2 = jml * 12; // 1 pohon ~ 12kg co2/tahun
             
@@ -1571,6 +1775,126 @@ function hitungKarbon() {
             }
 
         // --- KALKULATOR URAI SAMPAH (KUMULATIF) ---
+
+        function hitungBiomassaKalkulator() {
+            const panjang = parseFloat(document.getElementById('input-bio-panjang').value) || 0;
+            const jumlah = parseFloat(document.getElementById('input-bio-jumlah').value) || 0;
+            // Rumus alometrik standar Herbivora Karang (a=0.015, b=3.0) -> Hasil dalam gram
+            const beratGram = 0.015 * Math.pow(panjang, 3.0) * jumlah;
+            const beratKg = (beratGram / 1000).toFixed(2);
+            document.getElementById('lbl-bio-hasil').innerText = beratKg;
+        }
+
+
+        function toggleTransekInputs() {
+            const metode = document.getElementById('form-bio-metode').value;
+            const transekBox = document.getElementById('transek-dimensions');
+            if(transekBox) {
+                transekBox.style.display = (metode === 'Belt Transect') ? 'grid' : 'none';
+            }
+        }
+
+        // --- AUTO CALCULATE DI FORM LAPANGAN ---
+        function autoHitungBiomassaForm() {
+            const spesies = document.getElementById('form-bio-spesies').value;
+            const panjang = parseFloat(document.getElementById('form-bio-panjang').value) || 0;
+            const jumlah = parseInt(document.getElementById('form-bio-jumlah').value) || 0;
+            
+            const elMetode = document.getElementById('form-bio-metode');
+            const metode = elMetode ? elMetode.value : 'Belt Transect'; 
+            
+            let a = 0.015; let b = 3.0; // Default
+            if (spesies.includes('Serranidae')) { a = 0.011; b = 3.1; } 
+            else if (spesies.includes('Lutjanidae')) { a = 0.017; b = 3.0; }
+            else if (spesies.includes('Lethrinidae')) { a = 0.014; b = 3.04; }
+            else if (spesies.includes('Chaetodontidae')) { a = 0.022; b = 2.9; }
+            else if (spesies.includes('Scaridae')) { a = 0.015; b = 3.0; }
+            else if (spesies.includes('Acanthuridae')) { a = 0.016; b = 3.0; }
+            else if (spesies.includes('Caesionidae')) { a = 0.012; b = 3.1; }
+            
+            // Hitung Berat Kg Ikan (Mentah)
+            const beratGram = a * Math.pow(panjang, b) * jumlah;
+            const beratKg = (beratGram / 1000);
+            document.getElementById('form-bio-berat').value = beratKg > 0 ? beratKg.toFixed(2) : '';
+
+            // AMBIL LUAS AREA GIS & TRANSEK
+            const areaGIS = parseFloat(document.getElementById('form-area-ha').value) || 0;
+            let areaSamplingHa = 0;
+            let sumberArea = "";
+            let kepadatan = 0;
+
+            const infoBox = document.getElementById('info-kepadatan-bio');
+            if(!infoBox) return;
+            
+            // KALKULASI NORMALISASI (Area Basis)
+            if (metode === 'Belt Transect') {
+                const p = parseFloat(document.getElementById('form-bio-transek-p').value) || 50;
+                const l = parseFloat(document.getElementById('form-bio-transek-l').value) || 5;
+                areaSamplingHa = (p * l) / 10000; // Konversi m2 ke Hektar
+                sumberArea = `Transek Sabuk (${p}x${l}m = ${areaSamplingHa} Ha)`;
+            } else {
+                areaSamplingHa = areaGIS; // Langsung tembak luas GIS
+                sumberArea = `Area Peta GIS (${areaSamplingHa} Ha)`;
+            }
+
+            if (areaSamplingHa > 0 && beratKg > 0) {
+                kepadatan = (beratKg / areaSamplingHa).toFixed(2);
+                
+                let statusKesehatan = kepadatan > 300 ? "Sangat Baik (Sehat)" : (kepadatan >= 100 ? "Sedang (Rentan)" : "Buruk (Terdegradasi)");
+                let warnaStatus = kepadatan > 300 ? "bg-green-100 text-green-800 border-green-300" : (kepadatan >= 100 ? "bg-yellow-100 text-yellow-800 border-yellow-300" : "bg-red-100 text-red-800 border-red-300");
+
+                // ==========================================
+                // EKSTRAPOLASI KE PETA GIS
+                // ==========================================
+                let htmlEkstrapolasi = "";
+                
+                if (metode === 'Belt Transect' && areaGIS > 0) {
+                    // Rumus Ekstrapolasi Ekologi Spasial
+                    const estimasiTotalBiomassa = (kepadatan * areaGIS).toFixed(1);
+                    
+                    htmlEkstrapolasi = `
+                        <div class="mt-3 p-3 bg-indigo-600 rounded-xl text-white text-center shadow-inner relative overflow-hidden">
+                            <i class="ph-fill ph-globe-hemisphere-west absolute -right-2 -top-2 text-6xl opacity-10"></i>
+                            <p class="text-[10px] uppercase font-bold text-indigo-200 tracking-widest mb-1 relative z-10 flex items-center justify-center gap-1">Ekstrapolasi Poligon GIS (${areaGIS} Ha)</p>
+                            <p class="text-2xl font-black drop-shadow-sm relative z-10">${estimasiTotalBiomassa} <span class="text-xs font-normal text-indigo-100">Kg Estimasi Total Area</span></p>
+                        </div>
+                    `;
+                } else if (metode === 'Belt Transect' && areaGIS === 0) {
+                    htmlEkstrapolasi = `
+                        <div class="mt-3 p-2 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 text-xs text-center flex items-center gap-2">
+                            <i class="ph-bold ph-lightbulb text-orange-500 text-lg"></i>
+                            <span class="font-medium text-left">Gambar Area GIS (Ha) di peta bawah untuk memproyeksikan estimasi total stok ikan di kawasan tersebut!</span>
+                        </div>
+                    `;
+                }
+
+                infoBox.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-indigo-100 pb-2 mb-2">
+                        <span class="font-bold text-indigo-900">Kepadatan Spesies:</span>
+                        <span class="text-base font-black text-indigo-700">${kepadatan} Kg/Ha</span>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-gray-500">Status Ekosistem:</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${warnaStatus}">${statusKesehatan}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-gray-500">Normalisasi:</span>
+                            <span class="text-[10px] font-semibold text-gray-600">${sumberArea}</span>
+                        </div>
+                    </div>
+                    ${htmlEkstrapolasi}
+                `;
+                infoBox.classList.remove('hidden');
+            } else if (beratKg > 0 && areaSamplingHa === 0) {
+                infoBox.innerHTML = `⚠️ <strong class="text-orange-600">Area tidak valid!</strong><br><span class="text-[10px] text-gray-500">Pastikan dimensi transek diisi atau peta GIS digambar.</span>`;
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
+            }
+        }
+
+
         function tambahSampahUrai() {
             const select = document.getElementById('input-jenis-sampah');
             const beratInput = document.getElementById('input-berat-sampah');
@@ -1651,19 +1975,24 @@ function hitungKarbon() {
             const amtBox = document.getElementById('input-amount-container');
             const amtInput = document.getElementById('form-amount');
             const plantingBox = document.getElementById('input-planting-container');
-            const warningBox = document.getElementById('input-warning-container');
+            const warningBox = document.getElementById('input-warning-container');
+            const biomassBox = document.getElementById('input-biomass-container'); // TAMBAH INI
 
-            // Reset semua display
-            amtBox.style.display = 'none'; 
-            amtInput.required = false; 
-            plantingBox.style.display = 'none';
-            warningBox.style.display = 'none';
+            // Reset semua display
+            amtBox.style.display = 'none'; 
+            amtInput.required = false; 
+            plantingBox.style.display = 'none';
+            warningBox.style.display = 'none';
+            biomassBox.style.display = 'none'; // TAMBAH INI
 
             if (type === 'cleanup') {
                 amtBox.style.display = 'block'; 
                 amtInput.required = true;
             } else if (type === 'planting') {
                 plantingBox.style.display = 'block';
+            } else if (type === 'biomassa') {
+                biomassBox.style.display = 'block';
+                document.getElementById('form-notes').placeholder = "Catat profil kedalaman atau kondisi rugosity karang...";
             } else if (type === 'early_warning') {
                 warningBox.style.display = 'block';
                 // Ganti placeholder notes agar lebih kontekstual
@@ -1837,6 +2166,18 @@ function hitungKarbon() {
                 newReport.jarak = document.getElementById('form-jarak').value;
                 newReport.jenis = document.getElementById('form-jenis').value;
             } 
+            else if (jenisKegiatan === 'biomassa') {
+                newReport.biomassData = {
+                    metode: document.getElementById('form-bio-metode').value,
+                    kedalaman: document.getElementById('form-bio-kedalaman').value,
+                    transekP: document.getElementById('form-bio-transek-p').value,
+                    transekL: document.getElementById('form-bio-transek-l').value,
+                    spesies: document.getElementById('form-bio-spesies').value,
+                    panjang: document.getElementById('form-bio-panjang').value,
+                    jumlah: document.getElementById('form-bio-jumlah').value,
+                    estimasiBerat: document.getElementById('form-bio-berat').value
+                };
+            }
             else if (jenisKegiatan === 'early_warning') {
                 newReport.kategoriAnomali = document.getElementById('form-kategori-anomali').value;
                 const urgensiEl = document.querySelector('input[name="urgensi"]:checked');
@@ -1889,6 +2230,11 @@ function hitungKarbon() {
             if(document.getElementById('form-bibit')) document.getElementById('form-bibit').value = '';
             if(document.getElementById('form-jarak')) document.getElementById('form-jarak').value = '';
             if(document.getElementById('form-jenis')) document.getElementById('form-jenis').value = 'Rhizophora';
+            if(document.getElementById('form-bio-spesies')) {
+                document.getElementById('form-bio-spesies').value = 'Herbivora (Parrotfish/Scaridae)';
+                document.getElementById('form-bio-panjang').value = '';
+                document.getElementById('form-bio-berat').value = '';
+            }
 
             // 👇 TAMBAHKAN KODE INI UNTUK RESET ANOMALI 👇
             if(document.getElementById('form-kategori-anomali')) document.getElementById('form-kategori-anomali').value = 'Geologis';
@@ -1955,6 +2301,13 @@ function hitungKarbon() {
                 if (!compact && r.jenis) {
                     extraDetail = `<div class="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md mt-2 inline-block font-medium"><i class="ph-bold ph-tree"></i> Jenis: ${r.jenis} | Jarak: ${r.jarak || '-'} m</div>`;
                 }
+            } else if (r.type === 'biomassa') {
+                iconClass = 'ph-scales text-indigo-600 bg-indigo-100';
+                title = 'Sensus Biomassa Karang';
+                if (r.biomassData && r.biomassData.estimasiBerat) highlightStat = `<div class="font-black text-indigo-600">${r.biomassData.estimasiBerat} Kg</div>`;
+                if (!compact && r.biomassData) {
+                    extraDetail = `<div class="text-[11px] bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md mt-2 inline-block font-medium"><i class="ph-bold ph-fish"></i> Kelompok: ${r.biomassData.spesies.split(' ')[0]} | L: ${r.biomassData.panjang}cm</div>`;
+                }
             } else if (r.type === 'early_warning') {
                 iconClass = 'ph-warning-octagon text-red-600 bg-red-100';
                 title = `Sinyal: ${r.kategoriAnomali || 'Anomali'}`;
@@ -2612,6 +2965,20 @@ function exportLaporanLengkap() {
                 document.getElementById('form-jenis').value = r.jenis || 'Rhizophora';
             }
 
+            if (r.type === 'biomassa' && r.biomassData) {
+                if(document.getElementById('form-bio-metode')) document.getElementById('form-bio-metode').value = r.biomassData.metode || 'Belt Transect';
+                if(document.getElementById('form-bio-kedalaman')) document.getElementById('form-bio-kedalaman').value = r.biomassData.kedalaman || 'Dangkal (3-5m)';
+                if(document.getElementById('form-bio-transek-p')) document.getElementById('form-bio-transek-p').value = r.biomassData.transekP || 50;
+                if(document.getElementById('form-bio-transek-l')) document.getElementById('form-bio-transek-l').value = r.biomassData.transekL || 5;
+                
+                document.getElementById('form-bio-spesies').value = r.biomassData.spesies;
+                document.getElementById('form-bio-panjang').value = r.biomassData.panjang;
+                document.getElementById('form-bio-jumlah').value = r.biomassData.jumlah;
+                document.getElementById('form-bio-berat').value = r.biomassData.estimasiBerat;
+                
+                toggleTransekInputs();
+                setTimeout(() => autoHitungBiomassaForm(), 300); // Kalkulasi ulang otomatis saat diedit
+            }
 
             // Restore Multi-Media state
             if (r.photo) {
@@ -3031,6 +3398,7 @@ function exportLaporanLengkap() {
                 alert("❌ Gagal mengirim data. Pastikan koneksi internet stabil.");
             });
         }
+
 
     </script>
 
