@@ -988,9 +988,28 @@
 
                 <p id="sync-error" class="text-red-500 text-xs hidden mb-3 font-medium bg-red-50 p-2 rounded-lg border border-red-100"></p>
 
+               
+                <!-- Tombol Kirim Server yang sudah ada -->
                 <button id="btn-submit-sync" onclick="submitDataToServer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
                     <i class="ph-bold ph-paper-plane-tilt"></i> Kirim Sekarang
                 </button>
+
+                <!-- 👇 KODE BARU: Pembatas & Tombol Share Lokal 👇 -->
+                <div class="relative flex items-center py-4">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink-0 mx-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">ATAU TRANSFER LOKAL</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <p class="text-[10px] text-gray-500 text-center mb-2 leading-relaxed">
+                    *Tidak perlu isi form di atas jika kamu hanya ingin mengirim data ini ke HP teman tim via Bluetooth / Nearby Share.
+                </p>
+
+                <button type="button" onclick="shareDataLokal()" class="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-3 rounded-xl transition border border-gray-300 flex justify-center items-center gap-2 shadow-sm">
+                    <i class="ph-bold ph-share-network text-lg text-blue-500"></i> Share ke HP Lain
+                </button>
+                <!-- 👆 BATAS KODE BARU 👆 -->
+
             </div>
         </div>
     </div>
@@ -3334,6 +3353,51 @@ function exportLaporanLengkap() {
                 btnSubmit.disabled = false;
                 closeSyncModal();
             }, 2000);
+        }
+
+       // --- FUNGSI SHARE LOKAL ANTAR HP (BLUETOOTH / NEARBY) ---
+        async function shareDataLokal() {
+            const allData = { 
+                reports: reports, 
+                ideas: ideas, 
+                savedAt: new Date().toISOString() 
+            };
+            
+            const jsonString = JSON.stringify(allData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            
+            let namaTim = userProfile.nama ? userProfile.nama.trim().replace(/\s+/g, '_') : "Anonim";
+            const dateObj = new Date();
+            const tgl = dateObj.getDate();
+            const bulanArr =["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+            const fileName = `PK_${namaTim}_${tgl}${bulanArr[dateObj.getMonth()]}${dateObj.getFullYear()}.json`;
+
+            const file = new File([blob], fileName, { type: 'application/json' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Transfer Data PesisirKita',
+                        text: `Data Laporan Lapangan dari Tim ${namaTim}. Buka aplikasi lalu klik 'Load' untuk menggabungkan data ini.`,
+                        files: [file]
+                    });
+                    console.log('Dialog Share OS berhasil dibuka.');
+                    closeSyncModal();
+                } catch (error) {
+                    console.log('Share gagal atau dibatalkan:', error);
+                    
+                    // JIKA ERROR DI PC (NotAllowedError), LANGSUNG DOWNLOAD FILENYA
+                    if (error.name === 'NotAllowedError') {
+                        alert('Karena kamu menggunakan PC/Laptop, fitur Share OS tidak didukung. File akan langsung di-download ke komputermu.');
+                        exportDataJSON(); // Panggil fungsi Download/Save biasa
+                        closeSyncModal();
+                    }
+                }
+            } else {
+                alert('Fitur share langsung tidak didukung di perangkat ini. File akan di-download.');
+                exportDataJSON();
+                closeSyncModal();
+            }
         }
 
 
