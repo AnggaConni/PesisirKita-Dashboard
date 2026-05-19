@@ -2802,24 +2802,24 @@ function toggleFormInputs() {
             </div>`;
         }
 
-        // --- 6. EXPORT PDF DASHBOARD KOMPREHENSIF (CARA 2: VIA TOOLPRINT.HTML) ---
+        // --- 6. EXPORT PDF DASHBOARD KOMPREHENSIF (VIA TOOLPRINT.HTML) ---
         function exportLaporanLengkap() {
-            // 1. Validasi ketersediaan data (Opsional tapi direkomendasikan)
+            // 1. Validasi ketersediaan data
             if (!reports || reports.length === 0) {
                 alert("Belum ada data laporan lapangan untuk dicetak.");
                 return;
             }
 
-            // 2. Simpan data ke localStorage agar bisa "diambil" oleh toolprint.html
+            // 2. Titipkan data dari memori aplikasi ke LocalStorage
             localStorage.setItem('pesisir_reports_data', JSON.stringify(reports));
             localStorage.setItem('pesisir_ideas_data', JSON.stringify(ideas));
 
-            // 3. Buka tab baru yang mengarah langsung ke file toolprint.html
+            // 3. Panggil dan buka file HTML khusus cetak di tab baru
             const printWindow = window.open('toolprint.html', '_blank');
             
-            // 4. Fallback jika browser memblokir pop-up tab baru
+            // 4. Fallback: Peringatan jika browser mengeblok pop-up tab baru
             if (!printWindow) {
-                alert("Pop-up diblokir oleh browser! Tolong izinkan pop-up untuk mencetak laporan.");
+                alert("Pop-up diblokir oleh browser! Tolong izinkan pop-up / buka tab baru untuk mencetak laporan.");
             }
         }
 
