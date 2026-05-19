@@ -571,6 +571,7 @@
                                     <option value="observation">Observasi Ekosistem Rutin</option>
                                     <option value="biomassa">Sensus Visual Biomassa (UVC)</option>
                                     <option value="early_warning" class="text-red-600 font-bold">🚨 Lapor Anomali / Early Warning</option>
+                                    <option value="pollution" class="text-purple-600 font-bold">🏭 Lapor Limbah UMKM Pesisir</option>
                                 </select>
 
                             </div>
@@ -664,6 +665,50 @@
                                 </div>
                             </div>
                             
+                            <!-- KOTAK KHUSUS LIMBAH UMKM & INDEKS PENCEMARAN (BARU) -->
+                            <div id="input-pollution-container" style="display: none;" class="bg-purple-50 p-4 rounded-xl border border-purple-200 space-y-4">
+                                
+                                <div>
+                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Konteks Industri UMKM</label>
+                                    <select id="poll-jenis" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-xs font-medium">
+                                        <option value="Pewarna Sintetis">Pewarna Sintetis (Azo dye, dll)</option>
+                                        <option value="Pewarna Alami (Tanpa Logam)">Pewarna Alami (Tanpa Fixer Logam)</option>
+                                        <option value="Pewarna Alami (Mordant Logam)">Pewarna Alami (Pakai Fixer Logam Tawas/Tunjung)</option>
+                                    </select>
+                                </div>
+
+                                <div class="border-t border-purple-200 pt-3">
+                                    <h4 class="text-xs font-bold text-purple-800 uppercase mb-2 flex items-center gap-1"><i class="ph-bold ph-flask"></i> Uji Kualitas Air (BOD/COD/TSS)</h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="text-[9px] font-bold text-purple-800 uppercase">pH Air</label>
+                                            <input type="number" step="0.1" id="poll-ph" oninput="hitungPencemaran()" placeholder="Normal: 6-9" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-purple-800 uppercase">BOD (mg/L)</label>
+                                            <input type="number" step="0.1" id="poll-bod" oninput="hitungPencemaran()" placeholder="Baku: 50" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-purple-800 uppercase">COD (mg/L)</label>
+                                            <input type="number" step="0.1" id="poll-cod" oninput="hitungPencemaran()" placeholder="Baku: 150" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-purple-800 uppercase">TSS (mg/L)</label>
+                                            <input type="number" step="0.1" id="poll-tss" oninput="hitungPencemaran()" placeholder="Baku: 50" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                    </div>
+                                    <div id="info-pollution" class="hidden mt-3 p-3 bg-white/90 border border-purple-300 rounded-lg text-xs text-purple-900 shadow-sm transition-all text-center"></div>
+                                </div>
+                                
+                                <div class="border-t border-purple-200 pt-3">
+                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Aspek Sosial Ekonomi</label>
+                                    <div class="flex flex-wrap gap-2 mt-1">
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-1" class="accent-purple-600 w-3 h-3"> Minat Pindah ke Alami</label>
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-2" class="accent-purple-600 w-3 h-3"> Krisis Regenerasi Perajin</label>
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-3" class="accent-purple-600 w-3 h-3"> IPAL Komunal Tersedia</label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Kotak Early warning -->
                         <div id="input-warning-container" style="display: none;" class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-4">
@@ -2056,14 +2101,15 @@ function loadSampleData() {
         }
 
 
-        function toggleFormInputs() {
+function toggleFormInputs() {
             const type = document.getElementById('form-type').value;
             const amtBox = document.getElementById('input-amount-container');
             const amtInput = document.getElementById('form-amount');
             const plantingBox = document.getElementById('input-planting-container');
             const warningBox = document.getElementById('input-warning-container');
             const biomassBox = document.getElementById('input-biomass-container');
-            const obsBox = document.getElementById('input-observation-container'); // BARU
+            const obsBox = document.getElementById('input-observation-container'); 
+            const pollBox = document.getElementById('input-pollution-container'); // BARU
 
             // Reset semua display
             amtBox.style.display = 'none'; 
@@ -2071,7 +2117,8 @@ function loadSampleData() {
             plantingBox.style.display = 'none';
             warningBox.style.display = 'none';
             biomassBox.style.display = 'none';
-            obsBox.style.display = 'none'; // BARU
+            obsBox.style.display = 'none'; 
+            pollBox.style.display = 'none'; // BARU
 
             if (type === 'cleanup') {
                 amtBox.style.display = 'block'; 
@@ -2089,7 +2136,10 @@ function loadSampleData() {
                 toggleAnomaliInputs();
             } else if (type === 'observation') {
                 obsBox.style.display = 'block';
-                toggleObsInputs(); // Panggil fungsi sub-menu observasi
+                toggleObsInputs(); 
+            } else if (type === 'pollution') {
+                pollBox.style.display = 'block';
+                document.getElementById('form-notes').placeholder = "Catat visual air limbah (warna, bau), letak buangan akhir (sungai/laut), dan hasil wawancara warga...";
             }
         }
 
@@ -2107,6 +2157,74 @@ function loadSampleData() {
             } else if(obsType === 'sandwatch') {
                 document.getElementById('form-notes').placeholder = "Catat apakah ada jejak penyu, lubang kepiting, atau tembok laut (sea defense)...";
                 hitungSandwatch(); // Trigger kalkulator
+            }
+        }
+
+        function hitungPencemaran() {
+            const ph = parseFloat(document.getElementById('poll-ph').value);
+            const bod = parseFloat(document.getElementById('poll-bod').value);
+            const cod = parseFloat(document.getElementById('poll-cod').value);
+            const tss = parseFloat(document.getElementById('poll-tss').value);
+            const infoBox = document.getElementById('info-pollution');
+
+            // Cek jika keempat indikator utama sudah diisi
+            if (!isNaN(ph) && !isNaN(bod) && !isNaN(cod) && !isNaN(tss)) {
+                
+                // Standar Baku Mutu (contoh disederhanakan: Permen LHK Industri Tekstil)
+                const L_ph_min = 6.0, L_ph_max = 9.0;
+                const L_bod = 50, L_cod = 150, L_tss = 50;
+
+                // 1. Hitung rasio Ci/Lij
+                // Untuk pH punya rentang (rumus khusus)
+                let cL_ph = 0;
+                if(ph < 7.0) {
+                    cL_ph = (7.0 - ph) / (7.0 - L_ph_min);
+                } else if(ph > 7.0) {
+                    cL_ph = (ph - 7.0) / (L_ph_max - 7.0);
+                } else {
+                    cL_ph = 0;
+                }
+
+                const cL_bod = bod / L_bod;
+                const cL_cod = cod / L_cod;
+                const cL_tss = tss / L_tss;
+
+                // 2. Cari Maksimum dan Rata-rata dari rasio
+                const cL_array = [cL_ph, cL_bod, cL_cod, cL_tss];
+                const cL_max = Math.max(...cL_array);
+                const sum_cL = cL_array.reduce((a,b) => a + b, 0);
+                const cL_avg = sum_cL / cL_array.length;
+
+                // 3. RUMUS INDEKS PENCEMARAN (IP) KEP.MEN LH No.115/2003
+                const ip = Math.sqrt((Math.pow(cL_max, 2) + Math.pow(cL_avg, 2)) / 2).toFixed(2);
+
+                // 4. Klasifikasi
+                let status = "", warna = "", ringkasan = "";
+                if(ip <= 1.0) { 
+                    status = "Memenuhi Baku Mutu"; warna = "text-green-700 bg-green-100 border-green-300"; 
+                    ringkasan = "Limbah UMKM ini aman untuk ekosistem (Toxicity Index Rendah).";
+                } else if(ip <= 5.0) { 
+                    status = "Tercemar Ringan"; warna = "text-yellow-700 bg-yellow-100 border-yellow-300"; 
+                    ringkasan = "Ada potensi eutrofikasi bertahap pada perairan sekitar.";
+                } else if(ip <= 10.0) { 
+                    status = "Tercemar Sedang"; warna = "text-orange-700 bg-orange-100 border-orange-300"; 
+                    ringkasan = "Berisiko memicu kematian biota lokal. Butuh IPAL segera.";
+                } else { 
+                    status = "Tercemar Berat"; warna = "text-red-700 bg-red-100 border-red-300"; 
+                    ringkasan = "Sangat toksik! Daya dukung sungai/pesisir terlampaui ekstrem.";
+                }
+
+                infoBox.innerHTML = `
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Hasil Analisis Indeks Pencemaran (IP)</p>
+                    <div class="p-2 rounded border ${warna} font-black text-lg shadow-inner mb-2 flex flex-col justify-center items-center">
+                        <span class="text-3xl">${ip}</span>
+                        <span class="text-[10px] uppercase tracking-wider">${status}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-600 font-medium leading-tight">Ekologi: ${ringkasan}</p>
+                `;
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
             }
         }
 
@@ -2377,6 +2495,19 @@ function loadSampleData() {
                 }
             }
 
+            else if (jenisKegiatan === 'pollution') {
+                newReport.pollutionData = {
+                    jenis: document.getElementById('poll-jenis').value,
+                    ph: document.getElementById('poll-ph').value,
+                    bod: document.getElementById('poll-bod').value,
+                    cod: document.getElementById('poll-cod').value,
+                    tss: document.getElementById('poll-tss').value,
+                    sosial1: document.getElementById('poll-sosial-1').checked,
+                    sosial2: document.getElementById('poll-sosial-2').checked,
+                    sosial3: document.getElementById('poll-sosial-3').checked,
+                };
+            }
+
             // 3. LOGIKA SAVE (BARU ATAU EDIT) - Sudah Fix Bug Index -1
             if (editingReportId) {
                 const index = reports.findIndex(r => r.id === editingReportId);
@@ -2427,6 +2558,33 @@ function loadSampleData() {
                 document.getElementById('form-bio-panjang').value = '';
                 document.getElementById('form-bio-berat').value = '';
             }
+
+            if(document.getElementById('poll-jenis')) {
+                document.getElementById('poll-jenis').value = 'Pewarna Sintetis';
+                document.getElementById('poll-ph').value = '';
+                document.getElementById('poll-bod').value = '';
+                document.getElementById('poll-cod').value = '';
+                document.getElementById('poll-tss').value = '';
+                document.getElementById('poll-sosial-1').checked = false;
+                document.getElementById('poll-sosial-2').checked = false;
+                document.getElementById('poll-sosial-3').checked = false;
+                document.getElementById('info-pollution').classList.add('hidden');
+            }
+
+            // 👇 TAMBAHAN RESET INPUT OBSERVASI 👇
+            if(document.getElementById('form-obs-type')) {
+                document.getElementById('form-obs-type').value = 'narrative';
+                document.getElementById('obs-sst').value = '';
+                document.getElementById('obs-salinitas').value = '';
+                document.getElementById('obs-ph').value = '';
+                document.getElementById('obs-arus').value = '';
+                document.getElementById('sw-width').value = '';
+                document.getElementById('sw-slope').value = '';
+                document.getElementById('sw-sand').value = 'Low';
+                document.getElementById('sw-light').value = '1';
+                document.getElementById('info-oceanografi').classList.add('hidden');
+                document.getElementById('info-sandwatch').classList.add('hidden');
+            }
 
             // 👇 TAMBAHKAN KODE INI UNTUK RESET ANOMALI 👇
             if(document.getElementById('form-kategori-anomali')) document.getElementById('form-kategori-anomali').value = 'Geologis';
@@ -2563,6 +2721,30 @@ function loadSampleData() {
                     title = 'Observasi Kualitatif';
                 }
             }
+
+            else if (r.type === 'pollution') {
+                iconClass = 'ph-factory text-purple-600 bg-purple-100';
+                title = 'Lapor Pencemaran UMKM';
+                
+                if (r.pollutionData && r.pollutionData.cod) {
+                    highlightStat = `<div class="font-black text-purple-600">COD: ${r.pollutionData.cod}</div>`;
+                }
+                
+                if (!compact && r.pollutionData) {
+                    let socTags = [];
+                    if(r.pollutionData.sosial1) socTags.push('Minat Alami');
+                    if(r.pollutionData.sosial2) socTags.push('Krisis Regenerasi');
+                    if(r.pollutionData.sosial3) socTags.push('Ada IPAL');
+                    
+                    extraDetail = `
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="text-[11px] bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium border border-purple-200">🧪 ${r.pollutionData.jenis}</span>
+                        <span class="text-[11px] bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium border border-purple-200">pH: ${r.pollutionData.ph}</span>
+                    </div>
+                    ${socTags.length > 0 ? `<div class="flex flex-wrap gap-1 mt-2">${socTags.map(t => `<span class="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded shadow-sm border border-gray-200">#${t}</span>`).join('')}</div>` : ''}
+                    `;
+                }
+            }
             
 
             return `
@@ -2620,291 +2802,26 @@ function loadSampleData() {
             </div>`;
         }
 
-// --- 6. EXPORT PDF DASHBOARD KOMPREHENSIF (NEW TAB INJECT) ---
-function exportLaporanLengkap() {
-    // 1. Kumpulkan Semua Data REAL DARI LAPANGAN (Bukan dari Kalkulator)
-    const totalTrash = reports.filter(r => r.type === 'cleanup').reduce((sum, r) => sum + Number(r.amount || 0), 0);
-    const totalPohon = reports.filter(r => r.type === 'observation' || r.type === 'planting').length;
-    const totalBibit = reports.filter(r => r.type === 'planting').reduce((sum, r) => sum + Number(r.bibit || 0), 0);
-    
-    // Hitung Total Karbon berdasarkan REAL BIBIT yang ditanam di lapangan
-    const totalCo2 = totalBibit * 12;
+        // --- 6. EXPORT PDF DASHBOARD KOMPREHENSIF (CARA 2: VIA TOOLPRINT.HTML) ---
+        function exportLaporanLengkap() {
+            // 1. Validasi ketersediaan data (Opsional tapi direkomendasikan)
+            if (!reports || reports.length === 0) {
+                alert("Belum ada data laporan lapangan untuk dicetak.");
+                return;
+            }
 
-    // 2. Buka Tab Baru
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return alert("Pop-up diblokir oleh browser! Tolong izinkan pop-up untuk mencetak PDF.");
+            // 2. Simpan data ke localStorage agar bisa "diambil" oleh toolprint.html
+            localStorage.setItem('pesisir_reports_data', JSON.stringify(reports));
+            localStorage.setItem('pesisir_ideas_data', JSON.stringify(ideas));
 
-    // 3. Desain HTML (Profesional, Clean, Modern, Berbasis Impact)
-    const html = `
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Laporan PesisirKita - Tim Kamu</title>
-        <!-- Inject Tailwind -->
-        <script src="https://cdn.tailwindcss.com"><\/script>
-        <!-- Inject Phosphor Icons -->
-        <script src="https://unpkg.com/@phosphor-icons/web"><\/script>
-        <!-- Inject Leaflet untuk Peta di PDF -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
-        
-        <style>
-            @media print {
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                .page-break { page-break-before: always; }
-                .no-break { page-break-inside: avoid; }
-                .leaflet-control-container { display: none !important; }
-
-}
-            body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1e293b; padding: 2rem; }
-        </style>
-    <\/head>
-    <body class="max-w-4xl mx-auto">
-        
-        <!-- HEADER PROFESIONAL -->
-        <div class="border-b-2 border-teal-600 pb-6 mb-8 flex justify-between items-end">
-            <div>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight">Laporan Aksi Pesisir</h1>
-                <p class="text-lg font-semibold text-teal-600 mt-1">Tim Pahlawan PesisirKita</p>
-            </div>
-            <div class="text-right">
-                <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Tanggal Cetak</p>
-                <p class="text-sm text-gray-800 font-medium">${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</p>
-            </div>
-        </div>
-
-        <!-- HIGHLIGHT ANGKA (EXECUTIVE SUMMARY BERDASARKAN DATA LAPANGAN) -->
-        <div class="grid grid-cols-4 gap-4 mb-10">
-            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center no-break">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total Kegiatan</p>
-                <p class="text-2xl font-black text-teal-700">${reports.length}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center no-break">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Sampah Diangkut</p>
-                <p class="text-2xl font-black text-orange-600">${totalTrash.toFixed(1)} <span class="text-sm font-medium text-gray-500">Kg</span></p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center no-break">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Bibit Ditanam</p>
-                <p class="text-2xl font-black text-emerald-600">${totalBibit}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center no-break">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Serapan Karbon</p>
-                <p class="text-2xl font-black text-blue-600">${totalCo2} <span class="text-sm font-medium text-gray-500">Kg/Thn</span></p>
-            </div>
-        </div>
-
-        <!-- IDE HACKATHON -->
-        <div class="mb-10">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-                <span class="bg-teal-100 text-teal-700 px-2 py-1 rounded text-xs">A</span> Rumusan Solusi & Ide Inovasi Tim
-            </h2>
-            <div class="space-y-6">
-                ${ideas.length === 0 ? '<p class="text-gray-500 text-sm italic">Belum ada ide yang dirumuskan.</p>' : ideas.map((idea, i) => `
-                <div class="border border-gray-200 p-6 rounded-2xl no-break">
-                    
-                    <!-- Label Solusi -->
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mb-3 inline-flex items-center gap-1 border border-yellow-200">
-                        <i class="ph-fill ph-lightbulb text-yellow-500 text-sm"></i> Solusi Utama #${i+1}
-                    </span>
-                    
-                    <!-- Teks Solusi (Bukan Bold, dibuat lega seperti di App) -->
-                    <p class="text-gray-800 text-base leading-relaxed text-justify mt-3 font-medium">
-                        ${idea.solusi}
-                    </p>
-                    
-                    <!-- Kotak Detail (Masalah & Alasan) -->
-                    <div class="flex flex-col gap-3 mt-5 pt-4 border-t border-gray-100">
-                        
-                        <!-- Block Masalah (Merah) -->
-                        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-xl">
-                            <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider block mb-2 flex items-center gap-1">
-                                <i class="ph-fill ph-warning-circle text-sm"></i> Mengatasi Masalah
-                            </span>
-                            <p class="text-sm text-gray-700 leading-relaxed text-justify">
-                                ${idea.masalah}
-                            </p>
-                        </div>
-                        
-                        <!-- Block Alasan (Biru) -->
-                        ${idea.alasan ? `
-                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl">
-                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider block mb-2 flex items-center gap-1">
-                                <i class="ph-fill ph-target text-sm"></i> Mengapa Signifikan?
-                            </span>
-                            <p class="text-sm text-gray-700 leading-relaxed text-justify">
-                                ${idea.alasan}
-                            </p>
-                        </div>
-                        ` : ''}
-
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-
-        <div class="page-break"></div>
-
-        <!-- RIWAYAT LAPANGAN DENGAN IMPACT -->
-        <div>
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
-                <span class="bg-teal-100 text-teal-700 px-2 py-1 rounded text-xs">B</span> Log Data Lapangan & Bukti Dampak
-            </h2>
-            <div class="space-y-6">
-                ${reports.length === 0 ? '<p class="text-gray-500 text-sm italic">Belum ada data lapangan yang direkam.</p>' : reports.map((r, i) => {
-                    const isCleanup = r.type === 'cleanup';
-                    const isPlanting = r.type === 'planting';
-                    const typeName = isCleanup ? 'Pembersihan Pesisir' : (isPlanting ? 'Penanaman Mangrove' : 'Observasi Ekosistem');
-                    const date = new Date(r.timestamp).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
-                    
-
-                    // --- LOGIK PERHITUNGAN IMPACT PER REPORT ---
-                    let impactBox = '';
-                    
-                    if (isPlanting && r.bibit) {
-                        const co2Report = Number(r.bibit) * 12;
-                        impactBox = `
-                        <div class="mt-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl px-5 py-4 text-white shadow-sm text-center relative overflow-hidden print:shadow-none">
-                            <h4 class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Pahlawan Iklim!</h4>
-                            <p class="text-sm z-10 relative">Melalui penanaman ini, tim kamu menyumbang potensi serapan karbon sebesar:</p>
-                            
-                            <!-- Angka Utama Dibuat Compact -->
-                            <div class="text-4xl font-black my-2 z-10 relative drop-shadow-sm">${co2Report} <span class="text-lg font-medium">Kg CO₂/Thn</span></div>
-                            
-                            <!-- Kotak Bawah Dibuat Lebih Rapat -->
-                            <div class="bg-black/20 rounded-lg p-2.5 mt-3 text-xs border border-white/10 z-10 relative leading-relaxed">
-                                Keren! 🌱 <strong>${r.bibit} Bibit</strong> ini akan tumbuh menjadi benteng alami penahan abrasi dan rumah bagi ribuan biota laut di masa depan.
-                            </div>
-                        </div>`;
-                    } 
-                    else if (isCleanup && r.amount) {
-                        // SMART LOGIC: Deteksi jenis sampah dari catatan laporan
-                        let tahunUrai = 400; // Default plastik umum
-                        const notesLower = (r.notes || '').toLowerCase();
-                        
-                        if(notesLower.includes('kaca')) tahunUrai = 4000;
-                        else if(notesLower.includes('jaring') || notesLower.includes('senar')) tahunUrai = 600;
-                        else if(notesLower.includes('botol') || notesLower.includes('pet') || notesLower.includes('plastik')) tahunUrai = 450;
-                        else if(notesLower.includes('kaleng')) tahunUrai = 200;
-                        else if(notesLower.includes('sterofoam') || notesLower.includes('styrofoam')) tahunUrai = 50;
-                        else if(notesLower.includes('kresek')) tahunUrai = 20;
-
-                        const generasi = Math.ceil(tahunUrai / 25); // 1 Generasi = 25 Tahun
-
-                        impactBox = `
-                        <div class="mt-4 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl px-5 py-4 text-white shadow-sm text-center relative overflow-hidden print:shadow-none">
-                            <h4 class="text-orange-100 text-xs font-bold uppercase tracking-wider mb-1">Pahlawan Lautan!</h4>
-                            <p class="text-sm z-10 relative">Di area ini, kamu mencegah <strong class="text-yellow-300">${r.amount} Kg</strong> sampah mencemari laut!</p>
-                            <p class="text-[11px] text-orange-50 z-10 relative mt-0.5">Dampak terburuk dari temuanmu memiliki waktu urai hingga:</p>
-                            
-                            <!-- Angka Utama Dibuat Compact -->
-                            <div class="text-4xl font-black my-2 z-10 relative drop-shadow-sm">${tahunUrai} <span class="text-lg font-medium">Tahun</span></div>
-                            
-                            <!-- Kotak Bawah Dibuat Lebih Rapat -->
-                            <div class="bg-black/20 rounded-lg p-2.5 mt-3 text-xs border border-white/10 z-10 relative leading-relaxed">
-                                GILA SIH! 😱 Sampah terburukmu baru hancur setelah <strong class="text-yellow-300 text-sm">${generasi} Generasi</strong> keturunanmu lahir!
-                            </div>
-                        </div>`;
-                    }
-
-                    return `
-                    <div class="border border-gray-200 rounded-2xl overflow-hidden no-break shadow-sm mb-6">
-                        <!-- Card Header -->
-                        <div class="bg-gray-50 px-5 py-3 border-b border-gray-200 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-base flex items-center gap-2">
-                                    ${isCleanup ? '<i class="ph-fill ph-trash text-orange-500"></i>' : (isPlanting ? '<i class="ph-fill ph-plant text-emerald-500"></i>' : '<i class="ph-fill ph-binoculars text-blue-500"></i>')}
-                                    ${typeName}
-                                </h4>
-                                <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mt-0.5">${date}</p>
-                            </div>
-                            <div class="text-right">
-                                ${r.amount ? `<span class="bg-white text-orange-700 font-bold px-3 py-1.5 rounded-full text-sm border border-orange-200 shadow-sm">${r.amount} Kg</span>` : ''}
-                                ${r.bibit ? `<span class="bg-white text-emerald-700 font-bold px-3 py-1.5 rounded-full text-sm border border-emerald-200 shadow-sm">${r.bibit} Bibit</span>` : ''}
-                            </div>
-                        </div>
-                        
-                        <!-- Card Body -->
-                        <div class="p-5">
-                            <!-- Jika Ada Peta -->
-                            ${r.geojson ? `<div id="print-map-${r.id}" class="w-full h-48 bg-gray-200 rounded-xl overflow-hidden mb-4 border border-gray-300 shadow-inner"></div>` : ''}
-
-                            <!-- Catatan Lapangan -->
-                            <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 flex items-center gap-1"><i class="ph-fill ph-notebook"></i> Catatan Lapangan</span>
-                                <p class="text-sm text-slate-700 leading-relaxed text-justify">${r.notes || 'Tidak ada catatan khusus.'}</p>
-                            </div>
-
-                            <!-- INJEKSI KOTAK IMPACT GAMIFIKASI DI SINI -->
-                            ${impactBox}
-
-                            <!-- Atribut Tambahan (Metadata GPS & Luas) -->
-                            <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                                ${parseFloat(r.areaHa) > 0 ? `
-                                <span class="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1.5 rounded flex items-center gap-1"><i class="ph-bold ph-bounding-box"></i> Luas Area: ${r.areaHa} Ha</span>
-                                ` : ''}
-
-                                ${isPlanting && r.jenis ? `
-                                <span class="text-[10px] font-bold bg-green-50 text-green-700 border border-green-200 px-2 py-1.5 rounded flex items-center gap-1"><i class="ph-bold ph-tree"></i> Flora: ${r.jenis} (Jarak ${r.jarak || '-'} m)</span>
-                                ` : ''}
-
-                                ${r.lat ? `
-                                <span class="text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200 px-2 py-1.5 rounded font-mono flex items-center gap-1"><i class="ph-bold ph-map-pin"></i> GPS: ${r.lat}, ${r.lng}</span>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                }).join('')}
-            </div>
-        </div>
-        
-        <!-- FOOTER -->
-        <div class="text-center mt-12 pt-6 border-t-2 border-gray-800 text-gray-500 text-xs font-bold uppercase tracking-widest pb-10">
-            Sistem Operasi Lapangan - PesisirKita © ${new Date().getFullYear()}
-        </div>
-
-        <!-- INJECT SCRIPT UNTUK MENGGAMBAR PETA -->
-        <script>
-            const reportsData = ${JSON.stringify(reports)};
+            // 3. Buka tab baru yang mengarah langsung ke file toolprint.html
+            const printWindow = window.open('toolprint.html', '_blank');
             
-            reportsData.forEach(r => {
-                if (r.geojson) {
-                    const mapId = 'print-map-' + r.id;
-                    const mapEl = document.getElementById(mapId);
-                    if(mapEl) {
-                        const map = L.map(mapId, {
-                            zoomControl: false, attributionControl: false,
-                            dragging: false, scrollWheelZoom: false,
-                            doubleClickZoom: false, boxZoom: false, touchZoom: false, keyboard: false
-                        });
-                        
-                        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-                        
-                        const polyColor = r.type === 'cleanup' ? '#ea580c' : '#059669';
-                        const layer = L.geoJSON(r.geojson, { 
-                            style: { color: polyColor, weight: 3, fillOpacity: 0.4 } 
-                        }).addTo(map);
-                        
-                        map.fitBounds(layer.getBounds(), { padding: [70, 70], maxZoom: 16 });
-                    }
-                }
-            });
-
-            // TUNGGU 2 DETIK AGAR GAMBAR SATELIT SELESAI LOADING, LALU PRINT
-            setTimeout(() => { window.print(); }, 2000);
-        <\/script>
-    <\/body>
-    <\/html>
-    `;
-    
-    // 4. Suntikkan HTML ke Tab Baru
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-}
+            // 4. Fallback jika browser memblokir pop-up tab baru
+            if (!printWindow) {
+                alert("Pop-up diblokir oleh browser! Tolong izinkan pop-up untuk mencetak laporan.");
+            }
+        }
 
         // --- 7. KAMUS LOGIC ---
         // --- LOGIKA KAMUS INTERAKTIF ---
@@ -3200,6 +3117,18 @@ function exportLaporanLengkap() {
                 setTimeout(() => autoHitungBiomassaForm(), 300); // Kalkulasi ulang otomatis saat diedit
             }
 
+            if (r.type === 'pollution' && r.pollutionData) {
+                document.getElementById('poll-jenis').value = r.pollutionData.jenis || 'Pewarna Sintetis';
+                document.getElementById('poll-ph').value = r.pollutionData.ph || '';
+                document.getElementById('poll-bod').value = r.pollutionData.bod || '';
+                document.getElementById('poll-cod').value = r.pollutionData.cod || '';
+                document.getElementById('poll-tss').value = r.pollutionData.tss || '';
+                document.getElementById('poll-sosial-1').checked = r.pollutionData.sosial1 || false;
+                document.getElementById('poll-sosial-2').checked = r.pollutionData.sosial2 || false;
+                document.getElementById('poll-sosial-3').checked = r.pollutionData.sosial3 || false;
+                hitungPencemaran(); // Hitung ulang IP
+            }
+
             // Restore Multi-Media state
             if (r.photo) {
                 // Pecah kembali string dari Sheets menjadi array berdasarkan koma
@@ -3239,6 +3168,26 @@ function exportLaporanLengkap() {
                     } else if (r.kategoriAnomali === 'Infrastruktur') {
                         document.getElementById('infra-fokus').value = r.metadataAnomali.fokus || '';
                     }
+                }
+            }
+
+            // 👇 TAMBAHAN RESTORE DATA OBSERVASI SAAT DIEDIT 👇
+            if (r.type === 'observation') {
+                document.getElementById('form-obs-type').value = r.obsType || 'narrative';
+                toggleObsInputs(); // Munculkan sub-form yang sesuai
+
+                if (r.obsType === 'oceanography' && r.obsData) {
+                    document.getElementById('obs-sst').value = r.obsData.sst || '';
+                    document.getElementById('obs-salinitas').value = r.obsData.salinitas || '';
+                    document.getElementById('obs-ph').value = r.obsData.ph || '';
+                    document.getElementById('obs-arus').value = r.obsData.arus || '';
+                    hitungOceanografi();
+                } else if (r.obsType === 'sandwatch' && r.obsData) {
+                    document.getElementById('sw-width').value = r.obsData.width || '';
+                    document.getElementById('sw-slope').value = r.obsData.slope || '';
+                    document.getElementById('sw-sand').value = r.obsData.sand || 'Low';
+                    document.getElementById('sw-light').value = r.obsData.light || '1';
+                    hitungSandwatch();
                 }
             }
 
