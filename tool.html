@@ -598,7 +598,74 @@
                                 </div>
                             </div>
 
+                            <!-- KOTAK KHUSUS OBSERVASI EKOSISTEM (3 MODE) -->
+                            <div id="input-observation-container" style="display: none;" class="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-blue-800 uppercase">Sub-Kategori Observasi</label>
+                                    <select id="form-obs-type" onchange="toggleObsInputs()" class="w-full mt-1 p-3 bg-white border border-blue-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-sm">
+                                        <option value="narrative">📝 Kualitatif / Narasi Bebas (Default)</option>
+                                        <option value="oceanography">🌊 Data Oseanografi Lanjutan</option>
+                                        <option value="sandwatch">🐢 Sandwatch Sea Turtle (Habitat Penyu)</option>
+                                    </select>
+                                </div>
+
+                                <!-- 1. Sub-Form Oseanografi -->
+                                <div id="obs-ocean-container" style="display: none;" class="space-y-3 pt-3 border-t border-blue-200">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">SST Suhu (°C)</label>
+                                            <input type="number" step="0.1" id="obs-sst" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Salinitas (ppt)</label>
+                                            <input type="number" step="0.1" id="obs-salinitas" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">pH Air Laut</label>
+                                            <input type="number" step="0.1" id="obs-ph" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Kecepatan Arus (m/s)</label>
+                                            <input type="number" step="0.1" id="obs-arus" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                    </div>
+                                    <div id="info-oceanografi" class="hidden mt-2 p-3 bg-white/80 border border-blue-200 rounded-lg text-xs text-blue-800 shadow-sm transition-all text-center"></div>
+                                </div>
+
+                                <!-- 2. Sub-Form Sandwatch (Penyu) -->
+                                <div id="obs-sandwatch-container" style="display: none;" class="space-y-3 pt-3 border-t border-blue-200">
+                                    <div class="grid grid-cols-2 gap-3 mb-2">
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Lebar Pantai (m)</label>
+                                            <input type="number" step="0.1" id="sw-width" oninput="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Kemiringan (Derajat)</label>
+                                            <input type="number" step="0.1" id="sw-slope" oninput="hitungSandwatch()" placeholder="Misal: 5" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Kelembutan Pasir (Gali 50cm)</label>
+                                        <select id="sw-sand" onchange="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-xs font-medium">
+                                            <option value="Low">Low Difficulty (Sangat Lembut / Mudah Digali)</option>
+                                            <option value="Medium">Medium Difficulty (Lumayan Keras)</option>
+                                            <option value="High">High Difficulty (Berbatu / Padat)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Polusi Cahaya (Beachfront Lighting)</label>
+                                        <select id="sw-light" onchange="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-xs font-medium">
+                                            <option value="1">Rank 1 (Gelap, cahaya sangat tidak langsung)</option>
+                                            <option value="2">Rank 2 (Ada cahaya langsung dari lampu gedung)</option>
+                                            <option value="3">Rank 3 (Sangat Terang, ada bayangan di pasir)</option>
+                                        </select>
+                                    </div>
+                                    <div id="info-sandwatch" class="hidden mt-2 p-3 bg-white/80 border border-blue-200 rounded-lg text-xs text-blue-800 shadow-sm transition-all text-center"></div>
+                                </div>
+                            </div>
                             
+
+                            <!-- Kotak Early warning -->
                         <div id="input-warning-container" style="display: none;" class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-4">
                             <div>
                                 <label class="text-xs font-bold text-red-800 uppercase">Kategori Sinyal Lemah (Weak Signal)</label>
@@ -1994,31 +2061,116 @@ function loadSampleData() {
             const amtBox = document.getElementById('input-amount-container');
             const amtInput = document.getElementById('form-amount');
             const plantingBox = document.getElementById('input-planting-container');
-            const warningBox = document.getElementById('input-warning-container');
-            const biomassBox = document.getElementById('input-biomass-container'); // TAMBAH INI
+            const warningBox = document.getElementById('input-warning-container');
+            const biomassBox = document.getElementById('input-biomass-container');
+            const obsBox = document.getElementById('input-observation-container'); // BARU
 
-            // Reset semua display
-            amtBox.style.display = 'none'; 
-            amtInput.required = false; 
-            plantingBox.style.display = 'none';
-            warningBox.style.display = 'none';
-            biomassBox.style.display = 'none'; // TAMBAH INI
+            // Reset semua display
+            amtBox.style.display = 'none'; 
+            amtInput.required = false; 
+            plantingBox.style.display = 'none';
+            warningBox.style.display = 'none';
+            biomassBox.style.display = 'none';
+            obsBox.style.display = 'none'; // BARU
 
             if (type === 'cleanup') {
                 amtBox.style.display = 'block'; 
                 amtInput.required = true;
+                document.getElementById('form-notes').placeholder = "Misal: Banyak ditemukan cangkang kepiting mati atau dominasi botol kaca...";
             } else if (type === 'planting') {
                 plantingBox.style.display = 'block';
+                document.getElementById('form-notes').placeholder = "Misal: Kegiatan berjalan lancar dibantu warga lokal...";
             } else if (type === 'biomassa') {
-                biomassBox.style.display = 'block';
-                document.getElementById('form-notes').placeholder = "Catat profil kedalaman atau kondisi rugosity karang...";
+                biomassBox.style.display = 'block';
+                document.getElementById('form-notes').placeholder = "Catat profil kedalaman atau kondisi rugosity karang...";
             } else if (type === 'early_warning') {
                 warningBox.style.display = 'block';
-                // Ganti placeholder notes agar lebih kontekstual
-                document.getElementById('form-notes').placeholder = "Jelaskan detail anomali yang kamu lihat. Kapan mulai terjadi? Seberapa cepat perubahannya?";
+                document.getElementById('form-notes').placeholder = "Jelaskan detail anomali yang kamu lihat. Kapan mulai terjadi?";
                 toggleAnomaliInputs();
+            } else if (type === 'observation') {
+                obsBox.style.display = 'block';
+                toggleObsInputs(); // Panggil fungsi sub-menu observasi
+            }
+        }
+
+        function toggleObsInputs() {
+            const obsType = document.getElementById('form-obs-type').value;
+            document.getElementById('obs-ocean-container').style.display = (obsType === 'oceanography') ? 'block' : 'none';
+            document.getElementById('obs-sandwatch-container').style.display = (obsType === 'sandwatch') ? 'block' : 'none';
+            
+            // Ubah placeholder Catatan berdasarkan Sub-Mode
+            if(obsType === 'narrative') {
+                document.getElementById('form-notes').placeholder = "Misal: Terpantau 3 ekor monyet bekantan sehat di tajuk mangrove...";
+            } else if(obsType === 'oceanography') {
+                document.getElementById('form-notes').placeholder = "Catat kondisi cuaca (cerah/hujan) dan tinggi gelombang saat ambil sampel air...";
+                hitungOceanografi(); // Trigger kalkulator
+            } else if(obsType === 'sandwatch') {
+                document.getElementById('form-notes').placeholder = "Catat apakah ada jejak penyu, lubang kepiting, atau tembok laut (sea defense)...";
+                hitungSandwatch(); // Trigger kalkulator
+            }
+        }
+
+        // Kalkulator Oseanografi Cerdas & Ekstrapolasi GIS
+        function hitungOceanografi() {
+            const sst = parseFloat(document.getElementById('obs-sst').value) || 0;
+            const ph = parseFloat(document.getElementById('obs-ph').value) || 0;
+            const arus = parseFloat(document.getElementById('obs-arus').value) || 0;
+            const areaGIS = parseFloat(document.getElementById('form-area-ha').value) || 0;
+            const infoBox = document.getElementById('info-oceanografi');
+
+            if (sst > 0 && ph > 0) {
+                // Logika Kualitas Air Sederhana
+                let status = "Optimal (Sehat)";
+                let warna = "text-green-600";
+                if (sst > 31 || ph < 7.5) { status = "Warning (Stres Lingkungan)"; warna = "text-orange-600"; }
+                if (sst > 33 || ph < 7.0) { status = "Kritis (Coral Bleaching)"; warna = "text-red-600"; }
+
+                // Ekstrapolasi Aliran Permukaan (Area x Kecepatan Arus x Konstanta Kedalaman)
+                let volumetriHtml = "";
+                if (areaGIS > 0 && arus > 0) {
+                    const volumeM3 = (areaGIS * 10000) * arus * 0.5; // asumsi 0.5m lapis permukaan
+                    volumetriHtml = `
+                    <div class="mt-2 p-2 bg-blue-100 rounded text-blue-800 text-[10px] font-bold">
+                        🌊 Pertukaran Massa Air di Poligon GIS: <br>
+                        <span class="text-sm font-black text-blue-900">${volumeM3.toLocaleString('id-ID')} M³/detik</span>
+                    </div>`;
+                } else {
+                    volumetriHtml = `<p class="text-[9px] text-gray-500 mt-1">*Gambar peta & isi arus untuk hitung volumetri.</p>`;
+                }
+
+                infoBox.innerHTML = `Indeks Perairan: <strong class="${warna}">${status}</strong> ${volumetriHtml}`;
+                infoBox.classList.remove('hidden');
             } else {
-                document.getElementById('form-notes').placeholder = "Misal: Banyak ditemukan cangkang kepiting mati atau dominasi botol kaca...";
+                infoBox.classList.add('hidden');
+            }
+        }
+
+        // Kalkulator Kesesuaian Habitat Penyu (Berdasarkan PDF Sandwatch)
+        function hitungSandwatch() {
+            const width = parseFloat(document.getElementById('sw-width').value) || 0;
+            const sand = document.getElementById('sw-sand').value;
+            const light = document.getElementById('sw-light').value;
+            const infoBox = document.getElementById('info-sandwatch');
+
+            if (width > 0) {
+                let poin = 0;
+                // Logika berdasarkan PDF manual
+                if (sand === 'Low') poin += 2; // Mudah digali (50cm hole)
+                if (sand === 'Medium') poin += 1;
+                
+                if (light === '1') poin += 2; // Gelap aman untuk hatchling
+                if (light === '2') poin += 0;
+
+                let tingkat = ""; let warna = "";
+                if (poin >= 3) { tingkat = "SANGAT IDEAL untuk Penyu Bertelur 🐢"; warna = "text-emerald-600 bg-emerald-50"; }
+                else if (poin === 2) { tingkat = "CUKUP BAIK, butuh minimasi cahaya ⚠️"; warna = "text-yellow-600 bg-yellow-50"; }
+                else { tingkat = "TIDAK LAYAK, Penyu akan disorientasi 🚫"; warna = "text-red-600 bg-red-50"; }
+
+                infoBox.innerHTML = `<div class="p-2 rounded border border-current ${warna} font-bold">${tingkat}</div>
+                <p class="text-[9px] text-gray-500 mt-1.5">*Berdasarkan standar Sandwatch Manual (UNESCO, 2005)</p>`;
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
             }
         }
 
@@ -2204,6 +2356,27 @@ function loadSampleData() {
                 newReport.metadataAnomali = metadataAnomali;
             }
 
+            else if (jenisKegiatan === 'observation') {
+                const obsType = document.getElementById('form-obs-type').value;
+                newReport.obsType = obsType; // Simpan tipe (narrative, oceanography, sandwatch)
+                
+                if (obsType === 'oceanography') {
+                    newReport.obsData = {
+                        sst: document.getElementById('obs-sst').value,
+                        salinitas: document.getElementById('obs-salinitas').value,
+                        ph: document.getElementById('obs-ph').value,
+                        arus: document.getElementById('obs-arus').value
+                    };
+                } else if (obsType === 'sandwatch') {
+                    newReport.obsData = {
+                        width: document.getElementById('sw-width').value,
+                        slope: document.getElementById('sw-slope').value,
+                        sand: document.getElementById('sw-sand').value,
+                        light: document.getElementById('sw-light').value
+                    };
+                }
+            }
+
             // 3. LOGIKA SAVE (BARU ATAU EDIT) - Sudah Fix Bug Index -1
             if (editingReportId) {
                 const index = reports.findIndex(r => r.id === editingReportId);
@@ -2360,6 +2533,34 @@ function loadSampleData() {
                     if(tags.length > 0) {
                         extraDetail = `<div class="flex flex-wrap gap-1.5 mt-3 text-[10px] font-bold text-red-800">${tags.map(t => `<span class="bg-red-50 border border-red-200 px-2 py-1 rounded-md shadow-sm">${t}</span>`).join('')}</div>`;
                     }
+                }
+            }
+
+            else if (r.type === 'observation') {
+                if (r.obsType === 'oceanography') {
+                    iconClass = 'ph-waves text-cyan-600 bg-cyan-100';
+                    title = 'Sensus Oseanografi Laut';
+                    if (r.obsData && r.obsData.sst) highlightStat = `<div class="font-black text-cyan-600">${r.obsData.sst} °C</div>`;
+                    
+                    if (!compact && r.obsData) {
+                        extraDetail = `<div class="flex gap-2 mt-2"><span class="text-[11px] bg-cyan-50 text-cyan-700 px-2 py-1 rounded-md font-medium">Salinitas: ${r.obsData.salinitas} ppt</span> <span class="text-[11px] bg-cyan-50 text-cyan-700 px-2 py-1 rounded-md font-medium">pH: ${r.obsData.ph}</span></div>`;
+                    }
+                } else if (r.obsType === 'sandwatch') {
+                    iconClass = 'ph-turtle text-emerald-600 bg-emerald-100'; // Ikon penyu
+                    title = 'Sandwatch Penyu (UNESCO)';
+                    if (r.obsData && r.obsData.width) highlightStat = `<div class="font-black text-emerald-600">${r.obsData.width} m</div>`;
+                    
+                    if (!compact && r.obsData) {
+                        extraDetail = `<div class="flex gap-2 mt-2 flex-wrap">
+                            <span class="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-medium">Pasir: ${r.obsData.sand} Diff.</span>
+                            <span class="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-medium">Lampu: Rank ${r.obsData.light}</span>
+                            <span class="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-medium">Slope: ${r.obsData.slope}°</span>
+                        </div>`;
+                    }
+                } else {
+                    // Narrative biasa
+                    iconClass = 'ph-binoculars text-blue-600 bg-blue-100';
+                    title = 'Observasi Kualitatif';
                 }
             }
             
