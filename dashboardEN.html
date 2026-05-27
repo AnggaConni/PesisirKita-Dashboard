@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - PesisirKita Command Center</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4',
+                            500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+                            800: '#115e59', 900: '#134e4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        .gradient-brand { background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%); }
+        .gradient-emerald { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .gradient-amber { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .gradient-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .gradient-slate { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 36px;
+            bottom: -10px;
+            width: 2px;
+            background: linear-gradient(to bottom, #cbd5e1, #e2e8f0);
+            z-index: 0;
+        }
+        .timeline-item:last-child .timeline-line::before { display: none; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .view-section { display: none; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-in-out; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px 0 rgba(13, 148, 136, 0.4);
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        }
+        .pulse-dot { animation: pulseDot 2s infinite; }
+
+        .map-legend {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+            z-index: 400;
+            font-size: 11px;
+        }
+
+        .obj-card { transition: all 0.2s ease; }
+        .obj-card:hover { transform: translateY(-2px); }
+        .obj-card.active {
+            border-color: #0d9488 !important;
+            background: linear-gradient(to right, #f0fdfa, #ffffff);
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.15);
+        }
+
+        .progress-bar { background: #e2e8f0; height: 6px; border-radius: 999px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.025em; text-transform: uppercase;
+        }
+
+        .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15) !important; }
+        .leaflet-popup-content { margin: 12px 16px !important; font-family: 'Inter', sans-serif !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-full md:w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 h-auto md:h-full z-30 relative">
+        <div class="p-6 border-b border-slate-100 bg-white">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 gradient-brand rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30">
+                    <i class="ph-fill ph-waves text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight leading-none text-slate-800">PesisirKita</h1>
+                    <p class="text-[10px] font-bold text-teal-600 uppercase tracking-widest mt-1">Command Center</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5 flex-1 overflow-y-auto hidden md:flex md:flex-col">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-3">Navigation</p>
+            <nav class="space-y-1.5">
+                <button onclick="switchView('global')" id="nav-global" class="nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all">
+                    <i class="ph-bold ph-globe-hemisphere-west text-xl"></i>
+                    <span class="flex-1">Distribution Map</span>
+                    <i class="ph-bold ph-caret-right text-sm opacity-50"></i>
+                </button>
+                <button onclick="switchView('log')" id="nav-log" class="nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all">
+                    <i class="ph-bold ph-list-magnifying-glass text-xl"></i>
+                    <span class="flex-1">Monitoring Logs</span>
+                    <i class="ph-bold ph-caret-right text-sm opacity-50"></i>
+                </button>
+            </nav>
+
+            <div class="mt-6">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-3">Current Status</p>
+                <div class="space-y-2">
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100/50 p-3 rounded-xl border border-teal-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-teal-700">Total Points (Codes)</p>
+                            <i class="ph-fill ph-map-pin text-teal-500"></i>
+                        </div>
+                        <h4 class="text-2xl font-black text-teal-900 mt-1" id="mini-stat-lokasi">0</h4>
+                    </div>
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-3 rounded-xl border border-emerald-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-emerald-700">Safe Condition</p>
+                            <i class="ph-fill ph-check-circle text-emerald-500"></i>
+                        </div>
+                        <h4 class="text-2xl font-black text-emerald-900 mt-1" id="mini-stat-aman">0</h4>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-50 to-red-100/50 p-3 rounded-xl border border-red-100">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-semibold text-red-700">Warning / Critical</p>
+                            <i class="ph-fill ph-warning-circle text-red-500"></i>
+                        </div>
+                        <h4 class="text-2xl font-black text-red-900 mt-1" id="mini-stat-rusak">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-6">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Synchronization</p>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></div>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 mb-1" id="sync-status">Live & Connected</p>
+                    <p class="text-[10px] text-slate-500 mb-3" id="sync-time">Last sync: --</p>
+                    <button onclick="fetchData()" class="w-full btn-primary text-white text-xs font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-arrows-clockwise"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- Mobile Header -->
+        <div class="md:hidden bg-white border-b border-slate-200 flex z-20 shadow-sm overflow-x-auto shrink-0">
+            <button onclick="switchView('global')" id="nav-global-mobile" class="flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center">Map</button>
+            <button onclick="switchView('log')" id="nav-log-mobile" class="flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center">Logs</button>
+            <button onclick="fetchData()" class="px-4 border-l border-slate-200 text-teal-600 bg-teal-50 shrink-0"><i class="ph-bold ph-arrows-clockwise text-xl"></i></button>
+        </div>
+
+        <!-- Loading screen -->
+        <div id="loading-screen" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
+            <div class="relative mb-6">
+                <div class="w-16 h-16 gradient-brand rounded-2xl flex items-center justify-center shadow-xl shadow-teal-500/30">
+                    <i class="ph-fill ph-waves text-3xl text-white"></i>
+                </div>
+                <div class="absolute -inset-3 border-4 border-teal-200 border-t-teal-600 rounded-3xl animate-spin"></div>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800">Fetching PesisirKita Data...</h2>
+            <p class="text-xs text-slate-500 mt-1">Analyzing historical reporting timeline</p>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 1: GLOBAL SUMMARY                         -->
+        <!-- ============================================== -->
+        <section id="view-global" class="view-section active flex-1 flex-col overflow-hidden bg-slate-50">
+
+            <div class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 shrink-0">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-1">
+                            <i class="ph-bold ph-house"></i>
+                            <span>Dashboard</span>
+                            <i class="ph-bold ph-caret-right text-[10px]"></i>
+                            <span class="text-teal-600 font-bold">Distribution Map</span>
+                        </div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Area Map & Status</h1>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></div>
+                            <span class="text-xs font-bold text-emerald-700">Real-time Integrated Data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-6">
+
+                <!-- METRIC CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-5" id="metric-cards-container">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-teal-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 gradient-brand rounded-xl flex items-center justify-center shadow-md shadow-teal-500/30 mb-2">
+                                <i class="ph-fill ph-map-pin text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Monitoring Points</p>
+                            <h3 class="text-2xl font-black text-slate-800 mt-0.5" id="stat-titik">0</h3>
+                            <p class="text-[10px] text-slate-400">locations collected</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 gradient-emerald rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/30 mb-2">
+                                <i class="ph-fill ph-shield-check text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Safe Condition</p>
+                            <h3 class="text-2xl font-black text-emerald-700 mt-0.5" id="stat-aman">0</h3>
+                            <p class="text-[10px] text-slate-400">current safe points</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 gradient-red rounded-xl flex items-center justify-center shadow-md shadow-red-500/30 mb-2">
+                                <i class="ph-fill ph-warning-octagon text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider">Warning/Critical</p>
+                            <h3 class="text-2xl font-black text-red-600 mt-0.5" id="stat-kritis">0</h3>
+                            <p class="text-[10px] text-slate-400">needs attention</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/30 mb-2">
+                                <i class="ph-fill ph-database text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Total Data</p>
+                            <h3 class="text-2xl font-black text-indigo-700 mt-0.5" id="stat-logs">0</h3>
+                            <p class="text-[10px] text-slate-400">recorded log history</p>
+                        </div>
+                    </div>
+                    
+                    <!-- DYNAMIC CARDS: CARBON (Only shows if data > 0) -->
+                    <div id="card-karbon" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all group relative overflow-hidden hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-green-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30 mb-2">
+                                <i class="ph-fill ph-leaf text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-green-600 uppercase tracking-wider">Carbon Potential</p>
+                            <h3 class="text-2xl font-black text-green-700 mt-0.5 whitespace-nowrap"><span id="stat-karbon">0</span> <span class="text-xs font-semibold text-slate-400 ml-0.5">Kg</span></h3>
+                            <p class="text-[10px] text-slate-400">CO₂ absorbed/year</p>
+                        </div>
+                    </div>
+                    
+                    <!-- DYNAMIC CARDS: BIOMASS (Only shows if data > 0) -->
+                    <div id="card-biomassa" class="bg-white p-4 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all group relative overflow-hidden hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -mr-6 -mt-6 group-hover:scale-110 transition-transform"></div>
+                        <div class="relative">
+                            <div class="w-9 h-9 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/30 mb-2">
+                                <i class="ph-fill ph-fish text-lg text-white"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Biomass Stock</p>
+                            <h3 class="text-2xl font-black text-blue-700 mt-0.5 whitespace-nowrap"><span id="stat-biomassa">0</span> <span class="text-xs font-semibold text-slate-400 ml-0.5">Kg</span></h3>
+                            <p class="text-[10px] text-slate-400">extrapolation estimate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 Column Section: Map + Side Stats -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-5">
+
+                    <!-- MAP -->
+                    <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-[500px] xl:h-[620px]">
+                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between bg-gradient-to-r from-slate-50 to-white shrink-0">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-map-trifold text-teal-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800">Geographical Visualization</h3>
+                                    <p class="text-xs text-slate-500">Interactive map of reporting code distribution</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <select id="filter-kabupaten-global" onchange="filterDataGlobal()" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="ALL">🗺️ All Districts</option>
+                                </select>
+                                <select id="filter-kode-global" onchange="filterDataGlobal()" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="ALL">📍 All Codes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="global-map" class="w-full flex-1 relative z-0"></div>
+                    </div>
+
+                    <!-- Side Panel -->
+                    <div class="space-y-4 md:space-y-5">
+
+                        <!-- Distribution -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-9 h-9 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-chart-pie-slice text-purple-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">Status Distribution</h3>
+                                    <p class="text-xs text-slate-500">Based on latest log conditions</p>
+                                </div>
+                            </div>
+                            <div id="distribution-bars" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[300px] xl:max-h-[350px]">
+                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex items-center gap-3 shrink-0">
+                                <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i class="ph-bold ph-pulse text-teal-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">Recent Activity</h3>
+                                </div>
+                            </div>
+                            <div id="recent-activity" class="divide-y divide-slate-100 flex-1 overflow-y-auto"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: LOG TIMELINE                           -->
+        <!-- ============================================== -->
+        <section id="view-log" class="view-section flex-1 flex-col overflow-hidden bg-slate-50">
+
+            <div class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 shrink-0">
+                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-1">
+                    <i class="ph-bold ph-house"></i>
+                    <span>Dashboard</span>
+                    <i class="ph-bold ph-caret-right text-[10px]"></i>
+                    <span class="text-teal-600 font-bold">Monitoring Logs</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Data Analysis Timeline</h1>
+                <p class="text-xs text-slate-500 mt-1">Select a location code in the table to view its historical footprint.</p>
+            </div>
+
+            <div class="flex-1 overflow-hidden p-4 md:p-5">
+                <div class="flex flex-col lg:flex-row gap-4 md:gap-5 h-full min-h-0">
+
+                    <!-- LEFT COLUMN: Points List -->
+                    <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden min-w-0">
+
+                        <!-- Filter Bar -->
+                        <div class="p-4 md:p-5 border-b border-slate-200 bg-white shrink-0">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-2.5">
+                                <div class="relative sm:col-span-2 lg:col-span-1">
+                                    <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" id="filter-text" oninput="renderTable()" placeholder="Search code/notes..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white transition">
+                                </div>
+                                <select id="filter-kabupaten" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">🗺️ All Districts</option>
+                                </select>
+                                <select id="filter-kode" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">📍 All Codes</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <select id="filter-kondisi" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">⚙️ All Statuses</option>
+                                    <option value="Aman">✅ Safe / Controlled</option>
+                                    <option value="Waspada">⚠️ Warning / Critical</option>
+                                </select>
+
+                                <select id="filter-tipe" onchange="renderTable()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                    <option value="ALL">📂 All Report Types</option>
+                                    <option value="cleanup">Cleanup</option>
+                                    <option value="planting">Planting</option>
+                                    <option value="observation">Observation</option>
+                                    <option value="early_warning">Early Warning</option>
+                                    <option value="biomassa">🐟 Biomass Census</option>
+                                    <option value="idea">💡 Idea / Solution</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <!-- Table Area -->
+                        <div class="flex-1 overflow-auto bg-pattern p-4 md:p-5">
+                            <div class="grid grid-cols-1 gap-2.5" id="data-table-body"></div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: TIMELINE -->
+                    <div class="w-full lg:w-[460px] shrink-0 hidden lg:flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <div class="p-6 gradient-slate text-white relative shrink-0 overflow-hidden">
+                            <i class="ph-fill ph-clock-counter-clockwise absolute -right-6 -bottom-6 text-9xl opacity-10"></i>
+                            <div class="relative">
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/15 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 backdrop-blur border border-white/10">
+                                    <i class="ph-bold ph-map-pin-line"></i> Point Historical Analysis
+                                </div>
+                                <h2 class="text-2xl font-black leading-tight mb-1" id="tl-kode-nama">Select Point</h2>
+                                <p class="text-xs text-slate-300 flex items-center gap-1" id="tl-lokasi-nama">
+                                    Click a card in the list to load timeline
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-gradient-to-br from-slate-50 to-white border-b border-slate-200 text-center shrink-0" id="tl-trend-box">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Trend Status</p>
+                            <h3 class="text-base font-bold text-slate-400 mt-1">No Data Yet</h3>
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto bg-white" id="tl-history-list">
+                            <div class="text-center p-12 text-slate-400">
+                                <div class="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-3">
+                                    <i class="ph-fill ph-hand-pointing text-3xl text-slate-300"></i>
+                                </div>
+                                <p class="text-sm font-bold text-slate-500">Select Location Code</p>
+                                <p class="text-xs text-slate-400 mt-1">Click one of the cards in the left list</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Mobile Modal Timeline -->
+            <div id="modal-timeline-mobile" class="fixed inset-0 bg-slate-900/80 z-[200] hidden flex-col justify-end items-center p-0 backdrop-blur-sm transition-opacity lg:hidden">
+                <div class="bg-white rounded-t-3xl w-full max-h-[90vh] flex flex-col shadow-2xl h-full">
+                    <div class="p-5 gradient-slate text-white rounded-t-3xl flex justify-between items-center sticky top-0 z-10">
+                        <div class="flex-1 min-w-0 pr-3">
+                            <h3 class="font-bold text-lg leading-tight truncate" id="tl-kode-nama-mobile">Code Name</h3>
+                            <p class="text-[10px] text-slate-300 uppercase tracking-widest mt-1 truncate" id="tl-lokasi-nama-mobile">Location</p>
+                        </div>
+                        <button onclick="closeTimelineMobile()" class="bg-white/20 hover:bg-white/30 p-2 rounded-full text-white transition shrink-0"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-slate-50 to-white border-b border-slate-200 text-center shrink-0" id="tl-trend-box-mobile"></div>
+                    <div class="p-5 flex-1 overflow-y-auto bg-white" id="tl-history-list-mobile"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Image Viewer Modal -->
+        <div id="image-modal" class="fixed inset-0 z-[300] hidden flex-col justify-center items-center bg-slate-900/90 backdrop-blur-sm p-4 transition-opacity">
+            <div class="relative max-w-4xl w-full flex flex-col items-center">
+                <button onclick="closeImageModal()" class="absolute -top-12 right-0 md:-right-10 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full text-white flex items-center justify-center backdrop-blur transition">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+                <img id="modal-image-content" src="" alt="Proof Photo" class="max-w-full max-h-[80vh] rounded-xl shadow-2xl object-contain fade-in">
+                <div class="mt-4 text-center bg-slate-800/50 backdrop-blur px-4 py-2 rounded-lg">
+                    <a id="modal-image-link" href="#" target="_blank" class="text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                        <i class="ph-bold ph-arrow-square-out"></i> Open Original Link in New Tab
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="geojson-modal" class="fixed inset-0 z-[350] hidden flex-col justify-center items-center bg-slate-900/90 backdrop-blur-sm p-4 transition-opacity">
+            <div class="relative max-w-5xl w-full h-[80vh] bg-white rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+                <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h3 class="font-bold text-slate-800" id="geojson-modal-title">Detailed Mapping Area</h3>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest" id="geojson-modal-subtitle">Satellite Polygon Visualization</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportGeoJSON()" class="px-3 py-2 bg-teal-100 text-teal-700 rounded-lg text-xs font-bold hover:bg-teal-200 transition flex items-center gap-2">
+                            <i class="ph-bold ph-download-simple"></i> Export GeoJSON
+                        </button>
+                        <button onclick="closeGeojsonModal()" class="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-full text-slate-600 flex items-center justify-center transition">
+                            <i class="ph-bold ph-x text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="geojson-map-canvas" class="flex-1 w-full h-full bg-slate-100"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // CSV URL
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFWyVTdXcRAvYcy5pDTzkdrByfqVRDZYCF41LYE2T4lZOgBGroJ059BEia9q6sahSYVFLw9MK3brmy/pub?output=csv";
+
+        const NAV_ACTIVE   = "nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all gradient-brand text-white shadow-lg shadow-teal-500/30";
+        const NAV_INACTIVE = "nav-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:bg-teal-50 hover:text-teal-600";
+
+        let groupedData    = {};
+        let flatLatestData = [];
+        let activeKodeId   = null;
+        let map            = null;
+        let mapLayer       = null;
+
+        const typeConfig = {
+            'cleanup'      : { label: 'Cleanup',            icon: 'ph-trash',           color: 'orange'  },
+            'planting'     : { label: 'Planting',           icon: 'ph-plant',           color: 'emerald' },
+            'observation'  : { label: 'Observation',        icon: 'ph-binoculars',      color: 'blue'    },
+            'early_warning': { label: 'Early Warning',      icon: 'ph-warning-octagon', color: 'red'     },
+            'patroli'      : { label: 'Patrol / Observation',icon: 'ph-binoculars',     color: 'blue'    },
+            'idea'         : { label: 'Idea & Solution',    icon: 'ph-lightbulb',       color: 'purple'  },
+            'biomassa'     : { label: 'Biomass Census',     icon: 'ph-scales',          color: 'indigo'  }
+        };
+
+        // ─── Media Helper ──────────────────────────────────────────────────────
+        function getMediaPreviewData(url) {
+            let previewUrl = url;
+            let isYouTube  = false;
+            const ytMatch  = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+            if (ytMatch && ytMatch[1]) {
+                previewUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+                isYouTube  = true;
+                return { previewUrl, isYouTube, linkAsli: url };
+            }
+            if (url.includes('drive.google.com/file/d/')) {
+                const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (driveMatch && driveMatch[1]) {
+                    previewUrl = `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800`;
+                }
+            }
+            return { previewUrl, isYouTube, linkAsli: url };
+        }
+
+        function showImageModal(originalUrl, previewUrl) {
+            const modal = document.getElementById('image-modal');
+            document.getElementById('modal-image-content').src = previewUrl || originalUrl;
+            document.getElementById('modal-image-link').href   = originalUrl;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('modal-image-content').src = "";
+        }
+
+        // ─── Init ──────────────────────────────────────────────────────────────
+        window.onload = () => {
+            document.getElementById('nav-global').className = NAV_ACTIVE;
+            document.getElementById('nav-log').className    = NAV_INACTIVE;
+            fetchData();
+        };
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            document.getElementById('nav-global').className        = NAV_INACTIVE;
+            document.getElementById('nav-log').className           = NAV_INACTIVE;
+            document.getElementById('nav-global-mobile').className = "flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center";
+            document.getElementById('nav-log-mobile').className    = "flex-1 py-4 px-2 text-sm font-semibold text-slate-500 border-b-2 border-transparent shrink-0 text-center";
+
+            if (viewId === 'global') {
+                document.getElementById('nav-global').className        = NAV_ACTIVE;
+                document.getElementById('nav-global-mobile').className = "flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center";
+                setTimeout(() => { if (!map) initMap(); else map.invalidateSize(); filterDataGlobal(); }, 100);
+            } else if (viewId === 'log') {
+                document.getElementById('nav-log').className        = NAV_ACTIVE;
+                document.getElementById('nav-log-mobile').className = "flex-1 py-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 shrink-0 text-center";
+                renderTable();
+            }
+        }
+
+        // ─── Fetch & Parse ─────────────────────────────────────────────────────
+        function fetchData() {
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.add('flex');
+
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processCSVData(results.data);
+                    const now = new Date();
+                    document.getElementById('sync-time').innerText = `Last sync: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+                },
+                error: function() {
+                    alert("Failed to fetch data from Google Sheets. Ensure the URL is published to the web.");
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('loading-screen').classList.remove('flex');
+                }
+            });
+        }
+
+        function processCSVData(rows) {
+            groupedData    = {};
+            flatLatestData = [];
+            const uniqueKabupaten = new Set();
+            const uniqueKode      = new Set();
+            const processedKeys   = new Set();
+
+            rows.forEach(row => {
+                const kode    = (row['Kode pelaporan']  || row['Kode Pelaporan']  || '').trim() || "UNKNOWN";
+                const kabKota = (row['Kabupaten/ Kota'] || row['Kabupaten/Kota']  || row['Kabupaten / Kota'] || '').trim() || "Unknown";
+                const pelapor = (row['Nama pelapor']    || row['Nama Pelapor']    || '').trim() || "Anonymous";
+
+                const payload1 = row['Data Payload (JSON)']    || row['Data Payload(JSON)']    || "";
+                const payload2 = row['Data Payload II (JSON)'] || row['Data Payload II(JSON)'] || "";
+                const payload3 = row['Data Payload III (JSON)']|| row['Data Payload III(JSON)']|| "";
+                const jsonStr  = (payload1 + payload2 + payload3).trim();
+
+                if (!jsonStr || !jsonStr.startsWith("{")) return; 
+
+                let parsedData;
+                try {
+                    parsedData = JSON.parse(jsonStr);
+                } catch (e) {
+                    console.warn("Failed to parse JSON for code:", kode, e);
+                    return;
+                }
+
+                const reportsArr = parsedData.reports;
+                const ideasArr   = parsedData.ideas;
+
+                // --- 1. PROCESS REPORTS DATA ---
+                if (reportsArr && Array.isArray(reportsArr)) {
+                    reportsArr.forEach(item => {
+                        let status = "Safe";
+                        if (item.type === 'early_warning') {
+                            status = item.urgensi
+                                || (item.metadataAnomali && item.metadataAnomali.urgensi)
+                                || "Warning";
+                        }
+                        
+                        // Convert ID Status string to EN for data handling
+                        if(status.toLowerCase().includes("waspada")) status = "Warning";
+                        if(status.toLowerCase().includes("kritis")) status = "Critical";
+                        if(status.toLowerCase().includes("bahaya")) status = "Danger";
+                        if(status.toLowerCase().includes("aman")) status = "Safe";
+
+                        const r = {
+                            kode    : kode,
+                            kabupaten: kabKota,
+                            pelapor : pelapor,
+                            timestamp: item.timestamp || new Date().toISOString(),
+                            type    : item.type  || 'observation',
+                            status  : status,
+                            notes   : item.notes || '',
+                            photo   : item.photo || '',
+                            lat     : parseFloat(item.lat) || 0,
+                            lng     : parseFloat(item.lng) || 0,
+                            metadata: item.metadataAnomali || null,
+                            amount  : item.amount || '',
+                            bibit   : item.bibit  || '',
+                            jenis   : item.jenis  || '',
+                            areaHa  : item.areaHa || '',
+                            urgensi : item.urgensi || '',
+                            kategoriAnomali: item.kategoriAnomali || '',
+                            biomassData: item.biomassData || null,
+                            geojson : item.geojson || null
+                        };
+
+                        const dateOnly = r.timestamp.split('T')[0];
+                        const uniqueKey = `${kode}_${dateOnly}_${r.type}_${r.notes.substring(0, 30)}`;
+
+                        if (!processedKeys.has(uniqueKey)) {
+                            processedKeys.add(uniqueKey); 
+
+                            const groupKey = `${kode}_${r.type}`; 
+                            if (!groupedData[groupKey]) {
+                                groupedData[groupKey] = { 
+                                    groupKey: groupKey, kode: kode, type: r.type, kabupaten: kabKota, history:[] 
+                                };
+                            }
+                            groupedData[groupKey].history.push(r);
+                        }
+                    });
+                }
+
+                // --- 2. PROCESS IDEAS DATA ---
+                if (ideasArr && Array.isArray(ideasArr)) {
+                    ideasArr.forEach(idea => {
+                        const ideaTime = new Date(idea.id).toISOString();
+                        
+                        const r = {
+                            kode    : kode,
+                            kabupaten: kabKota,
+                            pelapor : pelapor,
+                            timestamp: ideaTime,
+                            type    : 'idea', 
+                            status  : 'Idea',
+                            notes   : `💡 PROBLEM:\n${idea.masalah}\n\n🔍 REASON:\n${idea.alasan}\n\n✅ SOLUTION:\n${idea.solusi}`,
+                            photo   : '',
+                            lat     : 0, 
+                            lng     : 0,
+                            metadata: null,
+                            amount  : '', bibit : '', jenis : '', areaHa : '', urgensi : '', kategoriAnomali: '', geojson : null
+                        };
+
+                        const dateOnly = r.timestamp.split('T')[0];
+                        const uniqueKey = `${kode}_${dateOnly}_idea_${idea.id}`;
+
+                        if (!processedKeys.has(uniqueKey)) {
+                            processedKeys.add(uniqueKey);
+
+                            const groupKey = `${kode}_idea`; 
+                            if (!groupedData[groupKey]) {
+                                groupedData[groupKey] = { 
+                                    groupKey: groupKey, kode: kode, type: r.type, kabupaten: kabKota, history: [] 
+                                };
+                            }
+                            groupedData[groupKey].history.push(r);
+                        }
+                    });
+                }
+
+            }); 
+
+            // ── Flatten & sort ───────────────────────────────────────────────
+            for (let k in groupedData) {
+                groupedData[k].history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                const latest = groupedData[k].history[groupedData[k].history.length - 1];
+                uniqueKabupaten.add(groupedData[k].kabupaten);
+                uniqueKode.add(groupedData[k].kode);
+
+                flatLatestData.push({
+                    groupKey      : k,                   
+                    kode          : groupedData[k].kode, 
+                    kabupaten     : groupedData[k].kabupaten,
+                    latestTimestamp: latest.timestamp,
+                    status        : latest.status,
+                    type          : latest.type,
+                    notes         : latest.notes,
+                    lat           : latest.lat,
+                    lng           : latest.lng,
+                    historyCount  : groupedData[k].history.length,
+                    history       : groupedData[k].history
+                });
+            }
+
+            // ── Fill District Filter ──────────────────────────────────────────
+            let optKab = '<option value="ALL">🗺️ All Districts</option>';
+            Array.from(uniqueKabupaten).sort().forEach(kab => {
+                optKab += `<option value="${kab}">${kab}</option>`;
+            });
+            document.getElementById('filter-kabupaten-global').innerHTML = optKab;
+
+            const elKabTabel = document.getElementById('filter-kabupaten');
+            if (elKabTabel) elKabTabel.innerHTML = optKab;
+
+            // ── Fill Code Filter ───────────────────────────────────────
+            let optKode = '<option value="ALL">📍 All Codes</option>';
+            Array.from(uniqueKode).sort().forEach(k => {
+                optKode += `<option value="${k}">${k}</option>`;
+            });
+            document.getElementById('filter-kode-global').innerHTML = optKode;
+
+            const elKodeTabel = document.getElementById('filter-kode');
+            if (elKodeTabel) elKodeTabel.innerHTML = optKode;
+
+            // ── Render view ──────────────────────────────────────────
+            if (document.getElementById('view-global').classList.contains('active')) {
+                if (!map) initMap(); else map.invalidateSize();
+                filterDataGlobal();
+            } else {
+                renderTable();
+            }
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+            }, 400);
+        }
+
+        // ─── VIEW 1: MAP ───────────────────────────────────────────────────────
+        function initMap() {
+            map = L.map('global-map', { zoomControl: true }).setView([-6.200, 108.000], 6);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19, attribution: 'Tiles &copy; Esri'
+            }).addTo(map);
+            mapLayer = new L.FeatureGroup().addTo(map);
+
+            const legend = L.control({ position: 'bottomright' });
+            legend.onAdd = function() {
+                const div = L.DomUtil.create('div', 'map-legend');
+                div.innerHTML = `
+                    <div class="font-bold text-slate-700 mb-2 text-xs">Point Status</div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full" style="background:#10b981"></span><span class="font-medium text-slate-600">Safe</span></div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full" style="background:#f59e0b"></span><span class="font-medium text-slate-600">Warning</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#ef4444"></span><span class="font-medium text-slate-600">Critical / Danger</span></div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+        }
+
+        function filterDataGlobal() {
+            const selectedKab  = document.getElementById('filter-kabupaten-global').value;
+            const selectedKode = document.getElementById('filter-kode-global').value;
+            mapLayer.clearLayers();
+
+            let tTitik = 0, tAman = 0, tWaspada = 0, tKritis = 0, tLog = 0;
+            let tKarbon = 0, tBiomassa = 0;
+
+            flatLatestData.forEach(obj => {
+                if (selectedKab  !== 'ALL' && obj.kabupaten !== selectedKab)  return;
+                if (selectedKode !== 'ALL' && obj.kode      !== selectedKode) return;
+                tTitik++;
+                tLog += obj.historyCount;
+
+                // --- CARBON & BIOMASS CALCULATIONS ---
+                obj.history.forEach(h => {
+                    if (h.type === 'planting' && h.bibit) tKarbon += (parseInt(h.bibit) * 12);
+                    
+                    if (h.type === 'biomassa' && h.biomassData && h.biomassData.estimasiBerat) {
+                        let berat = parseFloat(h.biomassData.estimasiBerat);
+                        if (h.biomassData.metode === 'Belt Transect' && h.areaHa && parseFloat(h.areaHa) > 0) {
+                            const areaSampling = (parseFloat(h.biomassData.transekP) * parseFloat(h.biomassData.transekL)) / 10000;
+                            if (areaSampling > 0) {
+                                const kepadatan = berat / areaSampling;
+                                berat = kepadatan * parseFloat(h.areaHa); 
+                            }
+                        }
+                        tBiomassa += berat;
+                    }
+                });
+
+                let mapColor = '#10b981';
+                const st = (obj.status || '').toLowerCase();
+
+                if (st.includes('kritis') || st.includes('bahaya') || st.includes('critical') || st.includes('danger')) { mapColor = '#ef4444'; tKritis++; }
+                else if (st.includes('waspada') || st.includes('perhatian') || st.includes('warning')) { mapColor = '#f59e0b'; tWaspada++; }
+                else { tAman++; }
+
+                if (obj.lat && obj.lng) {
+                    const marker = L.circleMarker([obj.lat, obj.lng], {
+                        radius: 9, fillColor: mapColor, color: '#fff', weight: 2, fillOpacity: 0.95
+                    });
+
+
+                    marker.bindPopup(`
+                        <div style="min-width:160px">
+                            <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Code: ${obj.kode}</div>
+                            <div style="font-weight:800;color:#1e293b;font-size:14px;margin-bottom:6px">${obj.kabupaten}</div>
+                            <div style="display:inline-block;padding:3px 8px;background:${mapColor}20;color:${mapColor};border-radius:4px;font-size:11px;font-weight:700">${obj.status.toUpperCase()}</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:6px">${obj.historyCount} saved logs</div>
+                            
+                            <div class="mt-3 pt-3 border-t border-slate-100">
+                                <button onclick="goToDetail('${obj.kode}')" class="w-full bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white transition-all py-2 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+                                    View Historical Footprint <i class="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `);
+
+                    mapLayer.addLayer(marker);
+                }
+            });
+
+            // HIDE/SHOW LOGIC FOR CARBON AND BIOMASS CARDS
+            const cardKarbon = document.getElementById('card-karbon');
+            const cardBiomassa = document.getElementById('card-biomassa');
+            
+            if(cardKarbon) cardKarbon.style.display = tKarbon > 0 ? 'block' : 'none';
+            if(cardBiomassa) cardBiomassa.style.display = tBiomassa > 0 ? 'block' : 'none';
+
+            // SHOW STATS ON SCREEN
+            document.getElementById('stat-karbon').innerText = tKarbon.toLocaleString('en-US');
+            
+            let textBio = tBiomassa > 1000 ? (tBiomassa / 1000).toFixed(1) + "K" : tBiomassa.toFixed(1);
+            document.getElementById('stat-biomassa').innerText = textBio;
+
+            document.getElementById('stat-titik').innerText = tTitik;
+            document.getElementById('stat-aman').innerText  = tAman;
+            document.getElementById('stat-kritis').innerText = tWaspada + tKritis;
+            document.getElementById('stat-logs').innerText  = tLog;
+            document.getElementById('mini-stat-lokasi').innerText = tTitik;
+            document.getElementById('mini-stat-aman').innerText   = tAman;
+            document.getElementById('mini-stat-rusak').innerText  = tWaspada + tKritis;
+
+            renderDistribution(tAman, tWaspada, tKritis);
+            renderRecentActivity();
+
+            if (mapLayer.getLayers().length > 0) {
+                map.fitBounds(L.featureGroup(mapLayer.getLayers()).getBounds(), { padding: [40, 40], maxZoom: 16 });
+            }
+        }
+
+        function renderDistribution(aman, waspada, kritis) {
+            const total = aman + waspada + kritis || 1;
+            const items = [
+                { label: 'Safe',    count: aman,    color: 'emerald', icon: 'ph-check-circle'    },
+                { label: 'Warning', count: waspada, color: 'amber',   icon: 'ph-warning'          },
+                { label: 'Critical',  count: kritis,  color: 'red',     icon: 'ph-warning-octagon'  }
+            ];
+            let html = '';
+            items.forEach(item => {
+                const pct = ((item.count / total) * 100).toFixed(1);
+                html += `
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <i class="ph-fill ${item.icon} text-${item.color}-500"></i>
+                            <span class="font-semibold text-slate-700">${item.label}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-slate-800">${item.count}</span>
+                            <span class="text-slate-400 text-[10px] font-medium w-10 text-right">${pct}%</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill bg-${item.color}-500" style="width:${pct}%"></div></div>
+                </div>`;
+            });
+            document.getElementById('distribution-bars').innerHTML = html;
+        }
+
+        function renderRecentActivity() {
+            let all = [];
+            for (let k in groupedData) groupedData[k].history.forEach(h => all.push(h));
+            all.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            let html = '';
+            all.slice(0, 10).forEach(r => {
+                const typeInfo = typeConfig[r.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (r.status || '').toLowerCase();
+                if (r.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya') || st.includes('critical') || st.includes('danger')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian') || st.includes('warning')) clr = 'amber';
+                }
+                const d = new Date(r.timestamp);
+                html += `
+                <div class="p-4 hover:bg-slate-50 transition flex items-center gap-3 border-l-4 border-transparent hover:border-${clr}-500">
+                    <div class="w-10 h-10 rounded-xl bg-${clr}-50 text-${clr}-600 flex items-center justify-center shrink-0">
+                        <i class="ph-fill ${typeInfo.icon} text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-slate-800 text-sm truncate">${r.kode}</p>
+                            <span class="text-[9px] bg-${clr}-100 text-${clr}-700 px-1.5 py-0.5 rounded font-bold">${(r.status || 'Safe').toUpperCase()}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate mt-0.5">${r.notes || 'Activity recorded'}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <p class="text-xs font-bold text-slate-600">${d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</p>
+                        <p class="text-[10px] text-slate-400">${d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('recent-activity').innerHTML = html
+                || `<p class="text-center p-5 text-sm text-slate-400">No activity yet</p>`;
+        }
+
+        // ─── VIEW 2: LOG & TIMELINE ────────────────────────────────────────────
+        function renderTable() {
+            const textFilter = (document.getElementById('filter-text')?.value || '').toLowerCase();
+            const kabFilter  = document.getElementById('filter-kabupaten')?.value  || 'ALL';
+            const kodeFilter = document.getElementById('filter-kode')?.value || 'ALL';
+            const kondFilter = document.getElementById('filter-kondisi')?.value  || 'ALL';
+            const typeFilter = document.getElementById('filter-tipe')?.value     || 'ALL';
+            const container  = document.getElementById('data-table-body');
+
+            let filtered = flatLatestData.filter(obj => {
+                if (kabFilter  !== 'ALL' && obj.kabupaten !== kabFilter)  return false;
+                if (kodeFilter !== 'ALL' && obj.kode      !== kodeFilter) return false;
+                if (textFilter && !obj.kode.toLowerCase().includes(textFilter)
+                               && !(obj.notes || '').toLowerCase().includes(textFilter)) return false;
+                if (typeFilter !== 'ALL' && obj.type !== typeFilter) return false;
+                if (kondFilter !== 'ALL') {
+                    const st = (obj.status || '').toLowerCase();
+                    if (kondFilter === 'Aman'    && (st.includes('waspada') || st.includes('kritis') || st.includes('bahaya') || st.includes('warning') || st.includes('critical') || st.includes('danger'))) return false;
+                    if (kondFilter === 'Waspada' && (!st.includes('waspada') && !st.includes('kritis') && !st.includes('bahaya') && !st.includes('warning') && !st.includes('critical') && !st.includes('danger'))) return false;
+                }
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                const stA = (a.status || '').toLowerCase(), stB = (b.status || '').toLowerCase();
+                const scoreA = (stA.includes('kritis') || stA.includes('bahaya') || stA.includes('critical') || stA.includes('danger')) ? 0 : ((stA.includes('waspada') || stA.includes('warning')) ? 1 : 2);
+                const scoreB = (stB.includes('kritis') || stB.includes('bahaya') || stB.includes('critical') || stB.includes('danger')) ? 0 : ((stB.includes('waspada') || stB.includes('warning')) ? 1 : 2);
+                if (scoreA !== scoreB) return scoreA - scoreB;
+                return new Date(b.latestTimestamp) - new Date(a.latestTimestamp);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                <div class="text-center p-12 bg-white rounded-2xl border border-slate-200">
+                    <i class="ph-bold ph-magnifying-glass text-3xl text-slate-300 mb-2 block"></i>
+                    <p class="text-slate-700 font-bold">No logs found</p>
+                    <p class="text-slate-400 text-xs mt-1">Try changing filters or refreshing data</p>
+                </div>`;
+                return;
+            }
+
+            let htmlStr = '';
+            filtered.forEach(obj => {
+                const typeInfo = typeConfig[obj.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (obj.status || '').toLowerCase();
+                if (obj.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya') || st.includes('critical') || st.includes('danger')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian') || st.includes('warning')) clr = 'amber';
+                }
+                const dDate    = new Date(obj.latestTimestamp).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                const isActive = activeKodeId === obj.groupKey;
+
+                htmlStr += `
+                <div onclick="openTimeline('${obj.groupKey}', this)" class="obj-card bg-white border-2 ${isActive ? 'border-teal-500 active' : 'border-slate-200'} rounded-xl p-4 hover:border-teal-300 cursor-pointer flex items-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-${clr}-50 text-${clr}-600 flex items-center justify-center shrink-0 border border-${clr}-100">
+                        <i class="ph-fill ${typeInfo.icon} text-2xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                            <h3 class="font-bold text-slate-800 truncate">${obj.kode} - ${typeInfo.label}</h3>
+                            <span class="status-pill bg-${clr}-50 text-${clr}-700 border border-${clr}-200 shrink-0">${obj.status}</span>
+                            ${obj.historyCount > 1 ? `<span class="text-[9px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${obj.historyCount} Logs</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-500 truncate mt-1">
+                            <i class="ph-bold ph-map-pin"></i> ${obj.kabupaten} · ${dDate}
+                        </p>
+                    </div>
+                    <div class="hidden md:flex w-9 h-9 bg-slate-50 group-hover:bg-teal-600 rounded-lg items-center justify-center shrink-0 transition-colors">
+                        <i class="ph-bold ph-caret-right text-slate-400 group-hover:text-white"></i>
+                    </div>
+                </div>`;
+
+            });
+            container.innerHTML = htmlStr;
+        }
+
+        function openTimeline(groupKey, cardEl) {
+            activeKodeId = groupKey;
+            document.querySelectorAll('.obj-card').forEach(c => {
+                c.classList.remove('active', 'border-teal-500');
+                c.classList.add('border-slate-200');
+            });
+            if (cardEl) {
+                cardEl.classList.add('active', 'border-teal-500');
+                cardEl.classList.remove('border-slate-200');
+            }
+
+            const rData = groupedData[groupKey];
+            if (!rData) return;
+
+            const typeLabel = typeConfig[rData.type] ? typeConfig[rData.type].label : 'Report';
+            document.getElementById('tl-kode-nama').innerText       = `${rData.kode} - ${typeLabel}`;
+            document.getElementById('tl-lokasi-nama').innerHTML      = `<i class="ph-bold ph-map-pin"></i> ${rData.kabupaten}`;
+            document.getElementById('tl-kode-nama-mobile').innerText = `${rData.kode} - ${typeLabel}`;
+            document.getElementById('tl-lokasi-nama-mobile').innerText = rData.kabupaten;
+
+            const historyDesc = [...rData.history].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // ── Trend Box ──────────────────────────────────────────────────────
+            let trendHTML = '';
+            if (historyDesc.length === 1) {
+                trendHTML = `
+                <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-50 text-teal-700 rounded-xl font-bold border border-teal-200">
+                    <i class="ph-fill ph-info text-xl"></i> Initial Observation Data
+                </div>`;
+            } else {
+                const latest = historyDesc[0];
+                const prev   = historyDesc[1];
+                const lS = getStatusScore(latest.status);
+                const pS = getStatusScore(prev.status);
+                let msg = "Stagnant Condition", clr = "slate", icon = "ph-minus";
+                if (lS > pS) { msg = "Worsening Status";  clr = "red";     icon = "ph-trend-up"; }
+                else if (lS < pS) { msg = "Improving Condition"; clr = "emerald"; icon = "ph-trend-down"; }
+                else { if (lS > 0) { msg = "Still Anomalous"; clr = "amber"; icon = "ph-warning"; }
+                       else { msg = "Remains Controlled"; clr = "emerald"; icon = "ph-check-circle"; } }
+                trendHTML = `
+                <div class="inline-flex items-center gap-2 px-4 py-2.5 bg-${clr}-50 text-${clr}-700 rounded-xl font-black border border-${clr}-200 shadow-sm">
+                    <i class="ph-bold ${icon} text-xl"></i> ${msg.toUpperCase()}
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2">Comparison: <strong>${prev.type}</strong> → <strong>${latest.type}</strong></p>`;
+            }
+            document.getElementById('tl-trend-box').innerHTML        = trendHTML;
+            document.getElementById('tl-trend-box-mobile').innerHTML = trendHTML;
+
+            // ── History Render ─────────────────────────────────────────────────
+            let tlHTML = '<div class="p-5">';
+            historyDesc.forEach((r, idx) => {
+                const isLatest = idx === 0;
+                const typeInfo = typeConfig[r.type] || typeConfig['patroli'];
+                let clr = typeInfo.color;
+                const st = (r.status || '').toLowerCase();
+                if (r.type === 'early_warning') {
+                    if (st.includes('kritis') || st.includes('bahaya') || st.includes('critical') || st.includes('danger')) clr = 'red';
+                    else if (st.includes('waspada') || st.includes('perhatian') || st.includes('warning')) clr = 'amber';
+                }
+                const dDate = new Date(r.timestamp).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+                const dTime = new Date(r.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Multi-media thumbnails
+                let mediaHtml = '';
+                if (r.photo) {
+                    const urls = r.photo.split(',').map(u => u.trim()).filter(u => u);
+                    if (urls.length > 0) {
+                        mediaHtml += `<div class="flex flex-wrap gap-2 mt-3">`;
+                        urls.forEach(url => {
+                            const mediaInfo = getMediaPreviewData(url);
+                            const ytBadge   = mediaInfo.isYouTube
+                                ? `<div class="absolute bottom-1 right-1 bg-red-600 text-white rounded px-1 text-[8px] font-bold shadow">YT</div>` : '';
+                            mediaHtml += `
+                            <div onclick="showImageModal('${mediaInfo.linkAsli.replace(/'/g, "\\'")}','${mediaInfo.previewUrl.replace(/'/g, "\\'")}')"
+                                 class="relative w-16 h-16 border border-slate-200 rounded-lg overflow-hidden cursor-pointer hover:border-teal-400 group">
+                                <img src="${mediaInfo.previewUrl}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                    <i class="ph-fill ph-magnifying-glass-plus text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow"></i>
+                                </div>
+                                ${ytBadge}
+                            </div>`;
+                        });
+                        mediaHtml += `</div>`;
+                    }
+                }
+
+                let extraBadge = '';
+                if (r.type === 'cleanup' && r.amount) extraBadge = `<span class="bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.amount} Kg</span>`;
+                
+                if (r.type === 'planting' && r.bibit) {
+                    const co2 = parseInt(r.bibit) * 12;
+                    extraBadge = `<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2"><i class="ph-bold ph-leaf"></i> ${r.bibit} Seedlings (${co2} Kg CO₂)</span>`;
+                }
+                
+                if (r.type === 'early_warning') extraBadge = `<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2">${r.kategoriAnomali || ''}</span>`;
+                
+                if (r.type === 'biomassa' && r.biomassData) {
+                    const bio = r.biomassData;
+                    let kepadatanStr = "";
+                    if (bio.metode === 'Belt Transect') {
+                        const area = (parseFloat(bio.transekP) * parseFloat(bio.transekL)) / 10000;
+                        if (area > 0) kepadatanStr = ` · ${(parseFloat(bio.estimasiBerat)/area).toFixed(1)} Kg/Ha`;
+                    } else if (r.areaHa && parseFloat(r.areaHa) > 0) {
+                        kepadatanStr = ` · ${(parseFloat(bio.estimasiBerat)/parseFloat(r.areaHa)).toFixed(1)} Kg/Ha`;
+                    }
+                    extraBadge = `<span class="bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded text-[10px] ml-2"><i class="ph-bold ph-fish"></i> ${bio.estimasiBerat} Kg${kepadatanStr} · ${bio.spesies.split(' ')[0]}</span>`;
+                }
+                
+                let geojsonBtn = '';
+                if (r.geojson && r.geojson.geometry) {
+                    const geoData = JSON.stringify(r.geojson).replace(/'/g, "\\'");
+                    geojsonBtn = `
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <button onclick='openGeojsonModal(${geoData}, "${r.kode}")' class="inline-flex items-center gap-2 px-3 py-2 bg-slate-800 text-white rounded-lg text-[11px] font-bold hover:bg-slate-900 transition-all shadow-md">
+                            <i class="ph-bold ph-polyhedron"></i> View Mapping Area
+                        </button>
+                    </div>`;
+                }
+
+                tlHTML += `
+                <div class="timeline-item relative pl-12 pb-6 fade-in">
+                    <div class="timeline-line"></div>
+                    <div class="absolute left-0 top-0 w-10 h-10 rounded-full border-4 border-white ${isLatest ? 'gradient-brand shadow-lg shadow-teal-500/40 scale-110 z-10' : 'bg-slate-300 z-0'} flex items-center justify-center text-white">
+                        <i class="ph-bold ${typeInfo.icon} text-base"></i>
+                    </div>
+                    <div class="bg-white border ${isLatest ? 'border-teal-200 shadow-md ring-1 ring-teal-100' : 'border-slate-200'} p-4 rounded-2xl">
+                        ${isLatest ? '<div class="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-100 text-teal-700 text-[9px] font-black uppercase rounded mb-2">Latest</div>' : ''}
+                        <div class="flex justify-between items-start mb-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <p class="text-sm font-black text-slate-800">${dDate}</p>
+                                <p class="text-[10px] text-slate-400 font-medium mt-0.5"><i class="ph-bold ph-clock"></i> ${dTime} · ${r.pelapor}</p>
+                            </div>
+                            <span class="status-pill bg-${clr}-50 text-${clr}-700 border border-${clr}-200 shrink-0">${r.status}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-xs font-bold text-slate-700"><i class="ph-fill ${typeInfo.icon} text-${typeInfo.color}-500"></i> ${typeInfo.label}</span>
+                            ${extraBadge}
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed italic whitespace-pre-wrap">"${r.notes || 'No additional details.'}"</p>
+                        ${mediaHtml}
+                        ${geojsonBtn}
+                    </div>
+                </div>`;
+            });
+
+            tlHTML += '</div>';
+
+            document.getElementById('tl-history-list').innerHTML        = tlHTML;
+            document.getElementById('tl-history-list-mobile').innerHTML = tlHTML;
+
+            if (window.innerWidth < 1024) {
+                document.getElementById('modal-timeline-mobile').classList.remove('hidden');
+                document.getElementById('modal-timeline-mobile').classList.add('flex');
+            }
+        }
+
+        function getStatusScore(status) {
+            const s = (status || '').toLowerCase();
+            if (s.includes('kritis') || s.includes('bahaya') || s.includes('critical') || s.includes('danger')) return 2;
+            if (s.includes('waspada') || s.includes('perhatian') || s.includes('warning')) return 1;
+            return 0;
+        }
+
+        function closeTimelineMobile() {
+            document.getElementById('modal-timeline-mobile').classList.add('hidden');
+            document.getElementById('modal-timeline-mobile').classList.remove('flex');
+        }
+
+
+        let modalMap = null;
+        let geojsonLayer = null;
+        let currentGeojsonData = null;
+
+        function openGeojsonModal(data, kode) {
+            currentGeojsonData = data;
+            const modal = document.getElementById('geojson-modal');
+            document.getElementById('geojson-modal-title').innerText = `Detail Area: ${kode}`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (!modalMap) {
+                modalMap = L.map('geojson-map-canvas').setView([0, 0], 2);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19, attribution: 'Esri'
+                }).addTo(modalMap);
+            }
+
+            if (geojsonLayer) modalMap.removeLayer(geojsonLayer);
+
+            geojsonLayer = L.geoJSON(data, {
+                style: { color: "#14b8a6", weight: 3, opacity: 0.8, fillOpacity: 0.35 }
+            }).addTo(modalMap);
+
+            setTimeout(() => {
+                modalMap.invalidateSize();
+                modalMap.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+            }, 200);
+        }
+
+        function closeGeojsonModal() {
+            document.getElementById('geojson-modal').classList.add('hidden');
+            document.getElementById('geojson-modal').classList.remove('flex');
+        }
+
+        function exportGeoJSON() {
+            if (!currentGeojsonData) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentGeojsonData));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `PesisirKita_Export_${new Date().getTime()}.geojson`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // ─── DEEP LINKING FROM MAP TO TIMELINE ─────────────────────────
+        function goToDetail(kode) {
+            switchView('log');
+            
+            const filterKodeEl = document.getElementById('filter-kode');
+            if (filterKodeEl) {
+                filterKodeEl.value = kode;
+            }
+            
+            document.getElementById('filter-kabupaten').value = 'ALL';
+            document.getElementById('filter-kondisi').value = 'ALL';
+            document.getElementById('filter-tipe').value = 'ALL';
+            if (document.getElementById('filter-text')) {
+                document.getElementById('filter-text').value = '';
+            }
+
+            renderTable();
+            
+            setTimeout(() => {
+                const firstCard = document.querySelector('#data-table-body .obj-card');
+                if (firstCard) {
+                    firstCard.click();
+                }
+            }, 100);
+        }
+
+
+    </script>
+</body>
+</html>
