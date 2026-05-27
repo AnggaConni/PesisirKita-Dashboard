@@ -68,8 +68,8 @@
     <div id="modal-peta" class="fixed inset-0 bg-black/60 z-[100] hidden flex-col justify-center items-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col transform transition-all">
             <div class="p-4 bg-teal-600 text-white flex justify-between items-center">
-                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold text-xl"></i> Sweep Area Map</h3>
-                <button onclick="closeModalPeta()" class="font-bold text-white bg-teal-800 hover:bg-teal-900 px-3 py-1 rounded-lg transition-colors">Close</button>
+                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold text-xl"></i> Peta Area Sapuan</h3>
+                <button onclick="closeModalPeta()" class="font-bold text-white bg-teal-800 hover:bg-teal-900 px-3 py-1 rounded-lg transition-colors">Tutup</button>
             </div>
             <div id="modal-map-container" class="w-full h-[60vh] md:h-96 bg-gray-200"></div>
         </div>
@@ -84,25 +84,22 @@
 <div class="hidden md:flex items-center justify-between px-5 py-6 border-b border-gray-100 w-full">
 
     <!-- LEFT -->
-<div class="flex items-center gap-3 min-w-0">
-    
+<div class="flex items-center gap-2 min-w-0">
     <img 
         src="penyu.png" 
         alt="Logo Penyu PesisirKita"
-        class="w-10 h-10 rounded-xl object-cover flex-shrink-0"
+        class="w-8 h-8 object-contain flex-shrink-0"
     />
 
-    <h1 class="text-2xl font-bold text-teal-700 tracking-normal whitespace-nowrap">
-        Pesisir<span class="text-cyan-600">Kita</span>
+    <h1 class="text-xl font-black text-teal-800 tracking-tight whitespace-nowrap">
+        PesisirKita
     </h1>
-
 </div>
-
     <!-- RIGHT -->
     <button 
         onclick="openProfileModal()" 
         class="text-gray-400 hover:text-teal-600 transition flex-shrink-0 ml-3"
-        title="Profile Settings"
+        title="Pengaturan Data Diri"
     >
         <i class="ph-bold ph-gear text-xl"></i>
     </button>
@@ -112,23 +109,23 @@
             <div class="flex md:flex-col w-full px-2 md:px-4 py-2 md:py-6 gap-1 md:gap-2">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-teal-600 bg-teal-50 transition-colors">
                     <i class="ph-fill ph-house text-2xl md:text-xl md:mr-3"></i>
-                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Dashboard</span>
+                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Beranda</span>
                 </button>
                 <button onclick="switchTab('lapangan')" id="nav-lapangan" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50/50 transition-colors">
                     <i class="ph-fill ph-map-pin text-2xl md:text-xl md:mr-3"></i>
-                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Field</span>
+                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Lapangan</span>
                 </button>
                 <button onclick="switchTab('kalkulator')" id="nav-kalkulator" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50/50 transition-colors">
                     <i class="ph-fill ph-calculator text-2xl md:text-xl md:mr-3"></i>
-                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Calculator</span>
+                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Hitung</span>
                 </button>
                 <button onclick="switchTab('kamus')" id="nav-kamus" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50/50 transition-colors">
                     <i class="ph-fill ph-book-open-text text-2xl md:text-xl md:mr-3"></i>
-                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Dictionary</span>
+                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Kamus</span>
                 </button>
                 <button onclick="switchTab('hackathon')" id="nav-hackathon" class="nav-btn flex-1 md:flex-none flex flex-col md:flex-row items-center md:justify-start p-2 md:px-4 md:py-3 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50/50 transition-colors">
                     <i class="ph-fill ph-lightbulb text-2xl md:text-xl md:mr-3"></i>
-                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Team Ideas</span>
+                    <span class="text-[10px] md:text-sm font-semibold mt-1 md:mt-0">Ide Tim</span>
                 </button>
             </div>
         </nav>
@@ -144,7 +141,7 @@
 
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1 bg-teal-800 px-3 py-1 rounded-full text-sm font-semibold">
-                        <i class="ph-fill ph-medal text-yellow-400"></i> <span id="header-points">350</span> Points
+                        <i class="ph-fill ph-medal text-yellow-400"></i> <span id="header-points">350</span> Poin
                     </div>
                     <button onclick="openProfileModal()" class="text-teal-100 hover:text-white transition">
                         <i class="ph-bold ph-gear text-2xl"></i>
@@ -159,106 +156,59 @@
                 <!-- 1. DASHBOARD (ALL-IN-ONE) -->
                 <section id="view-dashboard" class="view-section active space-y-6">
                     
-                    <!-- KARTU STATUS (MODERN, SLEEK & DATA-DRIVEN) -->
-                    <div class="bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-700 rounded-[2rem] p-6 md:p-8 text-white shadow-2xl shadow-teal-900/20 relative overflow-hidden border border-white/10">
-                        
-                        <!-- Ornamen Latar (Lebih Halus) -->
-                        <i class="ph-fill ph-chart-line-up text-[200px] absolute -right-10 -bottom-10 opacity-5 transform rotate-12 pointer-events-none"></i>
-                        <div class="absolute -top-20 -left-20 w-64 h-64 bg-white/20 rounded-full mix-blend-overlay filter blur-[60px] pointer-events-none"></div>
+                    <!-- KARTU STATUS (BRIGHT & DATA-DRIVEN) -->
+                    <div class="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden border border-teal-400">
+                        <!-- Ornamen Latar -->
+                        <i class="ph-fill ph-chart-line-up text-[180px] absolute -right-4 -top-8 opacity-10 transform -rotate-12"></i>
+                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white rounded-full mix-blend-overlay filter blur-[50px] opacity-20"></div>
 
-                        <div class="relative z-10 flex flex-col lg:flex-row gap-8 lg:gap-10">
+                        <div class="relative z-10 flex flex-col md:flex-row justify-between gap-6">
                             
-                            <!-- BAGIAN KIRI: Main Score & Radar -->
-                            <div class="w-full lg:w-1/3 flex flex-col justify-between">
-                                <div>
-                                    <!-- Badge -->
-                                    <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 shadow-sm mb-6">
-                                        <i class="ph-fill ph-radar text-yellow-300 animate-pulse"></i>
-                                        <span class="text-[10px] font-bold tracking-widest uppercase text-teal-50">UNESCO Sandwatch</span>
-                                    </div>
-                                    
-                                    <!-- Main Index -->
-                                    <h2 id="confidence-score" class="text-6xl md:text-7xl font-black mb-1 text-transparent bg-clip-text bg-gradient-to-b from-white to-teal-200 drop-shadow-sm">17%</h2>
-                                    <p class="text-sm font-medium text-teal-100/80 mb-8 max-w-[200px] leading-snug">Data Confidence Index <br>(GPS & Bukti Visual)</p>
+                            <!-- Area Level & Progress -->
+                            <div class="flex-1 w-full">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border border-white/20 text-teal-50"><i class="ph-fill ph-medal text-yellow-300"></i> Status Tim</span>
                                 </div>
+                                <h2 id="dash-level" class="text-4xl md:text-5xl font-black mb-1 drop-shadow-sm text-white">Seed 🌱</h2>
+                                <p id="dash-reaksi" class="text-sm font-medium text-teal-100 mb-6">Tanam aksi kebaikan pertamamu! 👍</p>
                                 
-                                <!-- Coverage Radar (Diperhalus) -->
-                                <div class="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-4 md:p-5 border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:bg-white/15 transition-all">
-                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <span class="text-[10px] font-bold text-teal-100/70 uppercase tracking-widest block mb-1">Coverage Radar</span>
-                                            <div class="flex items-baseline gap-2">
-                                                <span id="blind-spot-warning" class="text-2xl font-bold text-white">15.91 <span class="text-sm text-teal-200">Ha</span></span>
-                                            </div>
-                                            <span class="text-xs font-medium text-emerald-300 mt-1 block">Tercover</span>
-                                        </div>
-                                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 shadow-inner">
-                                            <i class="ph-fill ph-map-trifold text-xl text-white"></i>
+                                <!-- Progress Bar Membaca Data -->
+                                <div class="w-full max-w-md bg-black/10 rounded-2xl p-4 backdrop-blur-sm border border-black/5">
+                                    <div class="flex justify-between text-[10px] font-bold text-teal-50 mb-2 uppercase tracking-wide">
+                                        <span>Progres Naik Level</span>
+                                        <span id="dash-progress-text" class="text-yellow-300 bg-black/20 px-2 py-0.5 rounded">0 dari 5 Aksi</span>
+                                    </div>
+                                    <div class="h-3 bg-teal-900/40 rounded-full overflow-hidden shadow-inner">
+                                        <div id="dash-progress" class="h-full bg-yellow-400 rounded-full transition-all duration-1000 ease-out w-[0%] relative">
+                                            <div class="absolute inset-0 bg-white/30 w-full animate-[shimmer_2s_infinite]"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- BAGIAN KANAN: Grid 6 Metrik (Disatukan agar rapi) -->
-                            <div class="w-full lg:w-2/3 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 content-center">
-                                
-                                <!-- Metric 1: Erosion -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-waves text-blue-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="metric-erosion" class="text-2xl font-black text-white">2</span>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1 mb-1">Erosion & Profiling</span>
-                                    <span class="text-[9px] font-bold bg-yellow-400/20 text-yellow-200 px-2 py-0.5 rounded-full">SDG 13</span>
-                                </div>
-                                
-                                <!-- Metric 2: Water Quality -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-drop text-cyan-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="metric-water" class="text-2xl font-black text-white">1</span>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1 mb-1">Water Quality</span>
-                                    <span class="text-[9px] font-bold bg-yellow-400/20 text-yellow-200 px-2 py-0.5 rounded-full">SDG 14</span>
-                                </div>
+                            <!-- Area Angka / Metrik (Untuk Data Literacy) -->
+                    <div class="w-full md:w-auto grid grid-cols-2 gap-3 mt-4 md:mt-0 items-end">
+                        <div class="bg-white/20 backdrop-blur-md border border-white/20 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-inner col-span-2 md:col-span-1 transform transition hover:scale-105">
+                            <i class="ph-fill ph-trash text-orange-300 text-2xl mb-1 drop-shadow"></i>
+                            <span id="dash-trash-num" class="text-xl font-black text-white drop-shadow-sm">0 <span class="text-xs font-medium text-teal-100">Kg</span></span>
+                            <span class="text-[9px] font-bold text-teal-100 uppercase tracking-wider mt-0.5">Sampah Diangkat</span>
+                        </div>
+                        
+                        <div class="bg-white/20 backdrop-blur-md border border-white/20 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-inner transform transition hover:scale-105">
+                            <i class="ph-fill ph-plant text-emerald-300 text-2xl mb-1 drop-shadow"></i>
+                            <span id="dash-pohon" class="text-xl font-black text-white drop-shadow-sm">0</span>
+                            <span class="text-[9px] font-bold text-teal-100 uppercase tracking-wider mt-0.5">Bibit Ditanam</span>
+                        </div>
 
-                                <!-- Metric 3: Flora Fauna -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-leaf text-emerald-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="metric-flora" class="text-2xl font-black text-white">2</span>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1 mb-1">Flora & Fauna</span>
-                                    <span class="text-[9px] font-bold bg-yellow-400/20 text-yellow-200 px-2 py-0.5 rounded-full">SDG 14/15</span>
-                                </div>
-
-                                <!-- Metric 4: Waste -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-trash text-orange-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <div class="flex items-baseline gap-1">
-                                        <span id="dash-trash-num" class="text-2xl font-black text-white">0</span>
-                                        <span class="text-xs font-medium text-teal-200">Kg</span>
-                                    </div>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1">Waste Collected</span>
-                                </div>
-                                
-                                <!-- Metric 5: Seedlings -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-plant text-green-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="dash-pohon" class="text-2xl font-black text-white">0</span>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1">Seedlings Planted</span>
-                                </div>
-
-                                <!-- Metric 6: Area -->
-                                <div class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 hover:border-white/30 p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-                                    <i class="ph-fill ph-bounding-box text-purple-200 text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <div class="flex items-baseline gap-1">
-                                        <span id="dash-area" class="text-2xl font-black text-white">0</span>
-                                        <span class="text-xs font-medium text-teal-200">Ha</span>
-                                    </div>
-                                    <span class="text-[10px] font-bold text-teal-100/80 uppercase tracking-widest mt-1">Area Cleaned</span>
-                                </div>
-
-                            </div>
+                        <div class="bg-white/20 backdrop-blur-md border border-white/20 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-inner transform transition hover:scale-105">
+                            <i class="ph-fill ph-bounding-box text-blue-300 text-2xl mb-1 drop-shadow"></i>
+                            <span id="dash-area" class="text-xl font-black text-white drop-shadow-sm">0 <span class="text-xs font-medium text-teal-100">Ha</span></span>
+                            <span class="text-[9px] font-bold text-teal-100 uppercase tracking-wider mt-0.5">Area Disapu</span>
                         </div>
                     </div>
-                <!-- Akhir status kartu -->
 
+                    </div>
+                </div>
 
                 <div class="relative group overflow-hidden rounded-3xl bg-white shadow-sm border border-gray-100 mb-6 mt-6">
                     <div id="carousel-wrapper" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);">
@@ -268,8 +218,8 @@
                                 <i class="ph-fill ph-shield-check text-3xl"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-black text-emerald-900 text-sm uppercase tracking-wider">Field Tips</h4>
-                                <p class="text-sm text-emerald-700 leading-tight mt-1">Use waterproof boots when planting in muddy areas to avoid injuries.</p>
+                                <h4 class="font-black text-emerald-900 text-sm uppercase tracking-wider">Tips Lapangan</h4>
+                                <p class="text-sm text-emerald-700 leading-tight mt-1">Gunakan sepatu bot saat menanam di lumpur dalam untuk menghindari luka.</p>
                             </div>
                         </div>
 
@@ -278,8 +228,8 @@
                                 <i class="ph-fill ph-info text-3xl"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-black text-blue-900 text-sm uppercase tracking-wider">Did You Know?</h4>
-                                <p class="text-sm text-blue-700 leading-tight mt-1">Mangroves absorb 5 times more carbon than regular forests!</p>
+                                <h4 class="font-black text-blue-900 text-sm uppercase tracking-wider">Tahukah Kamu?</h4>
+                                <p class="text-sm text-blue-700 leading-tight mt-1">Mangrove menyerap karbon 5x lebih banyak daripada hutan biasa!</p>
                             </div>
                         </div>
 
@@ -288,8 +238,8 @@
                                 <i class="ph-fill ph-sparkle text-3xl"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-black text-purple-900 text-sm uppercase tracking-wider">Weekly Mission</h4>
-                                <p class="text-sm text-purple-700 leading-tight mt-1">Target 50Kg of waste collected. Let's invite 2 friends to join us!</p>
+                                <h4 class="font-black text-purple-900 text-sm uppercase tracking-wider">Misi Minggu Ini</h4>
+                                <p class="text-sm text-purple-700 leading-tight mt-1">Target 50Kg sampah terangkat. Ayo ajak 2 temanmu bergabung!</p>
                             </div>
                         </div>
 
@@ -303,7 +253,7 @@
                 </div>
                 <button onclick="exportLaporanLengkap()" class="w-full bg-yellow-400 text-teal-900 hover:bg-yellow-300 px-6 py-4 rounded-2xl font-bold shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2 border border-yellow-500">
                     <i class="ph-bold ph-printer text-xl"></i>
-                    Print PDF Report
+                    Cetak Laporan PDF
                 </button>
 
                     <!-- Layout 2 Kolom untuk Riwayat Data -->
@@ -312,10 +262,10 @@
                         <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col hover:border-blue-200 transition-colors">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
-                                    <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-map-pin text-blue-500 text-xl"></i> Field History</h3>
-                                    <p class="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">3 Latest Data</p>
+                                    <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-map-pin text-blue-500 text-xl"></i> Riwayat Lapangan</h3>
+                                    <p class="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">3 Data Terakhir</p>
                                 </div>
-                                <button onclick="switchTab('lapangan')" class="text-[11px] text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">Manage Data</button>
+                                <button onclick="switchTab('lapangan')" class="text-[11px] text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">Kelola Data</button>
                             </div>
                             <div id="dash-list-lapangan" class="space-y-3 flex-1">
                                 <!-- Terisi Otomatis lewat JS -->
@@ -326,10 +276,10 @@
                         <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col hover:border-yellow-200 transition-colors">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
-                                    <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-lightbulb text-yellow-500 text-xl"></i> Team Solution Board</h3>
-                                    <p class="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Brainstorming Ideas</p>
+                                    <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-lightbulb text-yellow-500 text-xl"></i> Board Solusi Tim</h3>
+                                    <p class="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Brainstorming Ide</p>
                                 </div>
-                                <button onclick="switchTab('hackathon')" class="text-[11px] text-yellow-600 font-bold bg-yellow-50 px-3 py-1.5 rounded-lg hover:bg-yellow-100 transition-colors">Open Board</button>
+                                <button onclick="switchTab('hackathon')" class="text-[11px] text-yellow-600 font-bold bg-yellow-50 px-3 py-1.5 rounded-lg hover:bg-yellow-100 transition-colors">Buka Board</button>
                             </div>
                             <div id="dash-list-ide" class="space-y-3 flex-1">
                                 <!-- Terisi Otomatis lewat JS -->
@@ -340,8 +290,8 @@
                     <!-- CARD SAVE / LOAD JSON (Menu Sistem Compact) -->
                     <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row justify-between md:items-center gap-4">
                         <div>
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-database text-indigo-500 text-lg"></i> Storage System</h3>
-                            <p class="text-xs text-gray-500 mt-1">Export (Save) as .json file or Load to switch devices.</p>
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="ph-fill ph-database text-indigo-500 text-lg"></i> Sistem Penyimpanan</h3>
+                            <p class="text-xs text-gray-500 mt-1">Export (Save) jadi file .json atau Load untuk pindah HP.</p>
                         </div>
                         
                         <div class="flex flex-wrap gap-2">
@@ -363,23 +313,23 @@
                         
                         <!-- Tab: Karbon Biru -->
                         <button onclick="switchCalcTab('karbon')" id="btn-tab-karbon" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
-                            <i class="ph-bold ph-plant"></i> Blue Carbon
+                            <i class="ph-bold ph-plant"></i> Karbon Biru
                         </button>
                         
                         <!-- Tab: Perlu Tanam -->
                         <button onclick="switchCalcTab('tanam')" id="btn-tab-tanam" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
-                            <i class="ph-bold ph-tree-palm"></i> Need to Plant
+                            <i class="ph-bold ph-tree-palm"></i> Perlu Tanam
                         </button>
                         
                         <!-- Tab: Urai Sampah -->
                         <button onclick="switchCalcTab('sampah')" id="btn-tab-sampah" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 transition-all duration-200">
-                            <i class="ph-bold ph-trash"></i> Waste Sorting
+                            <i class="ph-bold ph-trash"></i> Urai Sampah
                         </button>
                         
                         <!-- Tab: Biomassa (Default Active State) -->
                         <!-- Perhatikan class aktifnya: bg-white, text-indigo-600, shadow-sm -->
                         <button onclick="switchCalcTab('biomassa')" id="btn-tab-biomassa" class="calc-tab-btn flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-bold bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5 transition-all duration-200">
-                            <i class="ph-bold ph-fish"></i> Biomass
+                            <i class="ph-bold ph-fish"></i> Biomassa
                         </button>
 
                     </div>
@@ -387,21 +337,21 @@
                     <!-- Mode Karbon -->
                     <div id="calc-karbon" class="hidden space-y-4">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="font-bold text-gray-800 mb-2">Carbon Absorption Simulation</h3>
-                            <p class="text-sm text-gray-500 mb-6">How many mangrove seedlings did your group plant today?</p>
+                            <h3 class="font-bold text-gray-800 mb-2">Simulasi Serapan Karbon</h3>
+                            <p class="text-sm text-gray-500 mb-6">Berapa banyak bibit mangrove yang kelompokmu tanam hari ini?</p>
                             <input type="number" id="input-pohon" value="5" oninput="hitungKarbon()" class="w-full text-center text-4xl font-bold text-teal-600 border-b-2 border-teal-200 pb-2 focus:outline-none focus:border-teal-500" min="1">
                         </div>
 
                         <div class="bg-teal-700 rounded-2xl p-6 text-white shadow-md text-center relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-full bg-yellow-400 text-teal-900 text-xs font-bold py-1 z-10">🎯 Challenge: Can your team reach 100 Kg CO₂?</div>
-                            <h4 class="text-teal-200 text-sm font-semibold mb-2 mt-4">Your Real Impact!</h4>
-                            <p class="text-lg">In 1 year, <strong class="text-yellow-300" id="lbl-pohon">5 trees</strong> will absorb approximately:</p>
+                            <div class="absolute top-0 left-0 w-full bg-yellow-400 text-teal-900 text-xs font-bold py-1 z-10">🎯 Challenge: Bisakah tim kamu capai 100 Kg CO₂?</div>
+                            <h4 class="text-teal-200 text-sm font-semibold mb-2 mt-4">Dampak Nyata Kamu!</h4>
+                            <p class="text-lg">Dalam 1 tahun, <strong class="text-yellow-300" id="lbl-pohon">5 pohon</strong> ini akan menyerap sekitar:</p>
                             <div class="text-5xl font-black my-2"><span id="lbl-co2">60</span> <span class="text-xl font-normal">kg CO₂</span></div>
-                            <div id="lbl-reaksi-karbon" class="text-sm font-bold text-yellow-300 mb-4 animate-pulse">Not Bad 👍</div>
+                            <div id="lbl-reaksi-karbon" class="text-sm font-bold text-yellow-300 mb-4 animate-pulse">Lumayan 👍</div>
 
                             <div class="flex justify-center mb-5 relative z-10">
                             <div class="bg-black/20 backdrop-blur-sm border border-white/20 rounded-2xl p-3 inline-flex flex-col items-center shadow-inner hover:bg-black/30 transition-colors">
-                                <p class="text-[10px] text-teal-200 font-bold uppercase tracking-widest mb-2 flex items-center gap-1"><i class="ph-bold ph-student"></i> Scientific Formula</p>
+                                <p class="text-[10px] text-teal-200 font-bold uppercase tracking-widest mb-2 flex items-center gap-1"><i class="ph-bold ph-student"></i> Rumus Sains</p>
                                 <div class="flex items-center gap-2 font-mono text-sm md:text-base">
                                     <!-- Angka Dinamis Pohon -->
                                     <span id="lbl-rumus-pohon" class="bg-teal-600 px-3 py-1 rounded-lg shadow-inner text-white font-bold border border-teal-500">5</span>
@@ -412,19 +362,19 @@
                                     <!-- Angka Dinamis Hasil -->
                                     <span id="lbl-rumus-hasil" class="bg-white text-teal-900 px-3 py-1 rounded-lg font-black shadow-md border-b-4 border-gray-200">60 kg</span>
                                 </div>
-                                <p class="text-[9px] text-teal-300/80 mt-2 text-center leading-tight max-w-[220px]">*One young mangrove tree on average absorbs <strong>12 kg CO₂</strong> per year.</p>
+                                <p class="text-[9px] text-teal-300/80 mt-2 text-center leading-tight max-w-[220px]">*Satu pohon mangrove muda secara rata-rata menyerap <strong>12 kg CO₂</strong> setiap tahunnya.</p>
                             </div>
                         </div>
                             
                             <div class="bg-teal-800/80 rounded-xl p-4 mt-2 text-sm text-left border border-teal-600 space-y-3">
-                                <p class="text-xs text-teal-300 font-bold uppercase border-b border-teal-600 pb-1">This Is Equivalent To Cleaning Up Pollution From:</p>
-                                <div class="flex items-center gap-3"><i class="ph-fill ph-motorcycle text-xl text-yellow-400"></i> <span>Riding motorcycle as far as <strong id="lbl-motor" class="text-white">600 km</strong></span></div>
-                                <div class="flex items-center gap-3"><i class="ph-fill ph-plug-charging text-xl text-blue-400"></i> <span>Charging Phone <strong id="lbl-hp" class="text-white">12.000x</strong> nonstop</span></div>
-                                <div class="flex items-center gap-3"><i class="ph-fill ph-snowflake text-xl text-cyan-300"></i> <span>Running AC <strong id="lbl-ac" class="text-white">6 Days</strong> nonstop</span></div>
+                                <p class="text-xs text-teal-300 font-bold uppercase border-b border-teal-600 pb-1">Itu Setara Dengan Membersihkan Polusi Dari:</p>
+                                <div class="flex items-center gap-3"><i class="ph-fill ph-motorcycle text-xl text-yellow-400"></i> <span>Naik motor sejauh <strong id="lbl-motor" class="text-white">600 km</strong></span></div>
+                                <div class="flex items-center gap-3"><i class="ph-fill ph-plug-charging text-xl text-blue-400"></i> <span>Ngecas HP <strong id="lbl-hp" class="text-white">12.000x</strong> nonstop</span></div>
+                                <div class="flex items-center gap-3"><i class="ph-fill ph-snowflake text-xl text-cyan-300"></i> <span>Nyalain AC <strong id="lbl-ac" class="text-white">6 Hari</strong> nonstop</span></div>
                             </div>
 
                             <div class="mt-4 bg-emerald-600 p-3 rounded-lg text-xs leading-relaxed border border-emerald-400 shadow-inner">
-                                🌍 <strong class="text-yellow-300">Imagine!</strong> If 1 class (30 people) does this together, we can absorb <strong id="lbl-multiplier" class="text-white text-sm font-black">1800 Kg CO₂!</strong>
+                                🌍 <strong class="text-yellow-300">Bayangkan!</strong> Kalau 1 kelas (30 orang) lakuin ini bareng, kita bisa serap <strong id="lbl-multiplier" class="text-white text-sm font-black">1800 Kg CO₂!</strong>
                             </div>
                             <p id="lbl-funfact-karbon" class="text-[10px] text-teal-200 mt-4 italic"></p>
                         </div>
@@ -434,24 +384,24 @@
                     <!-- Mode Tanam -->
                     <div id="calc-tanam" class="hidden space-y-4">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="font-bold text-gray-800 mb-4">Measure Area & Planting Calculator</h3>
-
+                            <h3 class="font-bold text-gray-800 mb-4">Ukur Area & Kalkulator Tanam</h3>
+                            
                             <div class="flex gap-2 mb-6">
-                                <button onclick="setModeTanam('manual')" id="btn-manual-tanam" class="flex-1 py-3 text-xs md:text-sm font-bold uppercase rounded-lg bg-teal-600 text-white transition-colors border border-teal-700 shadow-sm">Manual Input</button>
-                                <button onclick="setModeTanam('map')" id="btn-map-tanam" class="flex-1 py-3 text-xs md:text-sm font-bold uppercase rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center justify-center gap-1 border border-gray-200 shadow-sm"><i class="ph-bold ph-map-trifold"></i> Map Mode (Full Screen)</button>
+                                <button onclick="setModeTanam('manual')" id="btn-manual-tanam" class="flex-1 py-3 text-xs md:text-sm font-bold uppercase rounded-lg bg-teal-600 text-white transition-colors border border-teal-700 shadow-sm">Input Manual</button>
+                                <button onclick="setModeTanam('map')" id="btn-map-tanam" class="flex-1 py-3 text-xs md:text-sm font-bold uppercase rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center justify-center gap-1 border border-gray-200 shadow-sm"><i class="ph-bold ph-map-trifold"></i> Mode Peta (Layar Penuh)</button>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="text-xs font-bold text-gray-500 uppercase">Area Size (m²)</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Luas Area (m²)</label>
                                     <input type="number" id="input-luas" value="100" oninput="hitungTanam()" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none font-bold text-teal-700 text-center text-lg" />
                                 </div>
                                 <div>
-                                    <label class="text-xs font-bold text-gray-500 uppercase">Spacing (m)</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Jarak (m)</label>
                                     <select id="input-jarak" onchange="hitungTanam()" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none font-medium">
-                                        <option value="0.5">0.5 m (Dense)</option>
-                                        <option value="1" selected>1 m (Standard)</option>
-                                        <option value="1.5">1.5 m (Sparse)</option>
+                                        <option value="0.5">0.5 m (Rapat)</option>
+                                        <option value="1" selected>1 m (Standar)</option>
+                                        <option value="1.5">1.5 m (Renggang)</option>
                                     </select>
                                 </div>
                             </div>
@@ -460,10 +410,10 @@
                             <div id="map-tanam-wrapper" class="hidden bg-white flex-col transition-all">
                                 <div class="p-3 bg-teal-600 text-white flex justify-between items-center z-10">
                                     <div>
-                                        <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold"></i> Area Map</h3>
+                                        <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold"></i> Peta Area</h3>
                                     </div>
-                                    <button onclick="closeMapTanam()" id="btn-tanam-selesai" class="font-bold text-teal-900 bg-white hover:bg-gray-100 px-4 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95">Finish</button>
-                                    <button onclick="openMapTanam()" id="btn-tanam-expand" class="hidden font-bold text-white bg-teal-800 hover:bg-teal-900 px-3 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95"><i class="ph-bold ph-corners-out"></i> Expand</button>
+                                    <button onclick="closeMapTanam()" id="btn-tanam-selesai" class="font-bold text-teal-900 bg-white hover:bg-gray-100 px-4 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95">Selesai</button>
+                                    <button onclick="openMapTanam()" id="btn-tanam-expand" class="hidden font-bold text-white bg-teal-800 hover:bg-teal-900 px-3 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95"><i class="ph-bold ph-corners-out"></i> Perbesar</button>
                                 </div>
                                 <div id="map-tanam-container" class="w-full flex-1 relative z-0 bg-gray-200 min-h-[250px]"></div>
                                 <div class="p-2 bg-gray-50 flex justify-end border-t border-gray-200">
@@ -472,13 +422,13 @@
                             </div>
 
                                 <div class="mt-6 p-5 bg-emerald-50 rounded-xl border border-emerald-100 text-center relative">
-                                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">Target Today</div>
-                                    <p class="text-emerald-800 text-sm font-semibold mb-1 mt-2">Ideal Seed Requirement:</p>
-                                    <p class="text-4xl font-black text-emerald-600"><span id="lbl-bibit">100</span> <span class="text-lg font-normal">Seeds</span></p>
-
+                                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">Target Hari Ini</div>
+                                    <p class="text-emerald-800 text-sm font-semibold mb-1 mt-2">Kebutuhan Bibit Ideal:</p>
+                                    <p class="text-4xl font-black text-emerald-600"><span id="lbl-bibit">100</span> <span class="text-lg font-normal">Bibit</span></p>
+                                    
                                     <div class="bg-white p-3 rounded-lg mt-3 text-sm text-gray-700 flex items-center justify-center gap-2 border border-emerald-100">
                                         <i class="ph-fill ph-users text-emerald-500 text-xl"></i> 
-                                        <span>Need <strong id="lbl-orang" class="text-emerald-700 text-lg">5 People</strong> team to finish in 1 day!</span>
+                                        <span>Butuh <strong id="lbl-orang" class="text-emerald-700 text-lg">5 Orang</strong> tim untuk selesai dalam 1 hari!</span>
                                     </div>
                                     <p id="lbl-funfact-tanam" class="text-[10px] text-emerald-600 mt-3 italic"></p>
                                 </div>
@@ -489,19 +439,19 @@
                     <!-- Mode Waktu Urai Sampah (KUMULATIF) -->
                     <div id="calc-sampah" class="hidden space-y-4">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="font-bold text-gray-800 mb-2">Sea Impact Simulation</h3>
-                            <p class="text-sm text-gray-500 mb-6">Add the trash you find to the cart to calculate the impact.</p>
-
+                            <h3 class="font-bold text-gray-800 mb-2">Simulasi Dampak Sampah Laut</h3>
+                            <p class="text-sm text-gray-500 mb-6">Tambahkan sampah-sampah yang kelompokmu temukan ke dalam keranjang hitung.</p>
+                            
                             <div class="flex flex-col md:flex-row gap-3 mb-4">
                                 <div class="flex-1">
                                     <select id="input-jenis-sampah" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-medium text-gray-700">
-                                        <option value="450">PET Bottle / Mineral Water (450 yrs)</option>
-                                        <option value="600">Fishing Net / String (600 yrs)</option>
-                                        <option value="200">Aluminum Can (200 yrs)</option>
-                                        <option value="50">Styrofoam Cup / Plate (50 yrs)</option>
-                                        <option value="4000">Glass Bottle (4000 yrs)</option>
-                                        <option value="20">Plastic Bag (20 yrs)</option>
-                                        <option value="10">Cigarette Butt (10 yrs)</option>
+                                        <option value="450">Botol PET / Air Mineral (450 Thn)</option>
+                                        <option value="600">Jaring Nelayan / Senar (600 Thn)</option>
+                                        <option value="200">Kaleng Aluminium (200 Thn)</option>
+                                        <option value="50">Gelas Sterofoam / Piring (50 Thn)</option>
+                                        <option value="4000">Botol Kaca (4000 Thn)</option>
+                                        <option value="20">Kantong Plastik Kresek (20 Thn)</option>
+                                        <option value="10">Puntung Rokok (10 Thn)</option>
                                     </select>
                                 </div>
                                 <div class="w-full md:w-32 flex items-center gap-2">
@@ -510,7 +460,7 @@
                                 </div>
                             </div>
                             <button onclick="tambahSampahUrai()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 shadow-sm">
-                                <i class="ph-bold ph-plus"></i> Add to Cart
+                                <i class="ph-bold ph-plus"></i> Tambah ke Keranjang
                             </button>
                         </div>
 
@@ -531,10 +481,10 @@
                                 <i class="ph-fill ph-shield-check text-[100px] absolute top-2 right-2 opacity-10"></i>
                                 <h4 class="text-orange-100 text-sm font-bold uppercase tracking-wider mb-2">Pahlawan Lautan!</h4>
                                 <p class="text-base z-10 relative">Secara total, kamu telah mencegah <span id="lbl-total-berat-sampah" class="font-black text-yellow-300 text-xl">0 kg</span> sampah mencemari laut!</p>
-                                <p class="text-sm z-10 relative mt-2">The worst impact you've prevented has a decomposition time of up to:</p>
-                                <div class="text-5xl font-black my-3 z-10 relative"><span id="lbl-max-waktu-urai">0</span> <span class="text-xl font-normal">Years</span></div>
+                                <p class="text-sm z-10 relative mt-2">Dampak terburuk yang berhasil kamu cegah memiliki waktu urai hingga:</p>
+                                <div class="text-5xl font-black my-3 z-10 relative"><span id="lbl-max-waktu-urai">0</span> <span class="text-xl font-normal">Tahun</span></div>
                                 <div class="bg-black/20 rounded-xl p-3 mt-4 text-sm border border-white/10 z-10 relative leading-relaxed" id="lbl-generasi-sampah">
-                                    Extraordinary rescue!
+                                    Penyelamatan yang luar biasa!
                                 </div>
                             </div>
                         </div>
@@ -547,16 +497,16 @@
                         <!-- Ornamen background halus di card putih -->
                         <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl opacity-60"></div>
                         
-                        <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2 relative z-10"><i class="ph-fill ph-scales text-indigo-500 text-xl"></i> Coral Biomass Estimate</h3>
-                        <p class="text-xs text-gray-500 mb-6 relative z-10">Calculate the weight (energy modal) of the ecosystem using the empirical allometric formula.</p>
+                        <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2 relative z-10"><i class="ph-fill ph-scales text-indigo-500 text-xl"></i> Estimasi Biomassa Karang</h3>
+                        <p class="text-xs text-gray-500 mb-6 relative z-10">Hitung berat (modal energi) ekosistem menggunakan rumus empiris alometrik.</p>
                         
                         <div class="grid grid-cols-2 gap-4 mb-2 relative z-10">
                             <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Average Length (cm)</label>
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Rata Panjang (cm)</label>
                                 <input type="number" id="input-bio-panjang" value="25" oninput="hitungBiomassaKalkulator()" class="w-full bg-transparent border-b-2 border-indigo-200 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-center text-3xl pb-1" min="1">
                             </div>
                             <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Number of Fish</label>
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block text-center mb-1">Jumlah Ikan</label>
                                 <input type="number" id="input-bio-jumlah" value="5" oninput="hitungBiomassaKalkulator()" class="w-full bg-transparent border-b-2 border-gray-300 focus:border-gray-500 outline-none font-bold text-gray-700 text-center text-3xl pb-1" min="1">
                             </div>
                         </div>
@@ -566,15 +516,15 @@
                         <!-- Ikon dibesarkan sedikit dan digeser agar tidak nabrak teks -->
                         <i class="ph-fill ph-fish text-[120px] absolute -top-4 -right-4 opacity-10 transform -rotate-12"></i>
                         
-                        <h4 class="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2 z-10 relative">Coral Biomass Estimate</h4>
+                        <h4 class="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-2 z-10 relative">Estimasi Total Biomassa</h4>
                         <div class="text-6xl font-black my-4 z-10 relative drop-shadow-md"><span id="lbl-bio-hasil">1.17</span> <span class="text-2xl font-medium text-indigo-100">Kg</span></div>
                         
                         <div class="bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 mt-6 text-xs text-left z-10 relative shadow-inner">
-                            <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-widest mb-2 flex items-center gap-1 border-b border-indigo-500/50 pb-2"><i class="ph-bold ph-math-operations"></i> Allometric Formula Architecture</p>
+                            <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-widest mb-2 flex items-center gap-1 border-b border-indigo-500/50 pb-2"><i class="ph-bold ph-math-operations"></i> Arsitektur Rumus Alometrik</p>
                             <div class="flex items-center justify-center gap-3 my-3">
                                 <span class="font-mono text-lg font-bold bg-white/10 px-3 py-1 rounded">W = aL<sup>b</sup></span>
                             </div>
-                            <p class="text-indigo-100 mt-2 leading-relaxed text-[10px]">Using the standard for parrotfish (Parrotfish): Constant <strong class="text-white bg-indigo-500 px-1 rounded">a = 0.015</strong> and exponent <strong class="text-white bg-indigo-500 px-1 rounded">b = 3.0</strong>. W is the weight in grams, then converted to Kg.</p>
+                            <p class="text-indigo-100 mt-2 leading-relaxed text-[10px]">Menggunakan standar ikan kakatua (Parrotfish): Konstanta <strong class="text-white bg-indigo-500 px-1 rounded">a = 0.015</strong> dan eksponen <strong class="text-white bg-indigo-500 px-1 rounded">b = 3.0</strong>. W adalah berat dalam gram, lalu dikonversi ke Kg.</p>
                         </div>
                     </div>
                 </div>
@@ -589,15 +539,15 @@
 
                         <div class="flex justify-between items-center mb-6">
                             <div>
-                                <h2 class="text-xl font-bold text-gray-800">Field Data Management</h2>
-                                <p class="text-sm text-gray-500"><i class="ph-bold ph-wifi-slash"></i> Locally saved</p>
+                                <h2 class="text-xl font-bold text-gray-800">Manajemen Data Lapangan</h2>
+                                <p class="text-sm text-gray-500"><i class="ph-bold ph-wifi-slash"></i> Tersimpan Lokal</p>
                             </div>
                             <div class="flex gap-2">
                                 <button onclick="openSyncModal('report')" class="bg-blue-600 text-white px-3 md:px-4 py-2 rounded-xl font-bold text-sm shadow-sm flex items-center gap-2 hover:bg-blue-700 active:scale-95 transition">
-                                    <i class="ph-bold ph-cloud-arrow-up"></i> <span class="hidden md:inline">Sync</span>
+                                    <i class="ph-bold ph-cloud-arrow-up"></i> <span class="hidden md:inline">Sinkronisasi</span>
                                 </button>
                                 <button onclick="toggleFormLapangan(true)" class="bg-teal-600 text-white px-3 md:px-4 py-2 rounded-xl font-bold text-sm shadow-sm flex items-center gap-2 hover:bg-teal-700 active:scale-95 transition">
-                                    <i class="ph-bold ph-plus"></i> Record New
+                                    <i class="ph-bold ph-plus"></i> Catat Baru
                                 </button>
                             </div>
                         </div>
@@ -613,18 +563,18 @@
                             <i class="ph-bold ph-arrow-left"></i> Kembali
                         </button>
                         <form onsubmit="saveReport(event)" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-5">
-                            <h2 class="text-xl font-bold text-gray-800 border-b pb-2">Record New Data</h2>
+                            <h2 class="text-xl font-bold text-gray-800 border-b pb-2">Catat Data Baru</h2>
                             
                             <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase">Activity Type</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Jenis Kegiatan</label>
 
                                 <select id="form-type" onchange="toggleFormInputs()" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 font-bold">
-                                    <option value="cleanup">Coastal Trash Cleanup</option>
-                                    <option value="planting">Mangrove Planting</option> 
-                                    <option value="observation">Routine Ecosystem Observation</option>
-                                    <option value="biomassa">Visual Biomass Survey (UVC)</option>
-                                    <option value="early_warning" class="text-red-600 font-bold">🚨 Report Anomaly / Early Warning</option>
-                                    <option value="pollution" class="text-purple-600 font-bold">🏭 Report Coastal UMKM Pollution</option>
+                                    <option value="cleanup">Pembersihan Sampah Pesisir</option>
+                                    <option value="planting">Penanaman Mangrove</option> 
+                                    <option value="observation">Observasi Ekosistem Rutin</option>
+                                    <option value="biomassa">Sensus Visual Biomassa (UVC)</option>
+                                    <option value="early_warning" class="text-red-600 font-bold">🚨 Lapor Anomali / Early Warning</option>
+                                    <option value="pollution" class="text-purple-600 font-bold">🏭 Lapor Limbah UMKM Pesisir</option>
                                 </select>
 
                             </div>
@@ -633,21 +583,21 @@
                             <div id="input-planting-container" style="display: none;" class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 space-y-3">
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="text-xs font-bold text-emerald-800 uppercase">Number of Seeds (Quantitative)</label>
+                                        <label class="text-xs font-bold text-emerald-800 uppercase">Jml Bibit (Kuantitatif)</label>
                                         <input type="number" id="form-bibit" placeholder="Misal: 100" class="w-full mt-1 p-3 bg-white border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
                                     </div>
                                     <div>
-                                        <label class="text-xs font-bold text-emerald-800 uppercase">Spacing (m)</label>
+                                        <label class="text-xs font-bold text-emerald-800 uppercase">Jarak Tanam (m)</label>
                                         <input type="number" step="0.1" id="form-jarak" placeholder="Misal: 1.5" class="w-full mt-1 p-3 bg-white border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="text-xs font-bold text-emerald-800 uppercase">Mangrove Species (Qualitative)</label>
+                                    <label class="text-xs font-bold text-emerald-800 uppercase">Jenis Mangrove (Kualitatif)</label>
                                     <select id="form-jenis" class="w-full mt-1 p-3 bg-white border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
                                         <option value="Rhizophora">Rhizophora (Bakau - Akar Tunjang)</option>
                                         <option value="Sonneratia">Sonneratia (Pedada - Akar Napas)</option>
                                         <option value="Avicennia">Avicennia (Api-api)</option>
-                                        <option value="Campuran">Mangrove Mix / Others</option>
+                                        <option value="Campuran">Campuran / Lainnya</option>
                                     </select>
                                 </div>
                             </div>
@@ -655,11 +605,11 @@
                             <!-- KOTAK KHUSUS OBSERVASI EKOSISTEM (3 MODE) -->
                             <div id="input-observation-container" style="display: none;" class="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-4">
                                 <div>
-                                    <label class="text-[10px] font-bold text-blue-800 uppercase">Observation Sub-Kategori</label>
+                                    <label class="text-[10px] font-bold text-blue-800 uppercase">Sub-Kategori Observasi</label>
                                     <select id="form-obs-type" onchange="toggleObsInputs()" class="w-full mt-1 p-3 bg-white border border-blue-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-sm">
-                                        <option value="narrative">📝 Qualitative / Free Narrative (Default)</option>
-                                        <option value="oceanography">🌊 Advanced Oceanographic Data</option>
-                                        <option value="sandwatch">🐢 Sandwatch Sea Turtle (Turtle Habitat)</option>
+                                        <option value="narrative">📝 Kualitatif / Narasi Bebas (Default)</option>
+                                        <option value="oceanography">🌊 Data Oseanografi Lanjutan</option>
+                                        <option value="sandwatch">🐢 Sandwatch Sea Turtle (Habitat Penyu)</option>
                                     </select>
                                 </div>
 
@@ -667,19 +617,19 @@
                                 <div id="obs-ocean-container" style="display: none;" class="space-y-3 pt-3 border-t border-blue-200">
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">SST Temperature (°C)</label>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">SST Suhu (°C)</label>
                                             <input type="number" step="0.1" id="obs-sst" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Salinity (ppt)</label>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Salinitas (ppt)</label>
                                             <input type="number" step="0.1" id="obs-salinitas" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">pH Seawater</label>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">pH Air Laut</label>
                                             <input type="number" step="0.1" id="obs-ph" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Current Speed (m/s)</label>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Kecepatan Arus (m/s)</label>
                                             <input type="number" step="0.1" id="obs-arus" oninput="hitungOceanografi()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                     </div>
@@ -690,28 +640,28 @@
                                 <div id="obs-sandwatch-container" style="display: none;" class="space-y-3 pt-3 border-t border-blue-200">
                                     <div class="grid grid-cols-2 gap-3 mb-2">
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Beach Width (m)</label>
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Lebar Pantai (m)</label>
                                             <input type="number" step="0.1" id="sw-width" oninput="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Slope (Degrees)</label>
-                                            <input type="number" step="0.1" id="sw-slope" oninput="hitungSandwatch()" placeholder="e.g., 5" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
+                                            <label class="text-[9px] font-bold text-blue-800 uppercase">Kemiringan (Derajat)</label>
+                                            <input type="number" step="0.1" id="sw-slope" oninput="hitungSandwatch()" placeholder="Misal: 5" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Sand Moisture (Excavated 50cm)</label>
+                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Kelembutan Pasir (Gali 50cm)</label>
                                         <select id="sw-sand" onchange="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-xs font-medium">
-                                            <option value="Low">Low Difficulty (Very Soft / Easy to Dig)</option>
-                                            <option value="Medium">Medium Difficulty (Quite Hard)</option>
-                                            <option value="High">High Difficulty (Rocky / Solid)</option>
+                                            <option value="Low">Low Difficulty (Sangat Lembut / Mudah Digali)</option>
+                                            <option value="Medium">Medium Difficulty (Lumayan Keras)</option>
+                                            <option value="High">High Difficulty (Berbatu / Padat)</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Light Pollution (Beachfront Lighting)</label>
+                                        <label class="text-[9px] font-bold text-blue-800 uppercase">Polusi Cahaya (Beachfront Lighting)</label>
                                         <select id="sw-light" onchange="hitungSandwatch()" class="w-full mt-1 p-2 bg-white border border-blue-200 rounded-lg outline-none text-xs font-medium">
-                                            <option value="1">Rank 1 (Dark, very indirect light)</option>
-                                            <option value="2">Rank 2 (Direct light from building lights)</option>
-                                            <option value="3">Rank 3 (Very Bright, shadows on sand)</option>
+                                            <option value="1">Rank 1 (Gelap, cahaya sangat tidak langsung)</option>
+                                            <option value="2">Rank 2 (Ada cahaya langsung dari lampu gedung)</option>
+                                            <option value="3">Rank 3 (Sangat Terang, ada bayangan di pasir)</option>
                                         </select>
                                     </div>
                                     <div id="info-sandwatch" class="hidden mt-2 p-3 bg-white/80 border border-blue-200 rounded-lg text-xs text-blue-800 shadow-sm transition-all text-center"></div>
@@ -722,19 +672,19 @@
                             <div id="input-pollution-container" style="display: none;" class="bg-purple-50 p-4 rounded-xl border border-purple-200 space-y-4">
                                 
                                 <div>
-                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Context of the MSME Industry</label>
+                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Konteks Industri UMKM</label>
                                     <select id="poll-jenis" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-xs font-medium">
-                                        <option value="Pewarna Sintetis">Synthetic Dyes (Azo dyes, etc.)</option>
-                                        <option value="Pewarna Alami (Tanpa Logam)">Natural Dyes (Without Metal Fixer)</option>
-                                        <option value="Pewarna Alami (Mordant Logam)">Natural Dyes (With Metal Fixer)</option>
+                                        <option value="Pewarna Sintetis">Pewarna Sintetis (Azo dye, dll)</option>
+                                        <option value="Pewarna Alami (Tanpa Logam)">Pewarna Alami (Tanpa Fixer Logam)</option>
+                                        <option value="Pewarna Alami (Mordant Logam)">Pewarna Alami (Pakai Fixer Logam Tawas/Tunjung)</option>
                                     </select>
                                 </div>
 
                                 <div class="border-t border-purple-200 pt-3">
-                                    <h4 class="text-xs font-bold text-purple-800 uppercase mb-2 flex items-center gap-1"><i class="ph-bold ph-flask"></i> Water Quality Test (BOD/COD/TSS)</h4>
+                                    <h4 class="text-xs font-bold text-purple-800 uppercase mb-2 flex items-center gap-1"><i class="ph-bold ph-flask"></i> Uji Kualitas Air (BOD/COD/TSS)</h4>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label class="text-[9px] font-bold text-purple-800 uppercase">Water pH</label>
+                                            <label class="text-[9px] font-bold text-purple-800 uppercase">pH Air</label>
                                             <input type="number" step="0.1" id="poll-ph" oninput="hitungPencemaran()" placeholder="Normal: 6-9" class="w-full mt-1 p-2 bg-white border border-purple-200 rounded-lg outline-none text-sm font-bold text-center">
                                         </div>
                                         <div>
@@ -754,11 +704,11 @@
                                 </div>
                                 
                                 <div class="border-t border-purple-200 pt-3">
-                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Social Economic Aspects</label>
+                                    <label class="text-[10px] font-bold text-purple-800 uppercase">Aspek Sosial Ekonomi</label>
                                     <div class="flex flex-wrap gap-2 mt-1">
-                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-1" class="accent-purple-600 w-3 h-3"> Interest in Moving to Natural Environments</label>
-                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-2" class="accent-purple-600 w-3 h-3"> Crisis of Artisan Regeneration</label>
-                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-3" class="accent-purple-600 w-3 h-3"> Availability of Community Wastewater Treatment Plants</label>
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-1" class="accent-purple-600 w-3 h-3"> Minat Pindah ke Alami</label>
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-2" class="accent-purple-600 w-3 h-3"> Krisis Regenerasi Perajin</label>
+                                        <label class="flex items-center gap-1 text-[10px] text-purple-800 bg-white px-2 py-1.5 border border-purple-200 rounded-md shadow-sm"><input type="checkbox" id="poll-sosial-3" class="accent-purple-600 w-3 h-3"> IPAL Komunal Tersedia</label>
                                     </div>
                                 </div>
                             </div>
@@ -766,16 +716,16 @@
                             <!-- Kotak Early warning -->
                         <div id="input-warning-container" style="display: none;" class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-4">
                             <div>
-                                <label class="text-xs font-bold text-red-800 uppercase">Weak Signal Category</label>
+                                <label class="text-xs font-bold text-red-800 uppercase">Kategori Sinyal Lemah (Weak Signal)</label>
                                 <select id="form-kategori-anomali" onchange="toggleAnomaliInputs()" class="w-full mt-1 p-3 bg-white border border-red-200 rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium">
-                                    <option value="Geologis">🌍 Geological (Cracked Land, Rapid Abrasion, Landslides)</option>
-                                    <option value="Hidrologis">🌊 Hydrological (Sea Level Rise/Rob, Changes in Water Temperature)</option>
-                                    <option value="Biologis">🦀 Bio-Indicators (Mass Biota Deaths, Animal Migration)</option>
-                                    <option value="Infrastruktur">🧱 Infrastructure (Cracked Embankments, Clogged Drainage)</option>
+                                    <option value="Geologis">🌍 Geologis (Tanah Retak, Abrasi Cepat, Longsor)</option>
+                                    <option value="Hidrologis">🌊 Hidrologis (Air Laut Naik/Rob, Perubahan Suhu Air)</option>
+                                    <option value="Biologis">🦀 Bio-Indikator (Biota Mati Massal, Hewan Pindah)</option>
+                                    <option value="Infrastruktur">🧱 Infrastruktur (Tanggul Retak, Drainase Mampet)</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="text-xs font-bold text-red-800 uppercase">Level of Urgency According to Residents</label>
+                                <label class="text-xs font-bold text-red-800 uppercase">Tingkat Urgensi Menurut Warga</label>
                                 <div class="grid grid-cols-3 gap-2 mt-1">
                                     <label class="cursor-pointer">
                                         <input type="radio" name="urgensi" value="Waspada" class="peer hidden" checked>
@@ -793,70 +743,70 @@
                             </div>
 
                             <div id="dynamic-anomali-fields" class="mt-4 pt-4 border-t border-red-200">
-                                <h4 class="text-xs font-bold text-red-800 uppercase mb-3 flex items-center gap-1"><i class="ph-bold ph-radar"></i> Field Context</h4>
-
+                                <h4 class="text-xs font-bold text-red-800 uppercase mb-3 flex items-center gap-1"><i class="ph-bold ph-radar"></i> Konteks Lapangan</h4>
+                                
                                 <div id="dyn-geologis" class="space-y-3">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Since When?</label>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Sejak Kapan?</label>
                                             <select id="geo-waktu" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
-                                                <option value="Baru saja (< 1 Jam)">Just Now (< 1 Jam)</option>
-                                                <option value="Hari ini (< 24 Jam)">Today (< 24 Jam)</option>
-                                                <option value="Sudah berhari-hari">For Several Days</option>
+                                                <option value="Baru saja (< 1 Jam)">Baru saja (< 1 Jam)</option>
+                                                <option value="Hari ini (< 24 Jam)">Hari ini (< 24 Jam)</option>
+                                                <option value="Sudah berhari-hari">Sudah berhari-hari</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Length Estimate (m)</label>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Estimasi Panjang (m)</label>
                                             <input type="number" id="geo-panjang" placeholder="Misal: 10" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-2 mt-2">
-                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-bertambah" class="accent-red-500 w-3 h-3"> Getting Worse/Wider</label>
-                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-suara" class="accent-red-500 w-3 h-3"> There is Sound/Vibration</label>
-                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-pemukiman" class="accent-red-500 w-3 h-3"> Near Settlement</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-bertambah" class="accent-red-500 w-3 h-3"> Makin parah/lebar</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-suara" class="accent-red-500 w-3 h-3"> Ada suara/getaran</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="geo-pemukiman" class="accent-red-500 w-3 h-3"> Dekat pemukiman</label>
                                     </div>
                                 </div>
 
                                 <div id="dyn-hidrologis" class="space-y-3 hidden">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Rising Speed</label>
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Kecepatan Naik</label>
                                             <select id="hidro-cepat" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
-                                                <option value="Very Fast (Minutes)">Very Fast (Minutes)</option>
-                                                <option value="Slow (Hours)">Slow (Hours)</option>
-                                                <option value="Stable / Flooded">Stable / Flooded</option>
+                                                <option value="Sangat Cepat (Menit)">Sangat Cepat (Menit)</option>
+                                                <option value="Perlahan (Jam)">Perlahan (Jam)</option>
+                                                <option value="Stabil / Menggenang">Stabil / Menggenang</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Water Level (cm)</label>
-                                            <input type="number" id="hidro-tinggi" placeholder="Example: 50" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
+                                            <label class="text-[10px] font-bold text-gray-500 uppercase">Tinggi Air (cm)</label>
+                                            <input type="number" id="hidro-tinggi" placeholder="Misal: 50" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-2 mt-2">
-                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-hujan" class="accent-red-500 w-3 h-3"> There is Heavy Rain for More than 3 Days</label>
-                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-berulang" class="accent-red-500 w-3 h-3"> New Flood Point</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-hujan" class="accent-red-500 w-3 h-3"> Hujan lebih dari 3 hari</label>
+                                        <label class="flex items-center gap-1 text-xs text-gray-700 bg-white px-2 py-1.5 border border-red-100 rounded-md shadow-sm"><input type="checkbox" id="hidro-berulang" class="accent-red-500 w-3 h-3"> Titik banjir baru</label>
                                     </div>
                                 </div>
 
                                 <div id="dyn-biologis" class="space-y-3 hidden">
                                     <div>
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase">What is Affected?</label>
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Apa yang terdampak?</label>
                                         <select id="bio-kejadian" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
-                                            <option value="Ikan / Biota Laut Mati Massal">Mass Fish/Sea Life Deaths</option>
-                                            <option value="Pohon Mangrove Mendadak Kering">Mangrove Trees Suddenly Dry Up</option>
-                                            <option value="Hewan Darat Berpindah Wajar">Unnatural Land Animals Migrations</option>
-                                            <option value="Air Berubah Warna/Bau Tajam">Water Changes Color/Staple Odor</option>
+                                            <option value="Ikan / Biota Laut Mati Massal">Ikan / Biota Laut Mati Massal</option>
+                                            <option value="Pohon Mangrove Mendadak Kering">Pohon Mangrove Mendadak Kering</option>
+                                            <option value="Hewan Darat Berpindah Wajar">Hewan Darat Berpindah Tidak Wajar</option>
+                                            <option value="Air Berubah Warna/Bau Tajam">Air Berubah Warna/Bau Tajam</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div id="dyn-infrastruktur" class="space-y-3 hidden">
                                     <div>
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Damage Focus (Systemic)</label>
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Fokus Kerusakan (Sistemik)</label>
                                         <select id="infra-fokus" class="w-full mt-1 p-2 bg-white border border-red-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-red-500">
-                                            <option value="Tanggul Laut Rembes / Retak">Sea Wall Leaking / Cracking</option>
-                                            <option value="Sistem Drainase Utama Tersumbat">Main Drainage System Completely Blocked</option>
-                                            <option value="Penurunan Tanah Jalanan">Coastal Roadway Soil Settlement</option>
+                                            <option value="Tanggul Laut Rembes / Retak">Tanggul Laut Rembes / Retak</option>
+                                            <option value="Sistem Drainase Utama Tersumbat">Sistem Drainase Utama Tersumbat Total</option>
+                                            <option value="Penurunan Tanah Jalanan">Penurunan Tanah Jalanan Pesisir</option>
                                         </select>
                                     </div>
                                 </div>
@@ -870,18 +820,18 @@
                             <!-- UPGRADE EKSTRAPOLASI GIS -->
                             <div class="grid grid-cols-2 gap-3 mb-2 pb-3 border-b border-indigo-200/60">
                                 <div>
-                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Observation Method</label>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Metode Pengamatan</label>
                                     <select id="form-bio-metode" onchange="toggleTransekInputs(); autoHitungBiomassaForm();" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium">
-                                        <option value="Belt Transect">Belt Transect (Extrapolation)</option>
-                                        <option value="Roaming">Roaming (GIS Area)</option>
+                                        <option value="Belt Transect">Belt Transect (Ekstrapolasi)</option>
+                                        <option value="Roaming">Jelajah Bebas (GIS Area)</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Depth</label>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Kedalaman (Depth)</label>
                                     <select id="form-bio-kedalaman" class="w-full mt-1 p-2 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium">
-                                        <option value="Dangkal (3-5m)">Shallow (3 - 5 Meter)</option>
-                                        <option value="Sedang (8-10m)">Medium (8 - 10 Meter)</option>
-                                        <option value="Dalam (>12m)">Deep (> 12 Meter)</option>
+                                        <option value="Dangkal (3-5m)">Dangkal (3 - 5 Meter)</option>
+                                        <option value="Sedang (8-10m)">Sedang (8 - 10 Meter)</option>
+                                        <option value="Dalam (>12m)">Dalam (> 12 Meter)</option>
                                     </select>
                                 </div>
                             </div>
@@ -899,36 +849,36 @@
                             </div>
 
                             <div>
-                                <label class="text-[10px] font-bold text-indigo-800 uppercase">Functional Category (Main Family)</label>
+                                <label class="text-[10px] font-bold text-indigo-800 uppercase">Kategori Fungsional (Famili Utama)</label>
                                 <select id="form-bio-spesies" onchange="autoHitungBiomassaForm()" class="w-full mt-1 p-3 bg-white border border-indigo-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                                    <optgroup label="1. Indicator Fish (Coral Health)">
-                                        <option value="Indikator (Chaetodontidae)">Chaetodontidae (Butterflyfish)</option>
+                                    <optgroup label="1. Ikan Indikator (Kesehatan Karang)">
+                                        <option value="Indikator (Chaetodontidae)">Chaetodontidae (Kepe-kepe)</option>
                                     </optgroup>
-                                    <optgroup label="2. Target Fish (Fishing Pressure)">
-                                        <option value="Target (Serranidae)">Serranidae (Grouper)</option>
-                                        <option value="Target (Lutjanidae)">Lutjanidae (Snapper)</option>
-                                        <option value="Target (Lethrinidae)">Lethrinidae (Emperorfish)</option>
+                                    <optgroup label="2. Ikan Target (Tekanan Tangkap)">
+                                        <option value="Target (Serranidae)">Serranidae (Kerapu)</option>
+                                        <option value="Target (Lutjanidae)">Lutjanidae (Kakap)</option>
+                                        <option value="Target (Lethrinidae)">Lethrinidae (Lencam)</option>
                                     </optgroup>
-                                    <optgroup label="3. Herbivorous & Major">
+                                    <optgroup label="3. Ikan Herbivora & Mayor">
                                         <option value="Herbivora (Scaridae)">Scaridae (Kakatua)</option>
                                         <option value="Herbivora (Acanthuridae)">Acanthuridae (Botana)</option>
-                                        <option value="Mayor (Caesionidae)">Caesionidae (Yellow Tail)</option>
+                                        <option value="Mayor (Caesionidae)">Caesionidae (Ekor Kuning)</option>
                                     </optgroup>
                                 </select>
                             </div>
                             
                             <div class="grid grid-cols-3 gap-2 items-end">
                                 <div>
-                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Average Length (cm)</label>
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Rata Pnjg (cm)</label>
                                     <input type="number" step="0.1" id="form-bio-panjang" oninput="autoHitungBiomassaForm()" placeholder="Misal: 30" class="w-full mt-1 p-2.5 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center text-indigo-700 shadow-sm" />
                                 </div>
                                 <div>
-                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Number of Individuals</label>
-                                    <input type="number" id="form-bio-jumlah" oninput="autoHitungBiomassaForm()" placeholder="How many?" class="w-full mt-1 p-2.5 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center text-gray-700 shadow-sm" />
+                                    <label class="text-[9px] font-bold text-indigo-800 uppercase">Jumlah Ekor</label>
+                                    <input type="number" id="form-bio-jumlah" oninput="autoHitungBiomassaForm()" placeholder="Berapa?" class="w-full mt-1 p-2.5 bg-white border border-indigo-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center text-gray-700 shadow-sm" />
                                 </div>
                                 <div>
                                     <label class="text-[9px] font-bold text-indigo-800 uppercase">Total (Kg)</label>
-                                    <input type="number" step="0.01" id="form-bio-berat" placeholder="Automatically calculated" readonly class="w-full mt-1 p-2.5 bg-indigo-200/50 border border-indigo-300 rounded-lg outline-none text-sm font-black text-center text-indigo-900 cursor-not-allowed shadow-inner" />
+                                    <input type="number" step="0.01" id="form-bio-berat" placeholder="Otomatis" readonly class="w-full mt-1 p-2.5 bg-indigo-200/50 border border-indigo-300 rounded-lg outline-none text-sm font-black text-center text-indigo-900 cursor-not-allowed shadow-inner" />
                                 </div>
                             </div>
                             
@@ -938,23 +888,23 @@
 
                         <!-- KOTAK KHUSUS SAMPAH -->
                             <div id="input-amount-container">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Total Waste Collected (Kg)</label>
-                                <input type="number" id="form-amount" placeholder="Example: 15" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500" required />
+                                <label class="text-xs font-bold text-gray-500 uppercase">Total Sampah Terkumpul (Kg)</label>
+                                <input type="number" id="form-amount" placeholder="Contoh: 15" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500" required />
                             </div>
 
                             <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase">Notes / Unique Findings</label>
-                                <textarea id="form-notes" placeholder="Example: Many dead crab shells found or dominance of glass bottles..." class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 h-24" required></textarea>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Catatan / Temuan Unik</label>
+                                <textarea id="form-notes" placeholder="Misal: Banyak ditemukan cangkang kepiting mati atau dominasi botol kaca..." class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 h-24" required></textarea>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <!-- Area GPS -->
                                 <div class="bg-teal-50 p-4 rounded-xl border border-teal-100">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-sm font-bold text-teal-800 flex items-center gap-2"><i class="ph-fill ph-map-pin"></i> GPS Location</span>
-                                        <button type="button" onclick="getGPS()" class="bg-teal-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-teal-700 active:scale-95 shadow-sm">Track</button>
+                                        <span class="text-sm font-bold text-teal-800 flex items-center gap-2"><i class="ph-fill ph-map-pin"></i> GPS Lokasi</span>
+                                        <button type="button" onclick="getGPS()" class="bg-teal-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-teal-700 active:scale-95 shadow-sm">Lacak</button>
                                     </div>
-                                    <p id="form-gps-status" class="text-xs text-teal-600 font-medium">No data available</p>
+                                    <p id="form-gps-status" class="text-xs text-teal-600 font-medium">Belum ada data</p>
                                     <input type="hidden" id="form-lat"><input type="hidden" id="form-lng">
                                 </div>
                                 
@@ -962,7 +912,7 @@
                                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-2">
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="text-sm font-bold text-blue-800 flex items-center gap-2"><i class="ph-fill ph-bounding-box"></i> Area Sapuan (Ha)</span>
-                                        <button type="button" onclick="openMapLapangan()" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-blue-700 active:scale-95 shadow-sm">View Map</button>
+                                        <button type="button" onclick="openMapLapangan()" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-blue-700 active:scale-95 shadow-sm">Gambar Peta</button>
                                     </div>
                                     <p id="form-area-status" class="text-xs text-blue-600 font-medium">0 Hektar</p>
                                     <input type="hidden" id="form-area-ha" value="0">
@@ -973,31 +923,31 @@
                             <div id="map-lapangan-wrapper" class="hidden bg-white flex-col transition-all mb-4">
                                 <div class="p-3 bg-blue-600 text-white flex justify-between items-center z-10">
                                     <div>
-                                        <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold"></i> Map Area</h3>
+                                        <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-map-trifold"></i> Area Sapuan</h3>
                                     </div>
-                                    <button type="button" onclick="closeMapLapangan()" id="btn-lapangan-selesai" class="font-bold text-blue-900 bg-white hover:bg-gray-100 px-4 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95">Done</button>
-                                    <button type="button" onclick="openMapLapangan()" id="btn-lapangan-expand" class="hidden font-bold text-white bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95"><i class="ph-bold ph-corners-out"></i> Expand</button>
+                                    <button type="button" onclick="closeMapLapangan()" id="btn-lapangan-selesai" class="font-bold text-blue-900 bg-white hover:bg-gray-100 px-4 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95">Selesai</button>
+                                    <button type="button" onclick="openMapLapangan()" id="btn-lapangan-expand" class="hidden font-bold text-white bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded-lg transition-colors text-sm shadow-sm active:scale-95"><i class="ph-bold ph-corners-out"></i> Perbesar</button>
                                 </div>
                                 <div id="map-lapangan-container" class="w-full flex-1 relative z-0 bg-gray-200 min-h-[250px]"></div>
                             </div>
 
                             <!-- Foto Input -->
                             <div class="border border-gray-200 rounded-xl p-4 transition-colors relative bg-gray-50">
-                                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Visual Evidence Link <span class="text-[9px] text-teal-600 lowercase bg-teal-50 px-1 rounded">(gdrive / direct / youtube)</span></label>
+                                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Link Bukti Visual <span class="text-[9px] text-teal-600 lowercase bg-teal-50 px-1 rounded">(gdrive / direct / youtube)</span></label>
                                 <div class="flex gap-2 mb-2">
-                                    <input type="url" id="form-media-url" placeholder="Paste photo or YouTube video link..." class="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                                    <input type="url" id="form-media-url" placeholder="Paste link foto atau video YouTube..." class="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 text-sm">
                                     <button type="button" onclick="addMediaLink()" class="bg-teal-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 whitespace-nowrap shadow-sm active:scale-95 transition-transform">
-                                        Add
+                                        Tambah
                                     </button>
                                 </div>
-                                <p class="text-[10px] text-gray-400 mb-2">*You can add more than 1 link. Supports YouTube links (automatically becomes a thumbnail).</p>
+                                <p class="text-[10px] text-gray-400 mb-2">*Bisa tambah lebih dari 1 link. Mendukung link YouTube (otomatis jadi thumbnail).</p>
                                 
                                 <div id="media-preview-container" class="hidden flex flex-wrap gap-3 mt-3 border-t border-gray-200 pt-3">
                                     </div>
                             </div>
 
                             <button type="submit" class="w-full bg-teal-600 text-white p-4 rounded-xl font-bold text-lg shadow-md hover:bg-teal-700 active:scale-95 transition-transform flex justify-center items-center gap-2 mt-4">
-                                <i class="ph-bold ph-floppy-disk"></i> Save Report
+                                <i class="ph-bold ph-floppy-disk"></i> Simpan Laporan
                             </button>
                         </form>
                     </div>
@@ -1010,11 +960,11 @@
                     <div id="kamus-tod" class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden mb-2">
                         <i class="ph-fill ph-sparkle text-[120px] absolute -right-6 -top-6 opacity-20 transform rotate-12"></i>
                         <div class="relative z-10">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-purple-200 mb-1 flex items-center gap-1"><i class="ph-fill ph-star"></i> Today Spotlight </p>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-purple-200 mb-1 flex items-center gap-1"><i class="ph-fill ph-star"></i> Spotlight Hari Ini</p>
                             <h3 id="tod-term" class="text-2xl md:text-3xl font-black mb-2 text-yellow-300">Bekantan</h3>
-                            <p id="tod-desc" class="text-sm text-purple-50 font-medium leading-relaxed mb-3">A long-nosed monkey endemic to Kalimantan. Feeding on young Sonneratia shoots.</p>
+                            <p id="tod-desc" class="text-sm text-purple-50 font-medium leading-relaxed mb-3">Monyet hidung panjang endemik Kalimantan. Pemakan pucuk Sonneratia muda.</p>
                             <div id="tod-funfact" class="bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10 text-xs italic">
-                               "It turns out his big nose is to attract the attention of females, you know! 😎"
+                                "Hidung besarnya ternyata buat narik perhatian betina lho! 😎"
                             </div>
                         </div>
                     </div>
@@ -1023,11 +973,11 @@
                     <div class="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-gray-100 sticky top-0 z-20">
                         <div class="flex justify-between items-center mb-3">
                             <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i class="ph-bold ph-book-open-text text-teal-600"></i> Glosarium</h2>
-                            <span id="kamus-count" class="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full">0 Terms</span>
+                            <span id="kamus-count" class="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full">0 Istilah</span>
                         </div>
                         <div class="relative">
                             <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-lg"></i>
-                            <input type="text" id="search-kamus" oninput="renderKamus()" placeholder="Search terms... (e.g., Bakau)" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-sm font-medium transition-shadow shadow-inner" />
+                            <input type="text" id="search-kamus" oninput="renderKamus()" placeholder="Cari istilah... (contoh: Bakau)" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-sm font-medium transition-shadow shadow-inner" />
                         </div>
                     </div>
                     
@@ -1042,15 +992,15 @@
 
                         <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-4 md:p-6 text-white shadow-lg mb-6 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
                             <div>
-                                <h2 class="text-xl font-bold flex items-center gap-2"><i class="ph-fill ph-lightbulb text-yellow-400"></i> Hackathon Board</h2>
-                                <p class="text-xs text-gray-300 mt-1">Turn problems into solutions!</p>
+                                <h2 class="text-xl font-bold flex items-center gap-2"><i class="ph-fill ph-lightbulb text-yellow-400"></i> Papan Hackathon</h2>
+                                <p class="text-xs text-gray-300 mt-1">Ubah masalah jadi solusi!</p>
                             </div>
                             <div class="flex gap-2 w-full md:w-auto">
                                 <button onclick="openSyncModal('idea')" class="flex-1 md:flex-none bg-blue-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-600 transition flex justify-center items-center gap-2">
-                                    <i class="ph-bold ph-cloud-arrow-up"></i> Synchronize
+                                    <i class="ph-bold ph-cloud-arrow-up"></i> Sinkronisasi
                                 </button>
                                 <button onclick="toggleFormHackathon(true)" class="flex-1 md:flex-none bg-yellow-400 text-gray-900 px-4 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-yellow-300 transition flex justify-center items-center gap-2">
-                                    + Create Idea
+                                    + Buat Ide
                                 </button>
                             </div>
                         </div>
@@ -1061,14 +1011,14 @@
 
                     <div id="hackathon-form" class="hidden pb-10">
                         <button onclick="toggleFormHackathon(false)" class="mb-4 text-teal-600 text-sm font-semibold flex items-center gap-1">
-                            <i class="ph-bold ph-arrow-left"></i> Cancel
+                            <i class="ph-bold ph-arrow-left"></i> Batal
                         </button>
 
 
                         <form onsubmit="saveIdea(event)" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
                             <div class="border-b pb-2">
-                                <h2 class="text-xl font-bold text-gray-800">Hackathon Idea Canvas</h2>
-                                <p class="text-xs text-gray-500">Structure your team's thoughts.</p>
+                                <h2 class="text-xl font-bold text-gray-800">Kanvas Ide Hackathon</h2>
+                                <p class="text-xs text-gray-500">Strukturkan pemikiran tim kamu.</p>
                             </div>
 
                             <!-- 1. FUN TWIST GENERATOR -->
@@ -1077,38 +1027,38 @@
                                 <i class="ph-fill ph-magic-wand text-3xl text-purple-600 z-10"></i>
                                 <div class="z-10">
                                     <p class="text-[10px] font-black text-purple-800 uppercase tracking-wider mb-1">🧠 Fun Twist Challenge!</p>
-                                    <p id="fun-twist-text" class="text-sm text-purple-700 font-medium leading-tight">Imagine you are the mayor...</p>
+                                    <p id="fun-twist-text" class="text-sm text-purple-700 font-medium leading-tight">Bayangkan kamu jadi wali kota...</p>
                                 </div>
                             </div>
 
                             <!-- 2. KOLOM DENGAN HINT & PLACEHOLDER -->
                             <div class="space-y-1">
-                                <label class="text-sm font-bold text-red-600 flex items-center gap-2"><span class="bg-red-100 px-2 rounded-full text-xs">1</span> What is the Problem?</label>
-                                <p class="text-[10px] text-gray-500 font-medium ml-7">Example: Polluted beach due to plastic straws, or many mangrove seedlings dying.</p>
-                                <textarea id="idea-masalah" oninput="checkIdeLevel()" required placeholder="Write the specific problem you see in the field..." class="w-full mt-1 p-3 bg-red-50/50 border border-red-100 rounded-xl text-sm h-20 outline-none focus:ring-2 focus:ring-red-400"></textarea>
+                                <label class="text-sm font-bold text-red-600 flex items-center gap-2"><span class="bg-red-100 px-2 rounded-full text-xs">1</span> Apa Masalahnya?</label>
+                                <p class="text-[10px] text-gray-500 font-medium ml-7">Contoh: Pantai kotor karena sedotan plastik, atau banyak bibit mangrove mati.</p>
+                                <textarea id="idea-masalah" oninput="checkIdeLevel()" required placeholder="Tulis masalah spesifik yang kamu lihat di lapangan..." class="w-full mt-1 p-3 bg-red-50/50 border border-red-100 rounded-xl text-sm h-20 outline-none focus:ring-2 focus:ring-red-400"></textarea>
                             </div>
 
                             <div class="space-y-1">
-                                <label class="text-sm font-bold text-orange-600 flex items-center gap-2"><span class="bg-orange-100 px-2 rounded-full text-xs">2</span> Why is it Important?</label>
-                                <p class="text-[10px] text-gray-500 font-medium ml-7">Hint: What is the impact on the community? On marine life? For the next 5 years?</p>
-                                <textarea id="idea-alasan" oninput="checkIdeLevel()" required placeholder="This idea is important to address because..." class="w-full mt-1 p-3 bg-orange-50/50 border border-orange-100 rounded-xl text-sm h-20 outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+                                <label class="text-sm font-bold text-orange-600 flex items-center gap-2"><span class="bg-orange-100 px-2 rounded-full text-xs">2</span> Mengapa Penting?</label>
+                                <p class="text-[10px] text-gray-500 font-medium ml-7">Hint: Apa dampaknya buat warga? Buat hewan laut? Buat 5 tahun ke depan?</p>
+                                <textarea id="idea-alasan" oninput="checkIdeLevel()" required placeholder="Ide ini penting untuk diselesaikan karena..." class="w-full mt-1 p-3 bg-orange-50/50 border border-orange-100 rounded-xl text-sm h-20 outline-none focus:ring-2 focus:ring-orange-400"></textarea>
                             </div>
 
                             <div class="space-y-1">
-                                <label class="text-sm font-bold text-teal-600 flex items-center gap-2"><span class="bg-teal-100 px-2 rounded-full text-xs">3</span> Our Solution Idea?</label>
-                                <p class="text-[10px] text-gray-500 font-medium ml-7">Format:[Who] does [what] in [how] manner.</p>
-                                <textarea id="idea-solusi" oninput="checkIdeLevel()" required placeholder="Example: Students will create a cleaning schedule using cloth shopping bags..." class="w-full mt-1 p-3 bg-teal-50/50 border border-teal-100 rounded-xl text-sm h-24 outline-none focus:ring-2 focus:ring-teal-400"></textarea>
+                                <label class="text-sm font-bold text-teal-600 flex items-center gap-2"><span class="bg-teal-100 px-2 rounded-full text-xs">3</span> Ide Solusi Kami?</label>
+                                <p class="text-[10px] text-gray-500 font-medium ml-7">Format:[Siapa] melakukan [apa] dengan cara [bagaimana].</p>
+                                <textarea id="idea-solusi" oninput="checkIdeLevel()" required placeholder="Contoh: Siswa akan bikin jadwal piket bawa tas belanja kain dengan cara..." class="w-full mt-1 p-3 bg-teal-50/50 border border-teal-100 rounded-xl text-sm h-24 outline-none focus:ring-2 focus:ring-teal-400"></textarea>
                             </div>
 
                             <!-- 3. LIVE AUTO FEEDBACK / LEVEL IDE -->
                             <div id="ide-feedback-container" class="bg-gray-50 border border-gray-200 p-4 rounded-xl text-center transition-all duration-300 transform scale-100">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Your Idea Status</p>
-                                <h4 id="ide-level-title" class="text-lg font-black text-gray-400 transition-colors">No Ideas Yet 💤</h4>
-                                <p id="ide-level-msg" class="text-xs text-gray-500 mt-1 transition-colors">Let's start typing something above!</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Status Ide Kamu</p>
+                                <h4 id="ide-level-title" class="text-lg font-black text-gray-400 transition-colors">Belum Ada Ide 💤</h4>
+                                <p id="ide-level-msg" class="text-xs text-gray-500 mt-1 transition-colors">Ayo mulai ketik sesuatu di atas!</p>
                             </div>
 
                             <button type="submit" class="w-full bg-gray-800 text-white p-4 rounded-xl font-bold text-lg shadow-md hover:bg-gray-900 transition-transform active:scale-95 flex justify-center items-center gap-2">
-                                <i class="ph-bold ph-paper-plane-tilt"></i> Save Team Ideas
+                                <i class="ph-bold ph-paper-plane-tilt"></i> Simpan Ide Tim
                             </button>
                         </form>
 
@@ -1125,12 +1075,12 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSyncModal()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-11/12 max-w-sm overflow-hidden flex flex-col">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-600 text-white">
-                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-cloud-arrow-up"></i> Upload to Server</h3>
+                <h3 class="font-bold flex items-center gap-2"><i class="ph-bold ph-cloud-arrow-up"></i> Upload ke Server</h3>
                 <button onclick="closeSyncModal()" class="text-blue-200 hover:text-white transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
             </div>
             <div class="p-6">
                 <div class="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg mb-4 border border-blue-100 font-medium">
-                    Upload <strong id="sync-count" class="text-blue-600 font-black text-sm">0</strong> data from your phone to the Main Dashboard.
+                    Kirim <strong id="sync-count" class="text-blue-600 font-black text-sm">0</strong> data dari HP kamu ke Dashboard Utama.
                 </div>
                 
                 <input type="hidden" id="sync-type" value="">
@@ -1138,40 +1088,40 @@
                 
                 <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 mb-4 flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">Send as:</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Mengirim Sebagai:</p>
                         <p id="sync-user-display" class="text-sm font-bold text-gray-800">-</p>
                     </div>
-                    <button onclick="closeSyncModal(); openProfileModal();" class="text-teal-600 hover:text-teal-800 text-xs font-bold underline"><i class="ph-bold ph-pencil-simple"></i> Change</button>
+                    <button onclick="closeSyncModal(); openProfileModal();" class="text-teal-600 hover:text-teal-800 text-xs font-bold underline"><i class="ph-bold ph-pencil-simple"></i> Ubah</button>
                 </div>
 
 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Regency / City</label>
-                <input type="text" id="sync-kabupaten" placeholder="e.g., Jakarta Utara" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-3 bg-gray-50 focus:bg-white">
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Kabupaten / Kota</label>
+                <input type="text" id="sync-kabupaten" placeholder="Misal: Jakarta Utara" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-3 bg-gray-50 focus:bg-white">
                 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Reporting Code</label>
-                <input type="text" id="sync-kode" placeholder="e.g., PK-001" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-4 bg-gray-50 focus:bg-white">
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Kode Pelaporan</label>
+                <input type="text" id="sync-kode" placeholder="Misal: PK-001" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 mb-4 bg-gray-50 focus:bg-white">
 
                 <p id="sync-error" class="text-red-500 text-xs hidden mb-3 font-medium bg-red-50 p-2 rounded-lg border border-red-100"></p>
 
                
                 <!-- Tombol Kirim Server yang sudah ada -->
                 <button id="btn-submit-sync" onclick="submitDataToServer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
-                    <i class="ph-bold ph-paper-plane-tilt"></i> Upload Now
+                    <i class="ph-bold ph-paper-plane-tilt"></i> Kirim Sekarang
                 </button>
 
                 <!-- 👇 KODE BARU: Pembatas & Tombol Share Lokal 👇 -->
                 <div class="relative flex items-center py-4">
                     <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Or Local Transfer</span>
+                    <span class="flex-shrink-0 mx-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">ATAU TRANSFER LOKAL</span>
                     <div class="flex-grow border-t border-gray-200"></div>
                 </div>
 
                 <p class="text-[10px] text-gray-500 text-center mb-2 leading-relaxed">
-                    *No need to fill out the form above if you only want to send this data to your teammate's phone via Bluetooth / Nearby Share.
+                    *Tidak perlu isi form di atas jika kamu hanya ingin mengirim data ini ke HP teman tim via Bluetooth / Nearby Share.
                 </p>
 
                 <button type="button" onclick="shareDataLokal()" class="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-3 rounded-xl transition border border-gray-300 flex justify-center items-center gap-2 shadow-sm">
-                    <i class="ph-bold ph-share-network text-lg text-blue-500"></i> Share to Another Phone
+                    <i class="ph-bold ph-share-network text-lg text-blue-500"></i> Share ke HP Lain
                 </button>
                 <!-- 👆 BATAS KODE BARU 👆 -->
 
@@ -1191,7 +1141,7 @@
         <i class="ph-bold ph-user text-xl flex-shrink-0"></i>
 
         <h3 class="text-base font-bold whitespace-nowrap">
-            Team Profile
+            Profil Tim
         </h3>
     </div>
 
@@ -1206,16 +1156,16 @@
 </div>
 
             <div class="p-6">
-                <p class="text-xs text-gray-500 mb-4">This data is automatically attached every time you synchronize with the server.</p>
+                <p class="text-xs text-gray-500 mb-4">Data ini otomatis dilampirkan setiap kali kamu sinkronisasi ke server.</p>
                 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Reporter / Team Name</label>
-                <input type="text" id="profile-name" placeholder="e.g., Budi Santoso" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Nama Pelapor / Tim</label>
+                <input type="text" id="profile-name" placeholder="Misal: Budi Santoso" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
                 
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">School / Organization</label>
-                <input type="text" id="profile-org" placeholder="e.g., SMA Negeri 1" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-5 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
+                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Asal Sekolah / Organisasi</label>
+                <input type="text" id="profile-org" placeholder="Misal: SMA Negeri 1" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm mb-5 focus:outline-none focus:border-teal-500 bg-gray-50 focus:bg-white">
                 
                 <button onclick="saveProfile()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition shadow-md flex justify-center items-center gap-2">
-                    <i class="ph-bold ph-floppy-disk"></i> Save Profile
+                    <i class="ph-bold ph-floppy-disk"></i> Simpan Data Diri
                 </button>
             </div>
         </div>
@@ -1249,65 +1199,52 @@
         let editingReportId = null;
         let editingIdeaId = null;
 
-// --- FUN FACTS & GAMIFICATION DATA ---
+        // --- FUN FACTS & GAMIFICATION DATA ---
         const randomFunFacts =[
-            "Did you know? Mangrove forests absorb carbon 5x faster than tropical rainforests! 🌳💨",
-            "Mangrove roots act as a natural shield against Tsunamis and large waves! 🌊🛡️",
-            "A single mangrove tree can become a home for hundreds of tiny crabs. 🦀🏠",
-            "Without mangroves, the beaches we play on could eventually submerge! 🏖️📉",
-            "Juvenile lemon sharks often seek shelter among the mangrove roots! 🦈🌿"
+            "Tahukah kamu? Hutan mangrove menyerap karbon 5x lebih cepat dari hutan darat! 🌳💨",
+            "Akar mangrove itu pelindung alami dari Tsunami dan ombak besar! 🌊🛡️",
+            "Satu pohon mangrove bisa jadi rumah buat ratusan kepiting kecil. 🦀🏠",
+            "Tanpa mangrove, pantai tempat kita main lama-lama bisa tenggelam lho! 🏖️📉",
+            "Ikan hiu lemon muda sering berlindung di sela-sela akar mangrove! 🦈🌿"
         ];
 
         const sampahFacts = {
-            "450": "This bottle can outlive you and your future grandchildren! 😬",
-            "600": "Beware of 'Ghost Fishing'! This net will keep trapping fish even after being discarded 😢",
-            "200": "Such a waste to throw it away, even though this can is super easy to recycle ♻️",
-            "50": "Styrofoam easily breaks down into microplastics, gets eaten by fish, and then you eat the fish! 🤢",
-            "4000": "Wow, 40 centuries! This will literally become an ancient artifact in the future 🏛️",
-            "20": "Plastic bags in the ocean are often mistaken for jellyfish by sea turtles. Poor turtles could choke to death 🐢😭",
-            "10": "The toxins from just 1 cigarette butt can pollute up to 500 liters of seawater! ☠️"
+            "450": "Botol ini bisa bertahan lebih lama dari umur kamu dan cucumu nanti! 😬",
+            "600": "Bahaya 'Ghost Fishing'! Jaring ini bakal terus menjerat ikan walau dibuang 😢",
+            "200": "Sayang banget dibuang, padahal kaleng ini gampang banget didaur ulang ♻️",
+            "50": "Sterofoam gampang hancur jadi mikroplastik, dimakan ikan, lalu ikannya kamu makan! 🤢",
+            "4000": "Wow, 40 Abad! Ini bakal jadi artefak purbakala di masa depan 🏛️",
+            "20": "Kresek di laut sering dikira ubur-ubur sama penyu. Kasihan penyu nya bisa mati keselek 🐢😭",
+            "10": "Racun dari 1 puntung rokok bisa mencemari hingga 500 liter air laut lho! ☠️"
         };
         
         const funTwists =[
-            "Imagine you are a City Mayor with a strictly limited budget! 🏛️",
-            "How can you make this idea go viral on TikTok and reposted by influencers? 📱🔥",
-            "If you only had Rp 100,000 (around $7), how would you execute this idea? 💸",
-            "Imagine your idea has to involve elementary school kids as the heroes! 🦸‍♂️🦸‍♀️",
-            "What if the technology only relies on a WhatsApp group? 💬",
-            "Try to come up with a solution that can be done while just chilling at home! 🛏️😎"
+            "Bayangkan kamu adalah Wali Kota dengan budget terbatas! 🏛️",
+            "Gimana caranya biar ide ini viral di TikTok & direpost influencer? 📱🔥",
+            "Kalau kamu cuma punya uang Rp 100.000, gimana cara eksekusi ide ini? 💸",
+            "Bayangkan idemu harus melibatkan anak SD sebagai pahlawannya! 🦸‍♂️🦸‍♀️",
+            "Gimana kalau teknologinya cuma modal grup WhatsApp aja? 💬",
+            "Coba bikin solusi yang bisa dikerjakan rebahan dari rumah! 🛏️😎"
         ];
 
         // Data Kamus
         // Data Kamus Baru (Diperkaya dengan Fun Fact & Relasi)
-        const kamusData = [
-            { term: 'Blue Carbon', cat: 'Concept', desc: 'Carbon absorbed by coastal ecosystems. Mangroves store 3-5 times more carbon than tropical forests.', funfact: 'Like a giant vacuum cleaner sucking up the Earth\'s air pollution! 🌪️', terkait:['Carbon Sink', 'Climate Change Mitigation'] },
-            { term: 'Sonneratia alba (Mangrove Apple)', cat: 'Flora', desc: 'A tough pioneer mangrove at the frontline. It has cone-shaped breathing roots and small apple-like fruits.', funfact: 'The fruit is refreshingly sour, a favorite snack of the Proboscis Monkey! 🐒', terkait: ['Proboscis Monkey', 'Pneumatophore'] },
-            { term: 'Rhizophora (Red Mangrove)', cat: 'Flora', desc: 'The iconic mangrove with distinctive stilt roots that grip the mud tightly.', funfact: 'Its roots look like spider claws, acting as the main fortress against crashing waves. 🕷️', terkait: ['Abrasion', 'Nursery Ground'] },
-            { term: 'Proboscis Monkey', cat: 'Fauna', desc: 'A long-nosed monkey endemic to Borneo. They eat young Sonneratia shoots and are great swimmers.', funfact: 'Turns out their big nose is actually used to attract females! 😎', terkait: ['Sonneratia alba (Mangrove Apple)'] },
-            { term: 'Abrasion', cat: 'Threat', desc: 'Coastal erosion caused by ocean waves. If left unchecked, the land could slowly disappear.', funfact: 'Mangroves act as bodyguards or natural concrete walls holding back coastal abrasion. 🛡️', terkait: ['Rhizophora (Red Mangrove)', 'Coastal Resilience'] },
-            { term: 'Salinity', cat: 'Condition', desc: 'The saltiness level of water. Normal plants would die, but mangroves have a secret way to survive.', funfact: 'Some mangroves can "sweat" out excess salt through their leaves! 🧂', terkait:['Halophyte', 'Avicennia (Black Mangrove)'] },
-            { term: 'Pneumatophore', cat: 'Adaptation', desc: 'Breathing roots that stick up from the mud so the tree can "breathe" free oxygen.', funfact: 'They look like sharp nails sticking upside down in the muddy ground. 📌', terkait: ['Sonneratia alba (Mangrove Apple)', 'Avicennia (Black Mangrove)'] },
-            { term: 'Vivipary', cat: 'Adaptation', desc: 'A smart mangrove strategy: seeds germinate while still attached to the parent tree. When they drop, they are ready to grow!', funfact: 'Mangrove seeds drop like arrows, sticking straight into the mud. 🎯', terkait: ['Rhizophora (Red Mangrove)'] },
-            { term: 'Nursery Ground', cat: 'Function', desc: 'Mangroves are "marine kindergartens". A safe place for fish, shrimp, and crabs to grow before heading to the open sea.', funfact: 'Without mangroves, fishermen could lose 75% of their fish catch! 🎣', terkait:['Coastal Ecosystem', 'Overfishing'] },
-            { term: 'Illegal Logging', cat: 'Threat', desc: 'Illegal cutting of mangroves for charcoal or firewood. It destroys the ecosystem instantly.', funfact: 'It takes decades to undo the damage of illegal logging done in just 1 day. 😭', terkait:['Habitat Fragmentation'] },
-            { term: 'Mangrove Ecotourism', cat: 'Action', desc: 'Taking a relaxing walk on mangrove boardwalks while learning about conservation. It boosts the local economy.', funfact: 'The best healing spot to relieve school stress while breathing pure oxygen! 🌿', terkait:['Ecosystem Services'] },
-            { term: 'Avicennia (Black Mangrove)', cat: 'Flora', desc: 'A mangrove with the ability to filter salt at the roots. Its leaves are often seen coated with fine salt crystals.', funfact: 'If you lick the leaf, it actually tastes salty like potato chips! 🍟 (but please don\'t eat it)', terkait: ['Salinity', 'Pneumatophore'] },
-            { term: 'Mud Crab', cat: 'Fauna', desc: 'Animals that live in mangrove roots and play a role in recycling fallen leaves (detritus).', funfact: 'They are the mangrove gardeners, loving to dig and mix the soil to keep it fertile. 👨‍🌾', terkait: ['Bioturbation', 'Detritus'] },
-            { term: 'Overfishing', cat: 'Threat', desc: 'Excessive fishing in coastal areas that destroys the balance of marine and mangrove ecosystems.', funfact: 'Like taking money from a savings account but never making a deposit, eventually you go broke! 💸', terkait: ['Nursery Ground'] },
-            
-            // --- TAMBAHAN DATA BARU ---
-            { term: 'Propagule', cat: 'Adaptation', desc: 'The unique seed of a mangrove that has already germinated on the tree before dropping into the water.', funfact: 'They look like floating green magic wands drifting in the ocean until they find a place to root! 🪄🌊', terkait: ['Vivipary', 'Rhizophora (Red Mangrove)'] },
-            { term: 'Microplastics', cat: 'Threat', desc: 'Tiny pieces of plastic less than 5mm long that pollute mangrove sediments and harm marine life.', funfact: 'They are so tiny that baby fish eat them by mistake, thinking they are delicious plankton! 🍤🚫', terkait: ['Nursery Ground', 'Coastal Ecosystem'] },
-            { term: 'Mudskipper', cat: 'Fauna', desc: 'An amphibious fish that can walk on land using its pectoral fins and breathe through its wet skin.', funfact: 'This fish literally prefers climbing mangrove roots and chilling in the mud rather than swimming! 🐟🧗‍♂️', terkait: ['Pneumatophore', 'Coastal Ecosystem'] },
-            { term: 'Ocean Literacy', cat: 'Concept', desc: 'The ability to understand the ocean\'s influence on humans and our influence on the ocean. It covers 7 essential principles recognized globally.', funfact: 'Someone who is ocean literate knows that every raindrop that falls was once ocean water! 🌧️🌊', terkait: ['Coastal Ecosystem', 'Blue Carbon'] },
-            { term: 'Ocean Acidification', cat: 'Threat', desc: 'The decrease in ocean pH caused by the absorption of excess CO₂ from the atmosphere. It threatens coral reefs and shellfish.', funfact: 'The ocean has absorbed about 30% of all CO₂ humans ever produced — and now it\'s paying the price. 🧪', terkait: ['Climate Change Mitigation', 'Carbon Sink'] },
-            { term: 'Carbon Sink', cat: 'Function', desc: 'Any natural system that absorbs more carbon than it releases. Oceans are the largest carbon sink on Earth.', funfact: 'The ocean stores 50 times more carbon than the atmosphere. It\'s basically Earth\'s biggest fridge for CO₂! 🧊', terkait: ['Blue Carbon', 'Ocean Acidification'] },
-            { term: 'Dead Zone', cat: 'Threat', desc: 'A hypoxic (low oxygen) area in the ocean, often caused by agricultural runoff and pollution, where most marine life cannot survive.', funfact: 'The Gulf of Mexico has a dead zone the size of New Jersey that appears every summer. 💀🌊', terkait: ['Overfishing', 'Coastal Ecosystem'] },
-            { term: 'Trophic Cascade', cat: 'Concept', desc: 'A chain reaction in an ecosystem when a predator is removed, causing populations below it to explode or collapse uncontrollably.', funfact: 'When wolves were reintroduced to Yellowstone, they literally changed the path of rivers by fixing the whole food chain! 🐺🏔️', terkait: ['Nursery Ground', 'Overfishing'] },
-            { term: 'Bioluminescence', cat: 'Adaptation', desc: 'The ability of marine organisms to produce and emit light through chemical reactions in their bodies.', funfact: 'Over 75% of deep-sea creatures glow in the dark — the deep ocean is basically a natural disco! 🪩🌊', terkait: ['Coastal Ecosystem'] },
-            { term: 'Coastal Resilience', cat: 'Function', desc: 'The ability of a coastal ecosystem to withstand, adapt to, and recover from disturbances like storms, floods, or sea-level rise.', funfact: 'A healthy mangrove belt can reduce tsunami wave energy by up to 90% before it hits land! 🌊🛡️', terkait: ['Abrasion', 'Blue Carbon', 'Coastal Ecosystem'] },
-            { term: 'Citizen Science', cat: 'Action', desc: 'When ordinary people — including students — collect real scientific data to help researchers monitor ocean and coastal health.', funfact: 'You don\'t need a lab coat to be a scientist. Your phone camera can document a species new to science! 📱🔬', terkait: ['Ocean Literacy', 'Mangrove Ecotourism'] }
-        ];
+const kamusData =[
+    { term: 'Blue Carbon', cat: 'Konsep', desc: 'Karbon yang diserap oleh ekosistem pesisir. Mangrove menyimpan karbon 3-5 kali lebih banyak dari hutan tropis.', funfact: 'Ibarat vacuum cleaner raksasa buat nyedot polusi udara bumi! 🌪️', terkait:['Carbon Sink', 'Mitigasi Perubahan Iklim'] },
+    { term: 'Sonneratia alba (Pedada)', cat: 'Flora', desc: 'Mangrove pionir yang tangguh di garis depan. Punya akar napas kerucut dan buah berbentuk seperti apel kecil.', funfact: 'Buahnya asem-asem seger, ini makanan favoritnya Bekantan! 🐒', terkait: ['Bekantan', 'Pneumatofora'] },
+    { term: 'Rhizophora (Bakau)', cat: 'Flora', desc: 'Si ikonik mangrove dengan akar tunjang khas yang mencengkram lumpur dengan kuat.', funfact: 'Akarnya mirip cakar laba-laba, jadi benteng utama penahan ombak. 🕷️', terkait: ['Abrasi', 'Nursery Ground'] },
+    { term: 'Bekantan', cat: 'Fauna', desc: 'Monyet hidung panjang endemik Kalimantan. Pemakan pucuk Sonneratia muda dan jago berenang.', funfact: 'Hidung besarnya ternyata berfungsi buat narik perhatian betina lho! 😎', terkait: ['Sonneratia alba'] },
+    { term: 'Abrasi', cat: 'Ancaman', desc: 'Pengikisan pantai oleh gelombang laut. Kalau dibiarkan, daratan bisa hilang perlahan.', funfact: 'Mangrove itu ibarat bodyguard atau tembok beton alami penahan abrasi laut. 🛡️', terkait: ['Rhizophora', 'Coastal Resilience'] },
+    { term: 'Salinitas', cat: 'Kondisi', desc: 'Tingkat keasinan air. Tumbuhan biasa bakal mati, tapi mangrove punya cara rahasia buat bertahan.', funfact: 'Beberapa mangrove bisa "berkeringat" ngeluarin kelebihan garam lewat daunnya! 🧂', terkait:['Halofit', 'Avicennia'] },
+    { term: 'Pneumatofora', cat: 'Adaptasi', desc: 'Akar napas yang mencuat ke atas dari lumpur biar pohon bisa "bernapas" oksigen bebas.', funfact: 'Kelihatan kayak paku-paku tajam yang nancep terbalik di tanah lumpur. 📌', terkait: ['Sonneratia alba', 'Avicennia'] },
+    { term: 'Vivipari', cat: 'Adaptasi', desc: 'Strategi cerdas mangrove: biji berkecambah saat masih nempel di pohon induk. Pas jatuh, langsung siap tumbuh!', funfact: 'Biji mangrove jatuhnya kayak panah, langsung nancep lurus di lumpur. 🎯', terkait: ['Rhizophora'] },
+    { term: 'Nursery Ground', cat: 'Fungsi', desc: 'Mangrove adalah “taman kanak-kanak laut”. Tempat ikan, udang, kepiting tumbuh aman sebelum ke laut lepas.', funfact: 'Tanpa mangrove, nelayan bisa kehilangan 75% tangkapan ikannya! 🎣', terkait:['Ekosistem Pesisir', 'Overfishing'] },
+    { term: 'Illegal Logging', cat: 'Ancaman', desc: 'Penebangan liar mangrove buat dijadikan arang atau kayu bakar. Menghancurkan ekosistem secara instan.', funfact: 'Butuh puluhan tahun buat nebus kerusakan tebang liar yang cuma 1 hari. 😭', terkait:['Fragmentasi Habitat'] },
+    { term: 'Ekowisata Mangrove', cat: 'Aksi', desc: 'Jalan-jalan santai di boardwalk mangrove sambil belajar konservasi. Nambah ekonomi warga lokal.', funfact: 'Healing terbaik buat ngelepas stres sekolah sambil hirup oksigen murni! 🌿', terkait:['Jasa Ekosistem'] },
+    { term: 'Avicennia (Api-api)', cat: 'Flora', desc: 'Mangrove dengan kemampuan menyaring garam di akar. Daunnya sering terlihat berlapis kristal garam halus.', funfact: 'Kalau kamu jilat daunnya, rasanya beneran asin kayak keripik! 🍟 (tapi jangan dimakan ya)', terkait: ['Salinitas', 'Pneumatofora'] },
+    { term: 'Kepiting Bakau', cat: 'Fauna', desc: 'Hewan yang hidup di akar mangrove dan berperan dalam daur ulang daun jatuh (detritus).', funfact: 'Mereka ini tukang kebunnya mangrove, suka ngaduk-ngaduk tanah biar subur. 👨‍🌾', terkait: ['Bioturbasi', 'Detritus'] },
+    { term: 'Overfishing', cat: 'Ancaman', desc: 'Penangkapan ikan berlebihan di pesisir yang merusak keseimbangan ekosistem laut dan mangrove.', funfact: 'Ibarat ngambil uang di tabungan tapi nggak pernah nabung lagi, lama-lama ludes! 💸', terkait: ['Nursery Ground'] }
+];
 
         // --- 2. LEAFLET MAP LOGIC (MULTI-MAP SUPPORT) ---
         let mapTanam = null; let drawnItemsTanam = null; let currentGeoJSONTanam = null;
@@ -1630,10 +1567,11 @@ function handleLoadJSON(event) {
                     const newIdeas = incomingIdeas.filter(i => !existingIdeaIds.has(i.id));
                     ideas = [...ideas, ...newIdeas]; // Gabungkan array
 
-                 alert(`✅ Success! Added ${newReports.length} Reports and ${newIdeas.length} new Ideas into the system.`);
+                    alert(`✅ Berhasil! Ditambahkan ${newReports.length} Laporan dan ${newIdeas.length} Ide baru ke dalam sistem.`);
                 } else {
-                    // 2. REPLACE MODE (OVERWRITE DATA)
-                    const isReplace = confirm("⚠️ ATTENTION!\n\nYou have chosen to OVERWRITE the data. All local data on this device will be DELETED and replaced with the data from the JSON file.\n\nAre you sure you want to proceed?");
+                    // 2. MODE REPLACE (TIMPA DATA)
+                    const isReplace = confirm("⚠️ PERHATIAN!\n\nKamu memilih untuk MENIMPA data. Semua data lokal di HP ini akan DIHAPUS dan diganti dengan data dari file JSON.\n\nYakin ingin melanjutkan?");
+                    
                     if (!isReplace) {
                         event.target.value = ''; // Reset input file
                         return; // Batal total, keluar dari fungsi
@@ -1641,7 +1579,7 @@ function handleLoadJSON(event) {
                     
                     reports = data.reports; 
                     ideas = data.ideas || [];
-                    alert("✅ Old data has been successfully overwritten with the new data!");
+                    alert("✅ Data lama berhasil ditimpa seluruhnya dengan data baru!");
                 }
                 
                 // --- SIMPAN & RENDER ULANG ---
@@ -1652,10 +1590,10 @@ function handleLoadJSON(event) {
                 switchTab('dashboard');
                 
             } else { 
-                alert("❌ The JSON format is not recognized. Please ensure the file is from the PesisirKita application."); 
+                alert("❌ Format JSON tidak dikenali. Pastikan file berasal dari aplikasi PesisirKita."); 
             }
         } catch (err) { 
-            alert("❌ Failed to read JSON file. The file might be corrupted."); 
+            alert("❌ Gagal membaca file JSON. File mungkin rusak."); 
         }
     };
     
@@ -1691,14 +1629,14 @@ function loadSampleData() {
 
             const now = Date.now();
             
-// 1. Field Report Data
+            // 1. Data Laporan Lapangan
                 reports = [
                     { 
                         id: now, 
                         timestamp: new Date(now).toISOString(), 
                         type: 'cleanup', 
                         amount: '125', 
-                        notes: 'The team conducted a cleanup activity in the Graha Indah Mangrove Forest area, Balikpapan. The area swept was along the high tide line with quite deep mud conditions. The waste found was dominated by mineral water plastic bottles, plastic bags, and several damaged fishing nets tangled in the mangrove roots. The presence of these nets is quite dangerous as they have the potential to trap small marine life such as fish and crabs. During the activity, the team also found several relatively clean areas, indicating public awareness at certain points. The weather was clear and the tide was low, making the waste collection process easier.', 
+                        notes: 'Tim melakukan kegiatan pembersihan di kawasan Hutan Mangrove Graha Indah, Balikpapan. Area yang disisir berada di sepanjang jalur air pasang dengan kondisi lumpur cukup dalam. Sampah yang ditemukan didominasi oleh botol plastik air mineral, kantong kresek, serta beberapa jaring nelayan yang sudah rusak dan tersangkut di akar mangrove. Keberadaan jaring ini cukup berbahaya karena berpotensi menjebak biota kecil seperti ikan dan kepiting. Selama kegiatan, tim juga menemukan beberapa area yang relatif bersih, menandakan adanya kesadaran masyarakat di titik tertentu. Cuaca cerah dan air sedang surut, sehingga memudahkan proses pengumpulan sampah.', 
                         lat: '-1.2185', 
                         lng: '116.8361', 
                         areaHa: '2.14', 
@@ -1711,7 +1649,7 @@ function loadSampleData() {
                         timestamp: new Date(now - 86400000).toISOString(), 
                         type: 'planting', 
                         amount: '', 
-                        notes: 'Mangrove seedling planting activities were carried out with local residents in an area with a fairly stable mud substrate and minimal wave disturbance. The type of mangrove planted was Rhizophora because it is suitable for these coastal conditions. The team decided to use a planting distance of about 1.5 meters to provide room for stilt root growth in the future. Before planting, a simple check of soil conditions and tides was carried out. Local residents also provided information that this area had previously experienced planting failure due to planting too densely. The activity went smoothly and is expected to have a higher success rate.', 
+                        notes: 'Kegiatan penanaman bibit mangrove dilakukan bersama warga lokal di area dengan substrat lumpur yang cukup stabil dan minim gangguan ombak. Jenis mangrove yang ditanam adalah Rhizophora karena cocok untuk kondisi pesisir tersebut. Tim memutuskan menggunakan jarak tanam sekitar 1.5 meter untuk memberi ruang pertumbuhan akar tunjang di masa depan. Sebelum penanaman, dilakukan pengecekan sederhana terhadap kondisi tanah dan pasang surut air. Warga setempat juga memberikan informasi bahwa area ini sebelumnya pernah mengalami kegagalan tanam akibat penanaman terlalu rapat. Kegiatan berlangsung lancar dan diharapkan memiliki tingkat keberhasilan yang lebih tinggi.', 
                         lat: '-1.2150', 
                         lng: '116.8400', 
                         areaHa: '0.5', 
@@ -1727,7 +1665,7 @@ function loadSampleData() {
                         timestamp: new Date(now - 172800000).toISOString(), 
                         type: 'observation', 
                         amount: '', 
-                        notes: 'During the afternoon observation around the mangrove area, the team managed to see 3 proboscis monkeys active in a Sonneratia (Pedada) tree. The proboscis monkeys were seen eating young leaf shoots, which is one of their main food sources. This activity occurred around 16:30 when the tide started to rise. The surrounding environment was relatively quiet with little human disturbance. In addition, the team also observed the presence of several water birds in the distance. This observation shows that the area is still an active habitat for wildlife.', 
+                        notes: 'Selama observasi sore hari di sekitar area mangrove, tim berhasil melihat 3 ekor bekantan sedang beraktivitas di atas pohon Sonneratia (Pedada). Bekantan terlihat memakan pucuk daun muda, yang merupakan salah satu sumber makanan utamanya. Aktivitas ini terjadi sekitar pukul 16.30 saat kondisi air mulai pasang. Lingkungan sekitar relatif tenang dengan sedikit gangguan manusia. Selain itu, tim juga mengamati keberadaan beberapa burung air di kejauhan. Observasi ini menunjukkan bahwa area tersebut masih menjadi habitat aktif bagi satwa liar.', 
                         lat: '-1.2195', 
                         lng: '116.8355', 
                         areaHa: '0', 
@@ -1740,7 +1678,7 @@ function loadSampleData() {
                         timestamp: new Date(Date.now() - 259200000).toISOString(), // Simulasi kejadian 3 hari lalu
                         type: 'early_warning', 
                         amount: '', 
-                        notes: '🚨 Pantura Tidal Flood Early Warning!\nThere is an abnormal rise in sea level in the northern coastal area. Seawater has begun to flood main access roads and submerge coastal residential areas. The water has been rising slowly since early morning without being preceded by extreme rainfall. This is a new inundation point that rarely been affected this severely before. The boundary embankments are also starting to show signs of seepage.', 
+                        notes: '🚨 Peringatan Dini Banjir Rob Pantura!\nTerjadi kenaikan muka air laut yang tidak wajar di kawasan pesisir utara. Air laut mulai menggenangi akses jalan utama dan merendam area pemukiman warga pesisir. Air naik secara perlahan sejak dini hari tanpa didahului hujan ekstrem. Ini merupakan titik genangan baru yang sebelumnya jarang terdampak separah ini. Tanggul pembatas juga mulai menunjukkan indikasi rembesan.', 
                         lat: '-6.1023', // Koordinat simulasi sekitar pesisir Pantura Jakarta/Jabar
                         lng: '106.9032', 
                         areaHa: '0', 
@@ -1750,10 +1688,10 @@ function loadSampleData() {
                         photo: 'https://drive.google.com/file/d/1EyJJYK4aq7GORVcYNTtn424NwmC7-bLh/view?usp=sharing, https://youtu.be/b--__eI67ak?si=k480GYWEuIpU43R4', 
                         
                         // METADATA SPESIFIK EARLY WARNING
-                        kategoriAnomali: 'Hydrological',
-                        urgensi: 'Critical',
+                        kategoriAnomali: 'Hidrologis',
+                        urgensi: 'Kritis',
                         metadataAnomali: {
-                            cepat: 'Slow (Hours)',
+                            cepat: 'Perlahan (Jam)',
                             tinggi: '45',
                             hujan: false,
                             berulang: true
@@ -1764,7 +1702,7 @@ function loadSampleData() {
                         timestamp: new Date(now - 345600000).toISOString(), 
                         type: 'biomassa', 
                         amount: '', 
-                        notes: 'UVC census was conducted on the reef slope of Karimunjawa National Park with a 45-degree inclination. Coral rugosity (roughness) is very high, dominated by branching corals (Acropora) and massive corals (Porites). Moderate current. Recording was focused on the Scaridae (Parrotfish) family which was seen actively feeding on turf algae. Ecosystem condition is very healthy and preserved.', 
+                        notes: 'Sensus UVC dilakukan di lereng karang (reef slope) Taman Nasional Karimunjawa dengan kemiringan 45 derajat. Rugosity (kekasaran) karang sangat tinggi, didominasi oleh karang bercabang (Acropora) dan karang masif (Porites). Arus sedang. Pencatatan difokuskan pada famili Scaridae (Kakatua) yang terlihat aktif memakan turf algae. Kondisi ekosistem sangat sehat dan terjaga.', 
                         lat: '-5.8480', // Disesuaikan dengan centroid poligon
                         lng: '110.4150', // Disesuaikan dengan centroid poligon
                         areaHa: '12.075', 
@@ -1772,10 +1710,10 @@ function loadSampleData() {
                         photo: null, 
                         biomassData: {
                             metode: 'Belt Transect',
-                            kedalaman: 'Shallow (3-5m)',
+                            kedalaman: 'Dangkal (3-5m)',
                             transekP: 50,
                             transekL: 5,
-                            spesies: 'Herbivore (Scaridae)',
+                            spesies: 'Herbivora (Scaridae)',
                             panjang: 35,
                             jumlah: 25,
                             estimasiBerat: 16.08
@@ -1786,7 +1724,7 @@ function loadSampleData() {
                         timestamp: new Date(now - 432000000).toISOString(), 
                         type: 'biomassa', 
                         amount: '', 
-                        notes: 'UVC census in the waters of Thousand Islands (utilization zone area). Live coral cover condition is very low (< 20%), dominated by coral rubble due to indications of destructive fishing in the past. Apex predator fish are very rarely found. Groupers (Serranidae) recorded are mostly small-sized (juvenile) hiding between the rubble. Indicates chronic overfishing.', 
+                        notes: 'Sensus UVC di perairan Kepulauan Seribu (area zona pemanfaatan). Kondisi tutupan karang hidup sangat rendah (< 20%), didominasi pecahan karang (rubble) akibat indikasi destructive fishing di masa lalu. Sangat jarang ditemukan ikan predator puncak. Kerapu (Serranidae) yang tercatat rata-rata berukuran kecil (juvenile) yang bersembunyi di sela-sela rubble. Mengindikasikan overfishing kronis.', 
                         lat: '-5.7120', 
                         lng: '106.5920', 
                         areaHa: '1.20', // GIS Area
@@ -1794,7 +1732,7 @@ function loadSampleData() {
                         photo: null, 
                         biomassData: {
                             metode: 'Belt Transect',
-                            kedalaman: 'Medium (8-10m)',
+                            kedalaman: 'Sedang (8-10m)',
                             transekP: 50,
                             transekL: 5,
                             spesies: 'Target (Serranidae)',
@@ -1806,20 +1744,19 @@ function loadSampleData() {
                 ];
             
             // 2. Data Ide Hackathon
-
-            ideas = [
+                ideas = [
                     { 
                         id: now + 1, 
-                        masalah: 'Plastic waste from the ocean is often carried by high tides and gets tangled in mangrove roots, especially in water inlet areas. The most frequently found types of waste are plastic bottles, plastic bags, and pieces of fishing nets that are difficult to decompose.', 
-                        alasan: 'If left unchecked, this accumulation of waste can cover the mangrove\'s breathing roots (pneumatophores), hindering oxygen exchange. In the long run, this can cause stress to the mangroves, disrupt their growth, and even lead to death. Additionally, the trapped waste can entangle small marine life such as fish and crabs, destroying the balance of the ecosystem.', 
-                        solusi: 'The team proposes the installation of a Trash Boom (a simple floating net) at the water inlets leading to the mangrove area. This device can be made from strung-together used plastic bottles and fitted with a net to trap waste before it enters further. Installation is done at strategic points during low tide for easier setup. The collected waste can then be periodically removed by the team or local residents, making it much more efficient than having to sweep the entire mangrove area.' 
+                        masalah: 'Sampah plastik dari laut sering terbawa arus pasang dan tersangkut di akar mangrove, terutama di area yang menjadi jalur masuk air. Jenis sampah yang paling sering ditemukan adalah botol plastik, kantong kresek, dan potongan jaring yang sulit terurai.', 
+                        alasan: 'Jika dibiarkan, tumpukan sampah ini dapat menutup akar napas (pneumatofora) mangrove sehingga menghambat pertukaran oksigen. Dalam jangka panjang, hal ini bisa menyebabkan mangrove stres, pertumbuhannya terganggu, bahkan mati. Selain itu, sampah yang tersangkut juga bisa menjebak biota kecil seperti ikan dan kepiting, sehingga merusak keseimbangan ekosistem.', 
+                        solusi: 'Tim mengusulkan pemasangan Trash Boom (jaring apung sederhana) di jalur air masuk menuju area mangrove. Alat ini dapat dibuat dari botol plastik bekas yang dirangkai dan diberi jaring untuk menahan sampah sebelum masuk lebih jauh. Pemasangan dilakukan di titik strategis saat air surut agar lebih mudah. Sampah yang terkumpul kemudian bisa diangkat secara berkala oleh tim atau warga sekitar, sehingga lebih efisien dibanding harus menyisir seluruh area mangrove.' 
                     },
 
                     { 
                         id: now + 2, 
-                        masalah: 'Many visitors and some local residents still litter in the mangrove ecotourism area, especially along the trekking paths and near photo spots.', 
-                        alasan: 'The lack of awareness and habits of maintaining cleanliness causes the trash to keep reappearing even after being cleaned. If this continues, the mangrove environment will look dirty, decreasing its tourism appeal, and potentially damaging the ecosystem as well as polluting the surrounding water.', 
-                        solusi: 'The team proposes a creative social media-based campaign, specifically on TikTok and Instagram Reels, involving the local Youth Organization (Karang Taruna). The content could be a challenge like "1 person 1 trash" or before-after videos of cleaning the mangrove area. To increase participation, incentives such as e-wallet balances or simple merchandise are provided. This campaign is expected to build positive habits while reaching more young people to care about the environment.' 
+                        masalah: 'Masih banyak pengunjung dan sebagian masyarakat sekitar yang membuang sampah sembarangan di area ekowisata mangrove, terutama di jalur tracking dan dekat spot foto.', 
+                        alasan: 'Kurangnya kesadaran dan kebiasaan menjaga kebersihan membuat sampah terus muncul kembali meskipun sudah dibersihkan. Jika hal ini terus terjadi, lingkungan mangrove akan terlihat kotor, menurunkan daya tarik wisata, dan berpotensi merusak ekosistem serta mencemari air di sekitarnya.', 
+                        solusi: 'Tim mengusulkan kampanye kreatif berbasis media sosial, khususnya TikTok dan Instagram Reels, dengan melibatkan Karang Taruna setempat. Konten bisa berupa challenge seperti “1 orang 1 sampah” atau video before-after saat membersihkan area mangrove. Untuk meningkatkan partisipasi, diberikan insentif seperti hadiah saldo e-wallet atau merchandise sederhana. Kampanye ini diharapkan dapat membangun kebiasaan positif sekaligus menjangkau lebih banyak anak muda agar peduli terhadap lingkungan.' 
                     }
                 ];
 
@@ -3342,134 +3279,105 @@ function toggleFormInputs() {
         }
 
        // --- 9. DASHBOARD UPDATE (ALL-IN-ONE) ---
-        // --- KODE FINAL: UPDATE DASHBOARD SANDWATCH & SDG ---
+        // --- KODE BARU (UPDATE DASHBOARD LENGKAP) ---
         function updateDashboard() {
-            if (!reports) return;
-
-            // 1. Inisialisasi Variabel
-            let validDataCount = 0;
-            let erosionCount = 0;
-            let waterCount = 0;
-            let floraCount = 0;
-            let totalHektar = 0;
+            // 1. Hitung Total Data Secara Akurat
+            const totalTrash = reports.filter(r => r.type === 'cleanup').reduce((sum, r) => sum + Number(r.amount || 0), 0);
+            // Kita hitung jumlah BIBIT sungguhan, bukan cuma berapa kali kegiatan
+            const totalBibit = reports.filter(r => r.type === 'planting').reduce((sum, r) => sum + Number(r.bibit || 0), 0);
+            const totalArea = reports.reduce((sum, r) => sum + Number(r.areaHa || 0), 0).toFixed(2);
+            const totalAksi = reports.length; // Untuk progress bar
             
-            // 👇 TAMBAHAN VARIABEL BARU UNTUK 3 KOTAK BAWAH
-            let totalWaste = 0;
-            let totalSeedlings = 0;
-            let totalAreaCleaned = 0;
+            // Render Angka ke HTML Metrik yang baru kita buat
+            if(document.getElementById('dash-trash-num')) document.getElementById('dash-trash-num').innerHTML = `${totalTrash} <span class="text-xs font-medium text-teal-100">Kg</span>`;
+            if(document.getElementById('dash-pohon')) document.getElementById('dash-pohon').innerText = totalBibit;
+            if(document.getElementById('dash-area')) document.getElementById('dash-area').innerHTML = `${totalArea} <span class="text-xs font-medium text-teal-100">Ha</span>`;
 
-            // 2. Loop Data untuk Ekstraksi Metrik sesuai Form PesisirKita
-            reports.forEach(data => {
-                // A. Kalkulasi Data Confidence (Punya Koordinat & Foto)
-                let hasGPS = data.lat && data.lng;
-                let hasPhoto = data.photo && data.photo !== ""; 
-                
-                if (hasGPS && hasPhoto) {
-                    validDataCount++;
-                }
+            // 2. Logika Progress Bar & Level
+            let levelTeks = "Seed 🌱";
+            let reaksiTeks = "Tanam aksi kebaikan pertamamu! 👍";
+            let target = 5;      
+            let current = totalAksi; // Level dihitung dari total kegiatan lapangan
 
-                // B. Mapping Kategori ke Standar SDG & Sandwatch
-                let type = data.type || "";
-                let obsType = data.obsType || "";
+            if (totalAksi < 5) { 
+                levelTeks = "Seed 🌱"; 
+                reaksiTeks = "Tanam aksi kebaikan pertamamu! 👍"; 
+                target = 5;
+            }
+            else if (totalAksi >= 5 && totalAksi < 15) { 
+                levelTeks = "Sapling 🌿"; 
+                reaksiTeks = "Keren! Kamu mulai konsisten 🔥"; 
+                target = 15;
+            }
+            else if (totalAksi >= 15 && totalAksi < 30) { 
+                levelTeks = "Ranger 🤠"; 
+                reaksiTeks = "Luar biasa! Lanjutkan risetmu 🌍"; 
+                target = 30;
+            }
+            else if (totalAksi >= 30) { 
+                levelTeks = "Guardian 🌳👑"; 
+                reaksiTeks = "Legend! Pahlawan pesisir sejati 🏆"; 
+                target = totalAksi; 
+            }
+            
+            // Hitung Persentase Progress Bar
+            let pct = (current / target) * 100;
+            if (pct > 100) pct = 100;
+            
+            document.getElementById('dash-level').innerText = levelTeks;
+            document.getElementById('dash-reaksi').innerText = reaksiTeks;
+            
+            setTimeout(() => {
+                if(document.getElementById('dash-progress')) document.getElementById('dash-progress').style.width = `${pct}%`;
+            }, 100);
 
-                // SDG 13 (Erosi & Ketahanan Pantai)
-                if (type === 'planting' || (type === 'observation' && obsType === 'sandwatch') || type === 'early_warning') {
-                    erosionCount++;
-                }
-                // SDG 14 (Kualitas Air)
-                if (type === 'cleanup' || (type === 'observation' && obsType === 'oceanography') || type === 'pollution') {
-                    waterCount++;
-                }
-                // SDG 14/15 (Flora Fauna)
-                if (type === 'biomassa' || (type === 'observation' && obsType === 'narrative')) {
-                    floraCount++;
-                }
-
-                // C. Coverage Radar (Kalkulasi Total Area Hektar GIS yang dipetakan secara keseluruhan)
-                if (data.areaHa && parseFloat(data.areaHa) > 0) {
-                    totalHektar += parseFloat(data.areaHa);
-                }
-
-                // 👇 TAMBAHAN LOGIKA UNTUK MENGHITUNG SAMPAH, BIBIT, DAN AREA CLEANED
-                // Jika kegiatannya adalah pembersihan sampah (cleanup)
-                if (type === 'cleanup') {
-                    if (data.amount) totalWaste += parseFloat(data.amount);
-                    if (data.areaHa) totalAreaCleaned += parseFloat(data.areaHa);
-                }
-                
-                // Jika kegiatannya adalah penanaman mangrove (planting)
-                if (type === 'planting') {
-                    if (data.bibit) totalSeedlings += parseInt(data.bibit);
-                }
-            });
-
-            // 3. Render ke UI Dashboard Atas
-            const totalReports = reports.length;
-            const confidenceScore = totalReports > 0 ? Math.round((validDataCount / totalReports) * 100) : 0;
-            const confidenceEl = document.getElementById('confidence-score');
-            if(confidenceEl) confidenceEl.innerText = `${confidenceScore}%`;
-
-            // Render Coverage Radar
-            const radarStatus = document.getElementById('blind-spot-warning');
-            if (radarStatus) {
-                if (totalHektar === 0) {
-                    radarStatus.innerText = "0 Ha (Blank Spot)";
-                    radarStatus.className = "text-yellow-300 font-bold text-sm";
-                } else {
-                    radarStatus.innerText = `${totalHektar.toFixed(2)} Ha Tercover`;
-                    radarStatus.className = "text-emerald-300 font-bold text-sm";
-                }
+            if (totalAksi >= 30) {
+                document.getElementById('dash-progress-text').innerText = "Level Maksimal!";
+            } else {
+                document.getElementById('dash-progress-text').innerText = `${current} dari ${target} Aksi`;
             }
 
-            // Render Metrik Angka Bagian Atas
-            if(document.getElementById('metric-erosion')) document.getElementById('metric-erosion').innerText = erosionCount;
-            if(document.getElementById('metric-water')) document.getElementById('metric-water').innerText = waterCount;
-            if(document.getElementById('metric-flora')) document.getElementById('metric-flora').innerText = floraCount;
-
-            // 👇 TAMBAHAN RENDER METRIK ANGKA BAGIAN BAWAH
-            if(document.getElementById('dash-trash-num')) {
-                // Gunakan format angka desimal jika ada koma, misal: 12.5 Kg
-                document.getElementById('dash-trash-num').innerHTML = `${totalWaste % 1 === 0 ? totalWaste : totalWaste.toFixed(1)} <span class="text-xs font-medium text-teal-200">Kg</span>`;
-            }
-            if(document.getElementById('dash-pohon')) {
-                document.getElementById('dash-pohon').innerText = totalSeedlings.toLocaleString('id-ID'); // Format ribuan
-            }
-            if(document.getElementById('dash-area')) {
-                document.getElementById('dash-area').innerHTML = `${totalAreaCleaned % 1 === 0 ? totalAreaCleaned : totalAreaCleaned.toFixed(2)} <span class="text-xs font-medium text-teal-200">Ha</span>`;
-            }
-
-            // 4. Render Mini-List Laporan Lapangan
+            // 3. Render Mini-List Laporan Lapangan (Dengan Empty State Cantik)
             const dashLapContainer = document.getElementById('dash-list-lapangan');
-            if(dashLapContainer) {
-                if(reports.length === 0) {
-                    dashLapContainer.innerHTML = `
-                    <div class="text-center p-6 bg-blue-50/50 border border-dashed border-blue-200 rounded-2xl flex flex-col items-center transition-all hover:bg-blue-50">
-                        <i class="ph-fill ph-map-pin text-4xl text-blue-300 mb-2"></i>
-                        <p class="text-sm text-blue-600 font-bold">Belum ada data tervalidasi</p>
-                        <p class="text-[10px] text-blue-400 mt-1">Sistem siap menerima input 📡</p>
-                    </div>`;
-                } else {
-                    const latestReports = reports.slice(0, 3);
-                    dashLapContainer.innerHTML = latestReports.map(r => generateReportCard(r, true)).join('');
-                }
+            if(reports.length === 0) {
+                dashLapContainer.innerHTML = `
+                <div class="text-center p-6 bg-blue-50/50 border border-dashed border-blue-200 rounded-2xl flex flex-col items-center transition-all hover:bg-blue-50">
+                    <i class="ph-fill ph-map-pin text-4xl text-blue-300 mb-2"></i>
+                    <p class="text-sm text-blue-600 font-bold">Belum ada aksi!</p>
+                    <p class="text-[10px] text-blue-400 mt-1">Ayo jalan ke pesisir sekarang 🏖️</p>
+                </div>`;
+            } else {
+                const latestReports = reports.slice(0, 3);
+                dashLapContainer.innerHTML = latestReports.map(r => generateReportCard(r, true)).join('');
             }
 
-            // 5. Render Mini-List Ide Hackathon
+            // 4. Render Mini-List Ide Hackathon (Dengan Empty State Cantik)
             const dashIdeContainer = document.getElementById('dash-list-ide');
-            if(dashIdeContainer) {
-                if(ideas.length === 0) {
-                    dashIdeContainer.innerHTML = `
-                    <div class="text-center p-6 bg-yellow-50/50 border border-dashed border-yellow-200 rounded-2xl flex flex-col items-center transition-all hover:bg-yellow-50">
-                        <i class="ph-fill ph-lightbulb text-4xl text-yellow-300 mb-2"></i>
-                        <p class="text-sm text-yellow-600 font-bold">Board masih kosong</p>
-                        <p class="text-[10px] text-yellow-400 mt-1">Rumuskan strategi pertamamu 💡</p>
-                    </div>`;
-                } else {
-                    const latestIdeas = ideas.slice(0, 3);
-                    dashIdeContainer.innerHTML = latestIdeas.map(idea => generateIdeaCard(idea, true)).join('');
-                }
+            if(ideas.length === 0) {
+                dashIdeContainer.innerHTML = `
+                <div class="text-center p-6 bg-yellow-50/50 border border-dashed border-yellow-200 rounded-2xl flex flex-col items-center transition-all hover:bg-yellow-50">
+                    <i class="ph-fill ph-lightbulb text-4xl text-yellow-300 mb-2"></i>
+                    <p class="text-sm text-yellow-600 font-bold">Board masih kosong</p>
+                    <p class="text-[10px] text-yellow-400 mt-1">Yuk sumbang ide brilian pertamamu 💡</p>
+                </div>`;
+            } else {
+                const latestIdeas = ideas.slice(0, 3);
+                dashIdeContainer.innerHTML = latestIdeas.map(idea => generateIdeaCard(idea, true)).join('');
             }
         }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('dashboard'); 
+            updateDashboard();
+            
+            // Init Kamus
+            setTermOfTheDay(); 
+            renderKamus(); 
+            
+            renderIdeas();
+        });
+
 
         // --- LOGIKA CAROUSEL PESISIRKITA ---
         let currentSlide = 0;
