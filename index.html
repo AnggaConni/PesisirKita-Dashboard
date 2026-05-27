@@ -25,6 +25,23 @@
     <meta name="twitter:title" content="PesisirKita EcoEducation Hub">
     <meta name="twitter:description" content="Platform kolaboratif untuk sekolah & komunitas. Mengubah aksi Penanaman Mangrove dan Pembersihan Sampah menjadi kurikulum pendidikan berdampak nyata.">
     <meta name="twitter:image" content="https://anggaconni.github.io/PesisirKita-Dashboard/thum/thumbnail.png">
+
+    <script>
+    // Cek apakah user pernah memilih bahasa secara manual sebelumnya
+    const forcedLang = localStorage.getItem('forcedLanguage');
+
+    if (!forcedLang) {
+        // Jika belum pernah milih manual, jalankan deteksi otomatis browser
+        const userLanguage = navigator.language || navigator.userLanguage;
+        if (!userLanguage.startsWith('id')) {
+            window.location.href = 'indexEN.html';
+        }
+    } else if (forcedLang === 'en') {
+        // Jika tracking lokal mendeteksi user memilih EN, pastikan tetap di EN (berguna untuk halaman indexEN.html nanti)
+        // Di file index.html (versi ID) ini, bagian 'else if' bisa dikosongkan atau diabaikan, 
+        // namun logika ini penting agar sinkron dengan indexEN.html
+    }
+    </script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -105,6 +122,13 @@
                     <a href="#dampak" class="text-gray-600 hover:text-ocean-600 font-medium transition">Dampak</a>
                     <!-- MENU BARU MENGARAH KE OL.HTML -->
                     <a href="OL.html" class="bg-ocean-600 hover:bg-ocean-700 text-white px-6 py-2.5 rounded-full font-semibold transition shadow-md hover:shadow-lg">Apa itu Literasi Laut?</a>
+                    
+                    <!-- TOMBOL TOGGLE BAHASA DESKTOP -->
+                    <div class="flex items-center bg-gray-100 p-1 rounded-full border border-gray-200 shadow-inner">
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-white text-ocean-600 shadow-sm">ID</span>
+                        <button onclick="switchToEN()" class="px-3 py-1 text-xs font-medium rounded-full text-gray-500 hover:text-ocean-600 transition">EN</button>
+                    </div>
+
                 </div>
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
@@ -665,6 +689,8 @@
             }
         }
 
+
+
         // --- Integrasi Form ke Google Sheets ---
         // GANTI URL DI BAWAH dengan URL Web App Google Apps Script Anda nanti
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec';
@@ -702,6 +728,15 @@
                     btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
                 });
         });
+
+        // --- Fungsi Toggle Bahasa ke EN ---
+        function switchToEN() {
+            // Simpan preferensi manual user ke lokal storage agar tidak ter-redirect otomatis lagi
+            localStorage.setItem('forcedLanguage', 'en');
+            // Alihkan halaman ke versi Inggris
+            window.location.href = 'indexEN.html';
+        }
+
     </script>
 </body>
 </html>
