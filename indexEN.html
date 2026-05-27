@@ -1,1 +1,734 @@
- 
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PesisirKita EcoEducation Hub</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="thum/icon-192.png">
+    <link rel="apple-touch-icon" href="thum/icon-192.png">
+    
+    <!-- Open Graph / WhatsApp + Facebook + Instagram -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://anggaconni.github.io/PesisirKita-Dashboard/indexEN.html">
+    <meta property="og:site_name" content="PesisirKita">
+    <meta property="og:title" content="PesisirKita EcoEducation Hub">
+    <meta property="og:description" content="Collaborative platform for schools & communities. Transforming Mangrove Planting and Beach Cleanups into impactful educational curricula.">
+    <meta property="og:image" content="https://anggaconni.github.io/PesisirKita-Dashboard/thum/thumbnail.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="PesisirKita - Building Ocean-Aware Generations">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PesisirKita EcoEducation Hub">
+    <meta name="twitter:description" content="Collaborative platform for schools & communities. Transforming Mangrove Planting and Beach Cleanups into impactful educational curricula.">
+    <meta name="twitter:image" content="https://anggaconni.github.io/PesisirKita-Dashboard/thum/thumbnail.png">
+
+    <script>
+    // Check if the user has manually selected a language previously
+    const forcedLang = localStorage.getItem('forcedLanguage');
+
+    if (!forcedLang) {
+        // If no manual selection, check browser language
+        const userLanguage = navigator.language || navigator.userLanguage;
+        // If the browser language is Indonesian, redirect to the Indonesian version
+        if (userLanguage.startsWith('id')) {
+            window.location.href = 'index.html';
+        }
+    } else if (forcedLang === 'id') {
+        // If the user manually chose 'id', ensure they are redirected to the Indonesian version
+        window.location.href = 'index.html';
+    }
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        ocean: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        mangrove: {
+                            500: '#10b981',
+                            600: '#059669',
+                            800: '#065f46',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-pattern {
+            background-color: #0c4a6e;
+            background-image: linear-gradient(rgba(12, 74, 110, 0.8), rgba(12, 74, 110, 0.9)), url('https://images.unsplash.com/photo-1544551763-46a0e38eeba5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        /* Modal Animation */
+        .modal-enter {
+            animation: modalFadeIn 0.3s ease-out forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50 antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-ocean-500 to-mangrove-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <span class="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-ocean-800 to-mangrove-600">PesisirKita</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="text-gray-600 hover:text-ocean-600 font-medium transition">Home</a>
+                    <a href="#tentang" class="text-gray-600 hover:text-ocean-600 font-medium transition">Theory of Change</a>
+                    <a href="#ekosistem" class="text-gray-600 hover:text-ocean-600 font-medium transition">App Ecosystem</a>
+                    <a href="#dampak" class="text-gray-600 hover:text-ocean-600 font-medium transition">Impact</a>
+                    <a href="OL.html" class="bg-ocean-600 hover:bg-ocean-700 text-white px-6 py-2.5 rounded-full font-semibold transition shadow-md hover:shadow-lg">Ocean Literacy?</a>
+                    
+                    <!-- LANGUAGE TOGGLE BUTTON (ENGLISH ACTIVE) -->
+                    <div class="flex items-center bg-gray-100 p-1 rounded-full border border-gray-200 shadow-inner">
+                        <button onclick="switchToID()" class="px-3 py-1 text-xs font-medium rounded-full text-gray-500 hover:text-ocean-600 transition">ID</button>
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-white text-ocean-600 shadow-sm">EN</span>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-gray-600 hover:text-ocean-600 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="hero-pattern min-h-screen flex items-center pt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20 text-center md:text-left flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2">
+                <span class="inline-block py-1.5 px-4 rounded-lg bg-ocean-500/20 text-ocean-300 font-bold text-xs uppercase tracking-widest mb-6 border border-ocean-500/30 backdrop-blur-sm">
+                    <i class="fa-solid fa-network-wired mr-2"></i>Distributed Coastal Intelligence System
+                </span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6 tracking-tight">
+                    Building the Architecture of <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-ocean-300">Coastal Resilience</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
+                    An <em>end-to-end</em> platform testing field empirical reality into policy intelligence. Integrating <strong>Restoration Action</strong>, <strong>Biodiversity Observation</strong>, and <strong>Early Warning Signals</strong> in one comprehensive ecosystem.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#ekosistem" class="bg-mangrove-500 hover:bg-mangrove-600 text-white px-8 py-4 rounded-xl font-bold transition shadow-lg hover:shadow-mangrove-500/30 flex items-center justify-center">
+                        Explore the Architecture <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="dashboard.html" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-xl font-bold transition flex items-center justify-center">
+                        <i class="fa-solid fa-chart-pie mr-2"></i> Command Center
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative hidden md:block">
+                <!-- Abstract UI mockup representation -->
+                <div class="relative w-full aspect-square max-w-lg mx-auto">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-ocean-500/20 to-mangrove-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <img src="thum/stu.png" alt="Coastal Action" class="rounded-2xl shadow-2xl border-4 border-white/10 relative z-10 object-cover w-full h-full transform -rotate-3 hover:rotate-0 transition duration-500">
+                    
+                    <!-- Floating Badge 1: Mangrove -->
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl z-20 flex items-center gap-4 transform rotate-3">
+                        <div class="w-12 h-12 bg-mangrove-100 rounded-lg flex items-center justify-center text-mangrove-600 text-xl">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Restoration Points</p>
+                            <p class="text-xl font-black text-gray-800">12,450+ Logs</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Badge 2: Sampah -->
+                    <div class="absolute -top-6 -right-6 bg-white p-4 rounded-xl shadow-xl z-20 flex items-center gap-4 transform -rotate-3">
+                        <div class="w-12 h-12 bg-ocean-100 rounded-lg flex items-center justify-center text-ocean-600 text-xl">
+                            <i class="fa-solid fa-trash-can-arrow-up"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Extracted Debris</p>
+                            <p class="text-xl font-black text-gray-800">8,320+ Kg</p>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 3: Early Warning (NEW) -->
+                    <div class="absolute top-1/2 -left-12 bg-white p-4 rounded-xl shadow-xl z-20 flex items-center gap-4 transform -translate-y-1/2">
+                        <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-500 text-xl border border-red-100">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Anomaly Signals</p>
+                            <p class="text-xl font-black text-gray-800">Real-time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theory of Change / Tentang Section -->
+    <section id="tentang" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-ocean-900 mb-4">Architecture of Change (Theory of Change)</h2>
+        <p class="text-gray-600 max-w-3xl mx-auto mb-16 text-lg">Converting environmental awareness into empirical data interventions. We bridge the gap between coastline realities and policymaking rooms.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <!-- Pillar 1: Capability -->
+            <div class="p-8 rounded-2xl bg-ocean-50 border border-ocean-100 relative group">
+                <div class="w-16 h-16 bg-ocean-500 text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6 transform group-hover:scale-110 transition shadow-lg shadow-ocean-500/30">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Ecological & Spatial Literacy</h3>
+                <p class="text-gray-600 leading-relaxed">Equipping students, volunteers, and locals with the understanding of coastal ecosystems and digital mapping tools to precisely read signs of nature.</p>
+            </div>
+            
+            <!-- Pillar 2: Action -->
+            <div class="p-8 rounded-2xl bg-mangrove-50 border border-mangrove-100 relative group">
+                <div class="w-16 h-16 bg-mangrove-500 text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6 transform group-hover:scale-110 transition shadow-lg shadow-mangrove-500/30">
+                    <i class="fa-solid fa-satellite-dish"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Full Spectrum Action</h3>
+                <p class="text-gray-600 leading-relaxed">More than just planting. Users act as active sensors mapping waste, observing biodiversity, and transmitting Early Warning signals.</p>
+            </div>
+            
+            <!-- Pillar 3: Impact -->
+            <div class="p-8 rounded-2xl bg-blue-50 border border-blue-100 relative group">
+                <div class="w-16 h-16 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6 transform group-hover:scale-110 transition shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Evidence-Based Policy</h3>
+                <p class="text-gray-600 leading-relaxed">Thousands of field logs are validated into centralized intelligence on the Dashboard, triggering rapid disaster mitigation and driving measurable spatial policy transitions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Ekosistem Aplikasi Section -->
+    <section id="ekosistem" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div class="text-center mb-16">
+                    <span class="text-teal-600 font-bold tracking-wider uppercase text-sm mb-2 block">Integrated Strategic & Spatial Architecture</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">One Ecosystem, End-to-End Solutions</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                        Integrating four tactical modules into a <strong>zero-cost</strong> architecture to bridge <em>architectural blind spots</em> between administrative policy and empirical coastline reality in real-time.
+                    </p>
+                </div>
+
+            <!-- Core Tools (Existing) -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Field Action & Monitoring (Available)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                
+                <!-- Card: PesisirKita Tool -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm card-hover flex flex-col justify-between relative overflow-hidden">
+                    <!-- Background icon -->
+                    <i class="fa-solid fa-mobile-screen-button absolute -right-6 -bottom-6 text-9xl text-ocean-50/50 -z-0"></i>
+                    
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 bg-ocean-100 text-ocean-600 rounded-xl flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-check-circle mr-1"></i> Live</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">PesisirKita Field App</h3>
+                        <p class="text-gray-600 mb-4">A Progressive Web App (PWA) for direct field action data input. Equipped with four main modules:</p>
+                        <ul class="space-y-2 mb-6 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-seedling text-mangrove-500 mt-1"></i>
+                                <span><strong>Planting Module:</strong> Record GIS coordinates, seedling types, and photos of mangrove conditions.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-trash-can text-ocean-500 mt-1"></i>
+                                <span><strong>Cleanup Module:</strong> Report the weight (Kg) and type of coastal debris collected by volunteers/students.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-binoculars text-blue-500 mt-1"></i>
+                                <span><strong>Observation Module:</strong> Monitor wildlife activity, flora, and ecosystem health indicators in the vicinity.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1"></i>
+                                <span><strong>Early Signal Module:</strong> Report coastal anomalies, tidal flood early warnings, and infrastructure damage in real-time.</span>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <!-- CHANGED TO toolEN.html AS REQUESTED -->
+                    <a href="toolEN.html" target="_blank" class="relative z-10 w-full text-center bg-ocean-50 text-ocean-700 hover:bg-ocean-600 hover:text-white font-semibold py-3 rounded-xl transition duration-300">
+                        Open Data Input App
+                    </a>
+                </div>
+
+                <!-- Card: Dashboard -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm card-hover flex flex-col justify-between relative overflow-hidden">
+                    <!-- Background icon -->
+                    <i class="fa-solid fa-chart-pie absolute -right-6 -bottom-6 text-9xl text-mangrove-50/50 -z-0"></i>
+
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 bg-mangrove-100 text-mangrove-600 rounded-xl flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-check-circle mr-1"></i> Live</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">Command Center Dashboard</h3>
+                        <p class="text-gray-600 mb-4">A visual monitoring center integrating all field signals into distributed intelligence. Monitor ecosystem conditions holistically through a single control gateway:</p>
+                        <ul class="space-y-3 mb-6 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="ph-bold ph-map-trifold text-teal-600 mt-1"></i>
+                                <span><strong>Geographical Visualization (GeoJSON):</strong> Detailed mapping of mangrove areas using satellite polygons for accurate real-time land area monitoring and reporting point distribution.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="ph-bold ph-chart-line-up text-emerald-600 mt-1"></i>
+                                <span><strong>Historical Trend Analysis:</strong> A comparative algorithm analyzing whether local environmental conditions are improving, stagnant, or require immediate intervention based on log history.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="ph-bold ph-warning-octagon text-amber-600 mt-1"></i>
+                                <span><strong>Anomaly Detection System:</strong> The dashboard automatically highlights Early Warning signals such as sea-level rise or infrastructure damage for rapid response coordination.</span>
+                            </li>
+                            </ul>
+                    </div>
+                    <a href="dashboard.html" target="_blank" class="relative z-10 w-full text-center bg-mangrove-50 text-mangrove-700 hover:bg-mangrove-600 hover:text-white font-semibold py-3 rounded-xl transition duration-300">
+                        Access Monitoring Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Education & Community Tools (Suggested) -->
+            <div class="flex items-center justify-between mb-6 border-b pb-2">
+                <h3 class="text-xl font-bold text-gray-800">Education & Community Empowerment</h3>
+                <span class="text-sm text-gray-500 italic hidden sm:inline">Integrated EcoEducation Modules</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Suggested App 1 -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2">Blue Carbon Lab (Calculator)</h4>
+                    <p class="text-sm text-gray-600 mb-4">Students and teachers can compare the school's emission footprint (electricity, waste) against the carbon sink potential of their allometric mangrove plots.</p>
+                    <a href="cal.html" class="text-blue-600 font-semibold text-sm hover:underline mt-auto flex items-center w-fit">Open Lab Simulator <i class="fa-solid fa-angle-right ml-1"></i></a>
+                </div>
+
+                <!-- Suggested App 2 -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-orange-50 text-orange-500 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2">EcoEdu Hub (Teacher's Lounge)</h4>
+                    <p class="text-sm text-gray-600 mb-4">A dedicated repository platform for educators. Contains Environmental Lesson Plans, coastal education articles, and guides on mentoring student change-makers.</p>
+                    <a href="blog.html" class="text-orange-600 font-semibold text-sm hover:underline mt-auto flex items-center w-fit">Access Teacher's Lounge <i class="fa-solid fa-angle-right ml-1"></i></a>
+                </div>
+
+                <!-- Suggested App 3 -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10">DESIGN PHASE</div>
+                    <div class="w-12 h-12 bg-green-50 text-green-500 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+
+                    <h4 class="text-lg font-bold text-gray-800 mb-2">
+                        PesisirKita: Digital Monitoring & Ocean Literacy
+                    </h4>
+
+                    <p class="text-sm text-gray-600 mb-4">
+                    An integrated platform for community-based mangrove monitoring, field reporting, and regional policy strengthening. Equipped with Ocean Literacy and Blue Economy modules for coastal schools.
+                    </p>
+
+                    <a href="proposal.html" class="text-orange-600 font-semibold text-sm hover:underline mt-auto flex items-center w-fit">
+                        View Proposal
+                        <i class="fa-solid fa-angle-right ml-1"></i>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPACT PROJECTION & DIFFERENTIATION SECTION -->
+    <section id="dampak" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header -->
+            <div class="text-center mb-16">
+                <span class="text-ocean-600 font-bold tracking-wider uppercase text-sm mb-2 block">Scalability & Potential</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Ecosystem Impact Projection</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Designed with highly agile technological architecture, PesisirKita is ready to expand and map thousands of coastal data points nationally with high efficiency.</p>
+            </div>
+            
+            <!-- Target Metrics Projection -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-20">
+                <div class="bg-ocean-50 p-8 rounded-2xl border border-ocean-100 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-ocean-100 opacity-0 group-hover:opacity-50 transition-opacity"></div>
+                    <i class="fa-solid fa-map-location-dot text-4xl text-ocean-600 mb-4 relative z-10"></i>
+                    <h3 class="text-3xl font-black text-gray-800 mb-2 relative z-10">1,000+</h3>
+                    <p class="text-gray-600 font-bold text-sm relative z-10">Monitoring Points Target</p>
+                </div>
+                
+                <div class="bg-mangrove-50 p-8 rounded-2xl border border-mangrove-100 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-mangrove-100 opacity-0 group-hover:opacity-50 transition-opacity"></div>
+                    <i class="fa-solid fa-satellite text-4xl text-mangrove-600 mb-4 relative z-10"></i>
+                    <h3 class="text-3xl font-black text-gray-800 mb-2 relative z-10">5,000+ Ha</h3>
+                    <p class="text-gray-600 font-bold text-sm relative z-10">Coastal Area Mapped</p>
+                </div>
+                
+                <div class="bg-red-50 p-8 rounded-2xl border border-red-100 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-red-100 opacity-0 group-hover:opacity-50 transition-opacity"></div>
+                    <i class="fa-solid fa-bolt text-4xl text-red-500 mb-4 relative z-10"></i>
+                    <h3 class="text-3xl font-black text-gray-800 mb-2 relative z-10">&lt; 1 Min</h3>
+                    <p class="text-gray-600 font-bold text-sm relative z-10">Early Warning Distribution</p>
+                </div>
+                <div class="bg-orange-50 p-8 rounded-2xl border border-orange-100 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-orange-100 opacity-0 group-hover:opacity-50 transition-opacity"></div>
+                    <i class="fa-solid fa-tower-cell text-4xl text-orange-600 mb-4 relative z-10"></i>
+                    <h3 class="text-3xl font-black text-gray-800 mb-2 relative z-10">10k+</h3>
+                    <p class="text-gray-600 font-bold text-sm relative z-10">Social Sensor Capacity</p>
+                </div>
+            </div>
+
+            <!-- Competitive Analysis (Differentiation) -->
+            <div class="bg-gray-50 rounded-3xl p-8 md:p-12 border border-gray-200">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Why is PesisirKita Different?</h3>
+                    <p class="text-gray-600 text-sm max-w-xl mx-auto">Functional comparison of PesisirKita against conventional environmental reporting or field survey apps.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Status Quo (Similar Apps) -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm opacity-80">
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                            <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                                <i class="fa-solid fa-mobile-screen"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-700">Conventional Apps</h4>
+                        </div>
+                        <ul class="space-y-4 text-sm text-gray-600">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                                <span><strong>Rigid Implementation:</strong> Setting up new systems takes a long time and requires complex infrastructure installations in each region.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                                <span><strong>Siloed Data (Passive):</strong> Reports only go to an admin's desk or a closed dashboard, inaccessible to the public/schools transparently.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                                <span><strong>Single Feature:</strong> Usually focuses on only one thing (e.g., logging trash <em>only</em>, or planting trees <em>only</em>).</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- PesisirKita (Disruption) -->
+                    <div class="bg-gradient-to-br from-ocean-50 to-white p-6 rounded-2xl border-2 border-ocean-400 shadow-md relative">
+                        <div class="absolute -top-3 -right-3 bg-ocean-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                            New Innovation
+                        </div>
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-ocean-100">
+                            <div class="w-10 h-10 bg-ocean-100 rounded-lg flex items-center justify-center text-ocean-600">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-ocean-900">PesisirKita</h4>
+                        </div>
+                        <ul class="space-y-4 text-sm text-gray-700">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-ocean-500 mt-1"></i>
+                                <span><strong>Rapid Deployment:</strong> Lightweight architecture (PWA & CDN) allows platform activation in new coastal areas within hours without technical hurdles.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-ocean-500 mt-1"></i>
+                                <span><strong>Distributed Intelligence:</strong> Turns reporters (students/citizens) into "Social Sensors", data instantly appears on public Leaderboards and Dashboards.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-ocean-500 mt-1"></i>
+                                <span><strong>4-in-1 Ecosystem:</strong> Combines Cleanups, Planting, Observation, and Early Warning in a single unified tactical platform.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="bg-gradient-to-r from-ocean-800 to-ocean-600 py-16 relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full border-4 border-white/10"></div>
+        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full border-4 border-white/5"></div>
+        
+        <div class="max-w-5xl mx-auto px-4 relative z-10 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Transform Your School into an Eco-Friendly Zone?</h2>
+            <p class="text-ocean-100 mb-8 text-lg">Integrate your school's curriculum with real-world action through PesisirKita.</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="openModal('modalDaftar')" class="bg-white text-ocean-800 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-50 transition">Register School</button>
+                <button onclick="openModal('modalHubungi')" class="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white/10 transition">Contact Our Team</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-br from-ocean-500 to-mangrove-500 rounded flex items-center justify-center text-white font-bold text-sm">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <span class="font-bold text-xl text-white">PesisirKita</span>
+                </div>
+                <p class="text-sm leading-relaxed max-w-sm mb-4">Building an ocean-aware generation and transforming school culture through innovative technology and environmental education.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-youtube text-xl"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Apps</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="toolEN.html" class="hover:text-ocean-400 transition">Field Data Input</a></li>
+                    <li><a href="dashboard.html" class="hover:text-ocean-400 transition">Monitoring Dashboard</a></li>
+                    <li><a href="cal.html" class="hover:text-ocean-400 transition">Blue Carbon Calculator</a></li>
+                    <li><a href="blog.html" class="hover:text-ocean-400 transition">EcoEdu Hub (Teachers)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Information</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-ocean-400 transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-ocean-400 transition">Impact Report</a></li>
+                    <li><a href="#" class="hover:text-ocean-400 transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-ocean-400 transition">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-sm text-center">
+            <p>&copy; 2026 PesisirKita EcoEducation Initiative. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================== -->
+    <!-- MODAL POPUP SECTION -->
+    <!-- ============================================== -->
+
+    <!-- MODAL: REGISTER SCHOOL -->
+    <div id="modalDaftar" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeModal('modalDaftar')"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white rounded-2xl w-full max-w-lg relative z-10 modal-enter overflow-hidden shadow-2xl">
+            <div class="bg-ocean-600 p-6 flex justify-between items-center text-white">
+                <h3 class="font-bold text-xl"><i class="fa-solid fa-school mr-2"></i> School Registration Form</h3>
+                <button onclick="closeModal('modalDaftar')" class="text-white/70 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="p-6">
+                <!-- FORM GOOGLE SHEETS -->
+                <form id="formPendaftaran" name="pesisirkita-form">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">School Name</label>
+                            <input type="text" name="Nama Sekolah" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500 outline-none" placeholder="E.g.: SMAN 1 Pesisir">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Representative Name (PIC)</label>
+                            <input type="text" name="Nama PIC" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500 outline-none" placeholder="Full Name">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp Number</label>
+                                <input type="tel" name="No WhatsApp" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500 outline-none" placeholder="0812...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Province / City</label>
+                                <input type="text" name="Lokasi" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500 outline-none" placeholder="City, Province">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <button type="submit" id="btnSubmit" class="w-full bg-ocean-600 hover:bg-ocean-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                            <span>Submit Registration</span>
+                        </button>
+                    </div>
+
+                    <!-- Success Notification (Hidden by default) -->
+                    <div id="alertSuccess" class="hidden mt-4 p-3 bg-green-50 text-green-700 rounded-lg text-sm flex items-center gap-2 border border-green-200">
+                        <i class="fa-solid fa-circle-check text-lg"></i>
+                        Thank you! Your school data has been successfully submitted. Our team will contact you shortly.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONTACT OUR TEAM -->
+    <div id="modalHubungi" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeModal('modalHubungi')"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white rounded-2xl w-full max-w-md relative z-10 modal-enter overflow-hidden shadow-2xl">
+            <div class="p-6 text-center border-b border-gray-100 relative">
+                <button onclick="closeModal('modalHubungi')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <div class="w-16 h-16 bg-ocean-100 text-ocean-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3 class="font-bold text-2xl text-gray-800">Contact PesisirKita Team</h3>
+                <p class="text-gray-500 mt-2 text-sm">Have questions about the program? Feel free to reach out via the contacts below.</p>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-green-300 hover:bg-green-50 transition group">
+                    <div class="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xl group-hover:bg-green-500 group-hover:text-white transition">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase">WhatsApp / Phone</p>
+                        <p class="text-gray-800 font-bold">+62 812-3456-7890</p>
+                    </div>
+                </a>
+                
+                <a href="mailto:halo@pesisirkita.id" class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-blue-50 transition group">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xl group-hover:bg-blue-500 group-hover:text-white transition">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Email Us</p>
+                        <p class="text-gray-800 font-bold">halo@pesisirkita.id</p>
+                    </div>
+                </a>
+
+                <a href="https://kemdikbud.go.id" target="_blank" class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-ocean-300 hover:bg-ocean-50 transition group">
+                    <div class="w-10 h-10 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center text-xl group-hover:bg-gray-800 group-hover:text-white transition">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Ministry Partner</p>
+                        <p class="text-gray-800 font-bold text-sm">Kemendikdasmen (kemdikbud.go.id)</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Navbar scroll effect & Modal Logic -->
+    <script>
+        // --- Navbar Effect ---
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.replace('py-4', 'py-0');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.replace('py-0', 'py-4');
+            }
+        });
+
+        // --- Modal Open/Close Functions ---
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+            // If closing registration modal, reset success message
+            if(id === 'modalDaftar'){
+                document.getElementById('alertSuccess').classList.add('hidden');
+                document.getElementById('formPendaftaran').reset();
+            }
+        }
+
+        // --- Google Sheets Form Integration ---
+        // REPLACE THE URL BELOW with your Google Apps Script Web App URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxi_Gw7h1VbKP7yJJZ9g3RIlovC9H0tOad3k_V82zF6SwCIXxXclOM7Mp8FvGBl5HSSSA/exec';
+        const form = document.forms['pesisirkita-form'];
+        const btnSubmit = document.getElementById('btnSubmit');
+        const alertSuccess = document.getElementById('alertSuccess');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            // Change button to loading state
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    // Show success notification
+                    alertSuccess.classList.remove('hidden');
+                    form.reset();
+                    // Revert button to original state
+                    btnSubmit.innerHTML = originalBtnText;
+                    btnSubmit.disabled = false;
+                    btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
+                    
+                    // Automatically close modal after 3 seconds
+                    setTimeout(() => { closeModal('modalDaftar'); }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    alert("A system error occurred, please try again in a moment.");
+                    btnSubmit.innerHTML = originalBtnText;
+                    btnSubmit.disabled = false;
+                    btnSubmit.classList.remove('opacity-75', 'cursor-not-allowed');
+                });
+        });
+
+        // --- Function to Toggle Language to ID ---
+        function switchToID() {
+            // Save user manual preference to local storage
+            localStorage.setItem('forcedLanguage', 'id');
+            // Redirect to Indonesian version
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
