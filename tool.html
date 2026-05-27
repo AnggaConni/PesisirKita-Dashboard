@@ -84,17 +84,20 @@
 <div class="hidden md:flex items-center justify-between px-5 py-6 border-b border-gray-100 w-full">
 
     <!-- LEFT -->
-<div class="flex items-center gap-2 min-w-0">
+<div class="flex items-center gap-3 min-w-0">
+    
     <img 
         src="penyu.png" 
         alt="Logo Penyu PesisirKita"
-        class="w-8 h-8 object-contain flex-shrink-0"
+        class="w-10 h-10 rounded-xl object-cover flex-shrink-0"
     />
 
-    <h1 class="text-xl font-black text-teal-800 tracking-tight whitespace-nowrap">
-        PesisirKita
+    <h1 class="text-2xl font-bold text-teal-700 tracking-normal whitespace-nowrap">
+        Pesisir<span class="text-cyan-600">Kita</span>
     </h1>
+
 </div>
+
     <!-- RIGHT -->
     <button 
         onclick="openProfileModal()" 
@@ -3343,17 +3346,23 @@ function toggleFormInputs() {
         function updateDashboard() {
             if (!reports) return;
 
+            // 1. Inisialisasi Variabel
             let validDataCount = 0;
             let erosionCount = 0;
             let waterCount = 0;
             let floraCount = 0;
             let totalHektar = 0;
+            
+            // 👇 TAMBAHAN VARIABEL BARU UNTUK 3 KOTAK BAWAH
+            let totalWaste = 0;
+            let totalSeedlings = 0;
+            let totalAreaCleaned = 0;
 
-            // 1. Loop Data untuk Ekstraksi Metrik sesuai Form PesisirKita
+            // 2. Loop Data untuk Ekstraksi Metrik sesuai Form PesisirKita
             reports.forEach(data => {
                 // A. Kalkulasi Data Confidence (Punya Koordinat & Foto)
                 let hasGPS = data.lat && data.lng;
-                let hasPhoto = data.photo && data.photo !== ""; // Fix: pakai data.photo
+                let hasPhoto = data.photo && data.photo !== ""; 
                 
                 if (hasGPS && hasPhoto) {
                     validDataCount++;
@@ -3363,26 +3372,38 @@ function toggleFormInputs() {
                 let type = data.type || "";
                 let obsType = data.obsType || "";
 
-                // SDG 13 (Erosi & Ketahanan Pantai): Penanaman, Sandwatch Penyu, & Early Warning
+                // SDG 13 (Erosi & Ketahanan Pantai)
                 if (type === 'planting' || (type === 'observation' && obsType === 'sandwatch') || type === 'early_warning') {
                     erosionCount++;
                 }
-                // SDG 14 (Kualitas Air): Bersih Sampah, Oseanografi, Lapor Polusi UMKM
+                // SDG 14 (Kualitas Air)
                 if (type === 'cleanup' || (type === 'observation' && obsType === 'oceanography') || type === 'pollution') {
                     waterCount++;
                 }
-                // SDG 14/15 (Flora Fauna): Sensus Biomassa Karang & Observasi Hewan (Bekantan dll)
+                // SDG 14/15 (Flora Fauna)
                 if (type === 'biomassa' || (type === 'observation' && obsType === 'narrative')) {
                     floraCount++;
                 }
 
-                // C. Coverage Radar (Kalkulasi Total Area Hektar GIS yang dipetakan)
+                // C. Coverage Radar (Kalkulasi Total Area Hektar GIS yang dipetakan secara keseluruhan)
                 if (data.areaHa && parseFloat(data.areaHa) > 0) {
                     totalHektar += parseFloat(data.areaHa);
                 }
+
+                // 👇 TAMBAHAN LOGIKA UNTUK MENGHITUNG SAMPAH, BIBIT, DAN AREA CLEANED
+                // Jika kegiatannya adalah pembersihan sampah (cleanup)
+                if (type === 'cleanup') {
+                    if (data.amount) totalWaste += parseFloat(data.amount);
+                    if (data.areaHa) totalAreaCleaned += parseFloat(data.areaHa);
+                }
+                
+                // Jika kegiatannya adalah penanaman mangrove (planting)
+                if (type === 'planting') {
+                    if (data.bibit) totalSeedlings += parseInt(data.bibit);
+                }
             });
 
-            // 2. Render ke UI Dashboard Atas
+            // 3. Render ke UI Dashboard Atas
             const totalReports = reports.length;
             const confidenceScore = totalReports > 0 ? Math.round((validDataCount / totalReports) * 100) : 0;
             const confidenceEl = document.getElementById('confidence-score');
@@ -3400,12 +3421,24 @@ function toggleFormInputs() {
                 }
             }
 
-            // Render Metrik Angka
+            // Render Metrik Angka Bagian Atas
             if(document.getElementById('metric-erosion')) document.getElementById('metric-erosion').innerText = erosionCount;
             if(document.getElementById('metric-water')) document.getElementById('metric-water').innerText = waterCount;
             if(document.getElementById('metric-flora')) document.getElementById('metric-flora').innerText = floraCount;
 
-            // 3. Render Mini-List Laporan Lapangan
+            // 👇 TAMBAHAN RENDER METRIK ANGKA BAGIAN BAWAH
+            if(document.getElementById('dash-trash-num')) {
+                // Gunakan format angka desimal jika ada koma, misal: 12.5 Kg
+                document.getElementById('dash-trash-num').innerHTML = `${totalWaste % 1 === 0 ? totalWaste : totalWaste.toFixed(1)} <span class="text-xs font-medium text-teal-200">Kg</span>`;
+            }
+            if(document.getElementById('dash-pohon')) {
+                document.getElementById('dash-pohon').innerText = totalSeedlings.toLocaleString('id-ID'); // Format ribuan
+            }
+            if(document.getElementById('dash-area')) {
+                document.getElementById('dash-area').innerHTML = `${totalAreaCleaned % 1 === 0 ? totalAreaCleaned : totalAreaCleaned.toFixed(2)} <span class="text-xs font-medium text-teal-200">Ha</span>`;
+            }
+
+            // 4. Render Mini-List Laporan Lapangan
             const dashLapContainer = document.getElementById('dash-list-lapangan');
             if(dashLapContainer) {
                 if(reports.length === 0) {
@@ -3421,7 +3454,7 @@ function toggleFormInputs() {
                 }
             }
 
-            // 4. Render Mini-List Ide Hackathon
+            // 5. Render Mini-List Ide Hackathon
             const dashIdeContainer = document.getElementById('dash-list-ide');
             if(dashIdeContainer) {
                 if(ideas.length === 0) {
