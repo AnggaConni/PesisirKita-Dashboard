@@ -2856,25 +2856,28 @@ function toggleFormInputs() {
                 
                 <!-- Footer Action Buttons -->
                 ${!compact ? `
-                <div class="flex flex-wrap justify-between items-center mt-3 pt-4 border-t border-gray-100 gap-y-3">
-                    <div class="flex flex-wrap items-center gap-2 text-[11px] md:text-xs text-gray-400 font-medium w-full md:w-auto">
-                        <div class="flex gap-3 mr-1">
-                            <span class="flex items-center gap-1 ${r.lat ? 'text-teal-600' : ''}"><i class="ph-bold ph-map-pin text-sm"></i> GPS</span>
-                            <span class="flex items-center gap-1 ${r.geojson ? 'text-blue-600' : ''}"><i class="ph-bold ph-polygon text-sm"></i> Area</span>
+                <div class="flex flex-wrap justify-between items-center mt-3 pt-4 border-t border-gray-100 gap-y-3 md:gap-y-0">
+                    
+                    <!-- 1. Tombol Peta (Di HP naik ke atas/order-1, di PC tetap di tengah/order-2) -->
+                    ${r.geojson ? `
+                        <div class="order-1 md:order-2 flex gap-1.5 w-full md:w-auto mb-1 md:mb-0">
+                            <button type="button" onclick="viewMap(${reportIndex})" class="flex-1 md:flex-none justify-center whitespace-nowrap text-[11px] md:text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer relative z-10 flex items-center gap-1 shadow-sm"><i class="ph-bold ph-map-trifold"></i> Open Map</button>
+                            <button type="button" onclick="exportReportGeoJSON(${r.id})" class="flex-1 md:flex-none justify-center whitespace-nowrap text-[11px] md:text-xs font-bold text-teal-600 bg-teal-50 border border-teal-200 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer relative z-10 flex items-center gap-1 shadow-sm"><i class="ph-bold ph-download-simple"></i> GeoJSON</button>
                         </div>
-                        
-                        ${r.geojson ? `
-                            <div class="flex gap-1.5 w-full md:w-auto mt-2 md:mt-0">
-                                <button type="button" onclick="viewMap(${reportIndex})" class="flex-1 md:flex-none justify-center whitespace-nowrap text-[11px] md:text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer relative z-10 flex items-center gap-1 shadow-sm"><i class="ph-bold ph-map-trifold"></i> Open Map</button>
-                                <button type="button" onclick="exportReportGeoJSON(${r.id})" class="flex-1 md:flex-none justify-center whitespace-nowrap text-[11px] md:text-xs font-bold text-teal-600 bg-teal-50 border border-teal-200 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer relative z-10 flex items-center gap-1 shadow-sm"><i class="ph-bold ph-download-simple"></i> GeoJSON</button>
-                            </div>
-                        ` : ''}
+                    ` : ''}
+
+                    <!-- 2. Indikator GPS & Area (Di HP turun ke bawah/order-2, di PC tetap di kiri/order-1) -->
+                    <div class="order-2 md:order-1 flex gap-3 text-[11px] md:text-xs text-gray-400 font-medium w-auto">
+                        <span class="flex items-center gap-1 ${r.lat ? 'text-teal-600' : ''}"><i class="ph-bold ph-map-pin text-sm"></i> GPS</span>
+                        <span class="flex items-center gap-1 ${r.geojson ? 'text-blue-600' : ''}"><i class="ph-bold ph-polygon text-sm"></i> Area</span>
                     </div>
                     
-                    <div class="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-0 border-gray-50 pt-3 md:pt-0">
+                    <!-- 3. Tombol Edit & Delete (Selalu order-3 di kanan bawah) -->
+                    <div class="order-3 md:order-3 flex items-center gap-2 w-auto justify-end">
                         <button onclick="editReport(${r.id})" class="text-gray-500 hover:text-blue-600 transition-colors bg-gray-50 hover:bg-blue-50 p-2 rounded-lg border border-gray-200 hover:border-blue-200" title="Edit Data"><i class="ph-bold ph-pencil-simple text-base"></i></button>
                         <button onclick="deleteReport(${r.id})" class="text-gray-500 hover:text-red-600 transition-colors bg-gray-50 hover:bg-red-50 p-2 rounded-lg border border-gray-200 hover:border-red-200" title="Hapus Data"><i class="ph-bold ph-trash text-base"></i></button>
                     </div>
+
                 </div>` : ''}
             </div>`;
         }
