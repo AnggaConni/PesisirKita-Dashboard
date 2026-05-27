@@ -3691,6 +3691,25 @@ function toggleFormInputs() {
             });
         }
 
+        // =========================================================================
+        // INISIALISASI APLIKASI SAAT PERTAMA KALI DIBUKA / DI-REFRESH
+        // =========================================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // 1. Kalkulasi ulang semua data Dashboard dari memori lokal
+            updateDashboard();
+            
+            // 2. Render ulang daftar kartu (Lapangan, Ide, Keranjang)
+            renderReports();
+            renderIdeas();
+            renderSampahUrai();
+            
+            // 3. Acak istilah "Term of The Day" & Load isi Kamus
+            setTermOfTheDay();
+            renderKamus();
+            
+            // 4. Pastikan aplikasi terbuka di halaman Dashboard secara default
+            // switchTab('dashboard'); // Opsional jika ingin selalu mulai dari tab dashboard
+        });
 
     </script>
 
